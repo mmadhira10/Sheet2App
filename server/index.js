@@ -16,5 +16,9 @@ app.use(express.json());
 const db = require('./db')
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
+const appRouter = require('./routes/app-routes');
+app.use('/', appRouter);
+
+
 
 app.listen(PORT, () => console.log(`Listening on Port ${PORT}`));
