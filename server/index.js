@@ -4,6 +4,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 
 dotenv.config();
+const PORT = process.env.PORT || 4000;
 
 app.use(express.urlencoded({ extended: true }))
 app.use(cors({
@@ -12,8 +13,8 @@ app.use(cors({
 }))
 app.use(express.json());
 
+const db = require('./db')
+db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
 
-
-
-app.listen(80, () => console.log('Listening on Port 80'));
+app.listen(PORT, () => console.log(`Listening on Port ${PORT}`));
