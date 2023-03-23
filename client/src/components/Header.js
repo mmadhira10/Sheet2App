@@ -5,11 +5,19 @@ import { styled } from '@mui/material/styles'
 import './Header.css'
 
 const Header = (props) => {
+	const googleAuth = () => {
+		window.open(
+			`http://localhost:4000/auth/google/callback`,
+			"_self"
+		);
+	};
+
   return (
     <div className='header'>
       <h1>Sheet2App Home Page/Welcome back, John Doe!</h1>
       <div className='header-right'>
-        <Button variant='contained'>Login/Logout</Button>
+        <Button variant='contained' onClick={googleAuth}>Login</Button>
+        <Button variant='contained'>Sign In</Button>
       </div>
     </div>
   )

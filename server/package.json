@@ -1,8 +1,15 @@
 {
   "dependencies": {
+    "cookie-session": "^2.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "mongoose": "^7.0.2"
+    "mongoose": "^7.0.2",
+<<<<<<< HEAD
+    "mongoose-findorcreate": "^3.0.0",
+=======
+>>>>>>> 76b8c9619eaee1827338212fb863d748b8bef803
+    "passport": "^0.6.0",
+    "passport-google-oauth20": "^2.0.0"
   }
 }
