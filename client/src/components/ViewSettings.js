@@ -11,31 +11,29 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
 export default function ViewSettings(props) {
-    //for making array of columns, use commas and split by commas
+    
+    const {settings, opType} = props;
     const [open, setOpen] = useState(props.open);
     const [openFilter, setOpenFilter] = useState(false);
     const [openRoles, setOpenRoles] = useState(false);
-    const [viewName, setName] = useState("");
-    const [table, setTable] = useState('');
-    const [columns, setColumns] = useState();
-    const [viewType, setViewType] = useState("");
-    const [allowedActions, setAllowedActions] = useState();
-    const [editColumns, setEditColumns] = useState();
-    const [filter, setFilter] = useState();
-    const [userFilter, setUserFilter] = useState();
-    const [editFilter, setEditFilter] = useState();
-    const [addRec, setAddRec] = useState(0);
-    const [editRec, setEditRec] = useState(0);
-    const [delRec, setDelRec] = useState(0);
-    const [roles, setRoles] = useState([]);
-    //console.log(table);
+    const [viewName, setName] = useState(settings.name);
+    const [table, setTable] = useState(settings.table);
+    const [columns, setColumns] = useState(settings.columns);
+    const [viewType, setViewType] = useState(settings.viewType);
+    const [allowAct, setAllowAct] = useState(settings.allowedActions);
+    const [editColumns, setEditColumns] = useState(settings.editColumns);
+    const [filter, setFilter] = useState(settings.filter);
+    const [userFilter, setUserFilter] = useState(settings.userFilter);
+    const [editFilter, setEditFilter] = useState(settings.editFilter);
+    const [roles, setRoles] = useState(settings.roles);
+    console.log(viewName);
     const viewSet = {
         position: 'absolute',
         top: '30%',
         left: '50%',
         transform: "translate(-50%, -30%)",
         width: "50%",
-        height: "87%",
+        height: "77%",
         bgcolor: 'background.paper',
         border: '2px solid #000',
       };
@@ -87,50 +85,7 @@ export default function ViewSettings(props) {
           },
         };
 
-    let addButton = "outlined";
-    let editButton = "outlined";
-    let delButton = "outlined";
 
-    if(addRec == 1) {
-        addButton = "contained";
-    }
-    if(editRec == 1) {
-        editButton = "contained";
-    }
-    if(delRec == 1) {
-        delButton = "contained";
-    }
-
-    function toggleButton(event) {
-        let click = event.target.id;
-        if(click == "addBut") {
-            if(addRec == 0) {
-                setAddRec(1);
-            }
-            else {
-                setAddRec(0);
-            }
-            console.log("add" + addRec);
-        }
-        else if(click == "editBut") {
-            if(editRec == 0) {
-                setEditRec(1);
-            }
-            else {
-                setEditRec(0);
-            }
-            console.log("edit" + editRec);
-        }
-        if(click == "delBut") {
-            if(delRec == 0) {
-                setDelRec(1);
-            }
-            else {
-                setDelRec(0);
-            }
-            console.log("delete" + delRec);
-        }
-    }
     //functions for opening and closing this modal and nested ones
     function handleBack() {
         setOpen(false);
@@ -183,7 +138,22 @@ export default function ViewSettings(props) {
         setRoles(event.target.value);
     }
 
-    // function createView() {
+    function handleAllowDropDown(event) {
+        console.log(event.target.value);
+        setAllowAct(event.target.value);
+    }
+
+    function saveView() {
+        if(opType == "create") {
+            createView();
+        }
+        else {
+            editView();
+        }
+        handleBack();
+    }
+
+    function createView() {
     //     let allowArray = [];
     //     if(addRec == 1) {allowArray.push("add")};
     //     if(editRec == 1) {allowArray.push("edit")};
@@ -203,7 +173,9 @@ export default function ViewSettings(props) {
     //       .catch(function (error) {
     //         console.log(error);
     //       });
-    // }
+    }
+
+    function editView() {};
 
       
     return(
@@ -217,18 +189,12 @@ export default function ViewSettings(props) {
                         <Button color = "error" onClick = {handleBack} variant = "contained" sx = {{position: "absolute", top: "1%", right: "1%"}}>Back</Button>
                     </Grid>
                 </Grid>
-                <Box sx = {{display: "grid", gridTemplateRows: "repeat(7, 1fr)", gridTemplateColumns: "repeat(12, 1fr)", rowGap: 2, p: "20px"}}>
-                    <Box sx = {leftItem} gridColumn = "span 8">
-                        <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}}>Creator: </Typography>
-                    </Box>
-                    <Box sx = {rightItem} gridColumn = "span 4">
-                        <Typography sx = {{fontSize: "24px", paddingRight: "5px"}} variant = "body">John Doe </Typography>
-                    </Box>
+                <Box sx = {{display: "grid", gridTemplateRows: "repeat(6, 1fr)", gridTemplateColumns: "repeat(12, 1fr)", rowGap: 2, p: "20px"}}>
                     <Box sx = {leftItem} gridColumn = "span 8">
                         <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Name: </Typography>
                     </Box>
                     <Box sx = {rightItem} gridColumn = "span 4">
-                        <TextField id = "nameText" onChange = {handleChange} variant = "outlined" sx = {{margin: "5px"}} inputProps={{min: 0, style: { textAlign: 'right', background: "#FFFFFF"}}}  size = "small"></TextField>
+                        <TextField id = "nameText" value = {viewName} onChange = {handleChange} variant = "outlined" sx = {{margin: "5px"}}  size = "small"></TextField>
                     </Box> 
                     <Box sx = {leftItem} gridColumn = "span 8">
                         <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Table: </Typography>
@@ -243,7 +209,7 @@ export default function ViewSettings(props) {
                         <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Columns: </Typography>
                     </Box>
                     <Box sx = {rightItem} gridColumn = "span 4">
-                        <TextField id = "columnText" onChange = {handleChange} variant = "outlined" sx = {{margin: "5px"}} inputProps={{min: 0, style: { textAlign: 'right', background: "#FFFFFF"}}}  size = "small"></TextField>
+                        <TextField value = {columns} id = "columnText" onChange = {handleChange} variant = "outlined" sx = {{margin: "5px"}} size = "small"></TextField>
                     </Box> 
                     <Box sx = {leftItem} gridColumn = "span 8">
                         <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >View Type: </Typography>
@@ -258,15 +224,17 @@ export default function ViewSettings(props) {
                         <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Allowed Actions: </Typography>
                     </Box>
                     <Box sx = {rightItem} gridColumn = "span 4">
-                        <Button id = "addBut" onClick = {toggleButton} sx = {{marginLeft: "5px", marginRight: "5px"}} variant = {addButton} >Add</Button>
-                        <Button id = "editBut" onClick = {toggleButton} sx = {{marginLeft: "5px", marginRight: "5px"}} variant = {editButton} >Edit</Button>
-                        <Button id = "delBut" onClick = {toggleButton} sx = {{marginLeft: "5px", marginRight: "5px"}} variant = {delButton} >Delete</Button>
+                        <Select MenuProps = {MenuProps} multiple onChange = {handleAllowDropDown} value = {allowAct} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}>
+                            <MenuItem value = {"Add"}>Add</MenuItem>
+                            <MenuItem value = {"Edit"}>Edit</MenuItem>
+                            <MenuItem value = {"Delete"}>Delete</MenuItem>
+                        </Select>
                     </Box>
                     <Box sx = {leftItem} gridColumn = "span 8">
                         <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Editable Columns: </Typography>
                     </Box>
                     <Box sx = {rightItem} gridColumn = "span 4">
-                        <TextField id = "editColumnText" onChange = {handleChange} variant = "outlined" sx = {{margin: "5px"}} inputProps={{min: 0, style: { textAlign: 'right', background: "#FFFFFF"}}}  size = "small"></TextField>
+                        <TextField value = {editColumns} id = "editColumnText" onChange = {handleChange} variant = "outlined" sx = {{margin: "5px"}} inputProps={{min: 0, style: { textAlign: 'right', background: "#FFFFFF"}}}  size = "small"></TextField>
                     </Box>
                 </Box>
                 <Grid container rowSpacing = {2} columnSpacing = {2}>
@@ -280,7 +248,7 @@ export default function ViewSettings(props) {
                         <Button fullWidth sx = {{marginLeft: "5px", marginRight: "5px"}} color = "error" variant = "contained" >Delete View</Button>
                     </Grid>
                     <Grid item xs = {6} sx = {{display: "flex", justifyContent: "center"}}>
-                        <Button fullWidth sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "contained" >Save</Button>
+                        <Button onClick = {saveView} fullWidth sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "contained" >Save</Button>
                     </Grid>
                 </Grid>
                 <Modal open = {openFilter}>
@@ -290,28 +258,27 @@ export default function ViewSettings(props) {
                                 <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Filter: </Typography>
                             </Box>
                             <Box sx = {rightItem} gridColumn = "span 4">
-                                <TextField  variant = "outlined" sx = {{margin: "5px"}} size = "small"></TextField>
+                                <TextField  value = {filter}  variant = "outlined" sx = {{margin: "5px"}} size = "small"></TextField>
                             </Box>
                             <Box sx = {leftItem} gridColumn = "span 8">
                                 <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Edit Filter: </Typography>
                             </Box>
                             <Box sx = {rightItem} gridColumn = "span 4">
-                                <TextField  variant = "outlined" sx = {{margin: "5px"}} size = "small"></TextField>
+                                <TextField value = {editFilter} variant = "outlined" sx = {{margin: "5px"}} size = "small"></TextField>
                             </Box>
                             <Box sx = {leftItem} gridColumn = "span 8">
                                 <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >User Filter: </Typography>
                             </Box>
                             <Box sx = {rightItem} gridColumn = "span 4">
-                                <TextField  variant = "outlined" sx = {{margin: "5px"}} size = "small"></TextField>
+                                <TextField  value = {userFilter} variant = "outlined" sx = {{margin: "5px"}} size = "small"></TextField>
                             </Box>
                         </Box>
-                        <Grid container rowSpacing = {2} columnSpacing = {2}>
+                        <Grid container rowSpacing = {2} columnSpacing = {2} sx = {{paddingTop: "20px"}}>
+                            <Grid item xs = {3}></Grid>
                             <Grid item xs = {6} sx = {{display: "flex", justifyContent: "center"}}>
-                                <Button onClick = {handleCloseFilter} fullWidth sx = {{marginLeft: "5px", marginRight: "5px"}} color = "error" variant = "contained" >Back</Button>
+                                <Button onClick = {handleCloseFilter} fullWidth sx = {{marginLeft: "5px", marginRight: "5px"}}variant = "contained" >Done</Button>
                             </Grid>
-                            <Grid item xs = {6} sx = {{display: "flex", justifyContent: "center"}}>
-                            <Button fullWidth sx = {{marginLeft: "5px", marginRight: "5px"}}variant = "contained" >Save</Button>
-                            </Grid>
+                            <Grid item xs = {3}></Grid>
                         </Grid>
                     </Box>
                 </Modal>

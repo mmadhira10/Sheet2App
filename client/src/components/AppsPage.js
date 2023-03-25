@@ -8,8 +8,37 @@ import AppCard from "./AppCard.js";
 import ViewSettings from "./ViewSettings.js";
 import AppSettings from "./AppSettings.js";
 
+const testInfo = {
+    creator: "John Doe",
+    name: "Test App",
+    isPublished: false,
+    _id: "testing"
+};
+
+const titleStyle = {
+    position: "absolute",
+    top: "0%",
+    width: "100%",
+    height: "25%"
+};
+
+const myAppsStyle = {
+    position: "absolute",
+    top: "25%",
+    width: "80%",
+    height: "10%"
+}
+
+const appsList = {
+    position: "absolute",
+    top: "35%",
+    width: "80%",
+    height: "50%",
+
+}
+
 export default function AppsPage() {
-    const [openSettings, setSettings] = useState(true);
+    const [open, setOpen] = useState(false);
     const [count, setCount] = useState(1);
 
     function getMyApps() {
@@ -28,52 +57,19 @@ export default function AppsPage() {
         getMyApps();
     }, []);
 
-    //const Apps;
-    
-    const testInfo = {
-        creator: "John Doe",
-        name: "Test App",
-        isPublished: false,
-        _id: "testing"
-    };
-
-    const titleStyle = {
-        position: "absolute",
-        top: "0%",
-        width: "100%",
-        height: "25%"
-    };
-
-    const myAppsStyle = {
-        position: "absolute",
-        top: "25%",
-        width: "80%",
-        height: "10%"
+    function createApp() {
+        setOpen(true); // open view settings module
+        if(count == 1) {
+          setCount(2);
+        }
+        else {
+          setCount(1);
+        }
     }
-
-    const appsList = {
-        position: "absolute",
-        top: "35%",
-        width: "80%",
-        height: "50%",
-
-    }
-
-    function createView() {
-      setSettings(true); // open view settings module
-      if(count == 1) {
-        setCount(2);
-      }
-      else {
-        setCount(1);
-      }
-      console.log(openSettings)
-    }
-
 
     return(
         <div>
-            <ViewSettings open = {openSettings} key = {count}/>
+            <AppSettings open = {open} key = {count}/>
             <Box sx = {titleStyle}>
                 <Typography align = "center" variant = "h1">Sheet 2 App</Typography>
             </Box>
@@ -88,7 +84,7 @@ export default function AppsPage() {
                     />
                 </List>
             </Box>
-            <Button onClick = {createView} sx = {{position: "absolute", top: "85%", width: "80%"}}>Create New App</Button>
+            <Button onClick = {createApp} sx = {{position: "absolute", top: "85%", width: "80%"}}>Create New App</Button>
         </div>
     )
 }
