@@ -23,7 +23,7 @@ export default function AppCard(props) {
 
     return(
         <ListItem 
-            sx = {{margin: "10px", display: "flex"}}
+            sx = {{margin: "10px", display: "flex", border: "1px solid black"}}
             key = {appInfo._id}
         >
             <Grid container>

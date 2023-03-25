@@ -5,14 +5,27 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import List from '@mui/material/List';
 import AppCard from "./AppCard.js";
+import ViewSettings from "./ViewSettings.js";
+import AppSettings from "./AppSettings.js";
 
 export default function AppsPage() {
-    function getMyApps() {
+    const [openSettings, setSettings] = useState(true);
+    const [count, setCount] = useState(1);
 
-    }
+    function getMyApps() {
+    //     axios.get("/getApps", {
+
+    //       })
+    //       .then(function (response) {
+    //         console.log(response);
+    //       })
+    //       .catch(function (error) {
+    //         console.log(error);
+    //       });
+     }
 
     useEffect(() => {
-        getMyApps()
+        getMyApps();
     }, []);
 
     //const Apps;
@@ -42,12 +55,25 @@ export default function AppsPage() {
         position: "absolute",
         top: "35%",
         width: "80%",
-        height: "50%"
+        height: "50%",
+
+    }
+
+    function createView() {
+      setSettings(true); // open view settings module
+      if(count == 1) {
+        setCount(2);
+      }
+      else {
+        setCount(1);
+      }
+      console.log(openSettings)
     }
 
 
     return(
         <div>
+            <ViewSettings open = {openSettings} key = {count}/>
             <Box sx = {titleStyle}>
                 <Typography align = "center" variant = "h1">Sheet 2 App</Typography>
             </Box>
@@ -62,7 +88,7 @@ export default function AppsPage() {
                     />
                 </List>
             </Box>
-            <Button sx = {{position: "absolute", top: "85%", width: "80%"}}>Create New App</Button>
+            <Button onClick = {createView} sx = {{position: "absolute", top: "85%", width: "80%"}}>Create New App</Button>
         </div>
     )
 }
