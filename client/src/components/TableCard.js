@@ -6,10 +6,11 @@ import ListItem from '@mui/material/ListItem';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import TableSettings from "./TableSettings";
+import EditTable from "./EditTable.js";
 
-export default function TableCard() {
+export default function TableCard(props) {
 
-    //const {settings} = props;
+    const {table} = props;
 
     const [openEdit, setOpenEdit] = useState(false);
     const [count, setCount] = useState(1);
@@ -26,9 +27,10 @@ export default function TableCard() {
 
     return(
         <ListItem sx = {{display: "block", border: "1px solid black", width: "100%", marginBottom: "10px"}}>
+            <EditTable open = {openEdit} table = {table} key = {count}/>
             <Grid container>
                 <Grid item xs = {10}>
-                    <Typography variant = "body" sx = {{fontSize: "30px", fontWeight: "bold"}}>Name</Typography>
+                    <Typography variant = "body" sx = {{fontSize: "30px", fontWeight: "bold"}}>{table.name}</Typography>
                 </Grid>
                 <Grid item xs = {2} sx = {{display: "flex", justifyContent: "end"}}>
                     <Button variant = "contained" onClick = {editTable}>Edit</Button>

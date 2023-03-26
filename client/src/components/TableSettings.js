@@ -121,11 +121,11 @@ export default function TableSettings(props) {
 
             columnsArray.push(columnObj);
         }
-        let GID = URL.split('/')[6].substring(9);
+        let sheet_id = URL.split('/')[6].substring(9);
         let newTable = {
             name: tableName,
             URL: URL,
-            GID: GID,
+            sheet_id: sheet_id,
             key: key,
             columns: columnsArray
         };

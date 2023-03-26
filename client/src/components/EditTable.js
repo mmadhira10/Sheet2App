@@ -17,7 +17,7 @@ export default function TableSettings(props) {
     const [open, setOpen] = useState(props.open);
     const [openCol, setOpenCol] = useState(false);
     const [tableName, setTableName] = useState(table.name);
-    const [URL, setURL] = useState(table.URL);
+    //const [URL, setURL] = useState(table.URL);
     const [key, setKey] = useState(table.key);
 
 
@@ -75,33 +75,35 @@ export default function TableSettings(props) {
         if(change == "nameText") {
             setTableName(event.target.value);
         }
-        else if(change == "urlText") {
-            setURL(event.target.value);
-        }
         else if(change == "keyText") {
             setKey(event.target.value);
         }
     }
 
-    async function getColumns() {
-        try {
-            const response = await axios.post("http://127.0.0.1:4000/getColumnsFromURL", {url: URL});
-            console.log(response.data);
-            setColumnNames(response.data.columns);
-            setOpenCol(true);
-        }
-        catch (error) {
-            console.log(error);
-        }
-        console.log(columnNames);
-        console.log(openCol);
+    // async function getColumns() {
+    //     try {
+    //         const response = await axios.post("http://127.0.0.1:4000/getColumnsFromURL", {url: URL});
+    //         console.log(response.data);
+    //         setColumnNames(response.data.columns);
+    //         setOpenCol(true);
+    //     }
+    //     catch (error) {
+    //         console.log(error);
+    //     }
+    //     console.log(columnNames);
+    //     console.log(openCol);
+    // }
+
+    function editColumns() {
+        setOpenCol(true);
     }
 
     function saveColumnsAndTable() {
+        let columns = table.columns;
         let columnsArray = [];
-        console.log(columnNames.length);
-        for (let i = 0; i < columnNames.length; i++) {
-            let name = columnNames[i];
+        console.log(columns.length);
+        for (let i = 0; i < columns.length; i++) {
+            let name = columns[i].name;
             console.log(name);
             let initValText = document.getElementById("initValue-" + name);
             let labelText = document.getElementById("label-" + name);
@@ -109,7 +111,7 @@ export default function TableSettings(props) {
             let typeText = document.getElementById("type-"+name);
 
             //console.log(labelText == null);
-            console.log(labelText.value);
+            //console.log(labelText.value);
 
             let columnObj = {
                 name: name,
@@ -121,11 +123,11 @@ export default function TableSettings(props) {
 
             columnsArray.push(columnObj);
         }
-        let GID = URL.split('/')[6].substring(9);
+        //let GID = URL.split('/')[6].substring(9);
         let newTable = {
             name: tableName,
-            URL: URL,
-            GID: GID,
+            URL: table.URL,
+            sheet_id: table.sheet_id,
             key: key,
             columns: columnsArray
         };
@@ -159,7 +161,7 @@ export default function TableSettings(props) {
                         <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >URL: </Typography>
                     </Box>
                     <Box sx = {rightItem} gridColumn = "span 4">
-                        <TextField id = "urlText" value = {URL} onChange = {handleChange} variant = "outlined" sx = {{margin: "5px"}}  size = "small"></TextField>
+                    <TextField id = "urlText" value = {table.URL} label = "Read Only" variant = "outlined" sx = {{margin: "5px", marginTop: "10px"}}  size = "small" InputProps={{readOnly: true,}}></TextField>
                     </Box>
                     <Box sx = {leftItem} gridColumn = "span 8">
                         <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Key: </Typography>
@@ -171,7 +173,7 @@ export default function TableSettings(props) {
                 <Grid container rowSpacing = {2} columnSpacing = {2}>
                     <Grid item xs = {3}/>
                     <Grid item xs = {6} sx = {{display: "flex", justifyContent: "center"}}>
-                        <Button  onClick = {getColumns} fullWidth sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "contained" >Edit Columns</Button>
+                        <Button  onClick = {editColumns} fullWidth sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "contained" >Edit Columns</Button>
                     </Grid>
                     <Grid item xs = {3}/>
                 </Grid>
@@ -181,7 +183,7 @@ export default function TableSettings(props) {
                             <List>
                                 {
                                     table.columns.map((column) => (
-                                        <EditColumn column = {column} key = {column}/>
+                                        <EditColumn column = {column} key = {column.name}/>
                                     ))
                                 }
                             </List>
