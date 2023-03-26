@@ -6,7 +6,8 @@ import {
   Dashboard,
   Header,
   Home,
-  TableView
+  TableView,
+  TablesPage
 } from './components';
 
 import { GlobalStoreContextProvider } from './store';
@@ -22,6 +23,7 @@ function App() {
           <Route path="/apps" element={<AppsPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/tableview" element={<TableView />} />
+          <Route path="/tables" element={<TablesPage />} />
         </Routes>
       </GlobalStoreContextProvider>
     </BrowserRouter>

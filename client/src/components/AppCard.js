@@ -1,19 +1,30 @@
 import React from 'react';
+import { useContext } from 'react';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import ListItem from '@mui/material/ListItem';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
+import { GlobalStoreContext } from '../store';
+import { useNavigate } from 'react-router-dom';
 
 export default function AppCard(props) {
     const { appInfo } = props;
+    const { currentApp, setCurrentApp } = useContext(GlobalStoreContext);
+    const navigate = useNavigate();
 
     function deleteApp() {
 
     }
 
-    function editApp() {
+    function editApp(e) {
+        setCurrentApp(appInfo);
+        navigate("/tables");
+        console.log(currentApp);    }
+
+    function handleClick() {
+        
 
     }
 
@@ -25,6 +36,7 @@ export default function AppCard(props) {
         <ListItem 
             sx = {{margin: "10px", display: "flex", border: "1px solid black"}}
             key = {appInfo._id}
+            // onClick = {handleClick}
         >
             <Grid container>
                 <Grid item xs = {10}>
