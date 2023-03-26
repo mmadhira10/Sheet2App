@@ -7,6 +7,8 @@ import List from '@mui/material/List';
 import AppCard from "./AppCard.js";
 import ViewSettings from "./ViewSettings.js";
 import AppSettings from "./AppSettings.js";
+import axios from 'axios'
+
 
 const testInfo = {
     creator: "John Doe",
@@ -41,16 +43,19 @@ export default function AppsPage() {
     const [open, setOpen] = useState(false);
     const [count, setCount] = useState(1);
 
-    function getMyApps() {
-    //     axios.get("/getApps", {
+    const [apps, setApps] = useState([]);
 
-    //       })
-    //       .then(function (response) {
-    //         console.log(response);
-    //       })
-    //       .catch(function (error) {
-    //         console.log(error);
-    //       });
+
+    //function to get all apps from database
+    async function getMyApps() {
+        try {
+            const response = await axios.get("http://127.0.0.1:4000/getApps");
+            console.log(response.data);
+            setApps(response.data.apps);
+        }
+        catch (error) {
+            console.log(error);
+        }
      }
 
     useEffect(() => {
@@ -67,6 +72,18 @@ export default function AppsPage() {
         }
     }
 
+    console.log(apps);
+    const listcard = apps.map((app) => (
+        <List>
+            <AppCard
+            key = {app._id}
+            appInfo = {app}
+            />
+        </List>
+    ))
+
+    //map through array of apps and create an AppCard for each one
+
     return(
         <div>
             <AppSettings open = {open} key = {count}/>
@@ -77,12 +94,7 @@ export default function AppsPage() {
                 <Typography variant = "h2">My Apps</Typography>
             </Box>
             <Box sx = {appsList}>
-                <List>
-                    <AppCard
-                    key = {"123456"}
-                    appInfo = {testInfo}
-                    />
-                </List>
+                {listcard}
             </Box>
             <Button onClick = {createApp} sx = {{position: "absolute", top: "85%", width: "80%"}}>Create New App</Button>
         </div>

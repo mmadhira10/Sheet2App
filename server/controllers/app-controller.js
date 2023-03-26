@@ -2,6 +2,12 @@ const App = require('../models/app-schema')
 const View = require('../models/view-schema')
 const Table = require('../models/table-schema')
 
+const fs = require('fs').promises;
+const path = require('path');
+const process = require('process');
+const {authenticate} = require('@google-cloud/local-auth');
+const {google} = require('googleapis');
+
 const createApp = async (req, res) => {
     const body = req.body;
     if (!body) {
@@ -34,6 +40,27 @@ const createApp = async (req, res) => {
         })
     }
 }
+
+const updateApp = async (req, res) => {
+    const body = req.body;
+    if (!body) {
+        return res.status(400).json({
+            errorMessage: 'Improperly formatted request',
+        })
+    }
+    try {
+        const updatedApp = await App.findOneAndUpdate({_id:body._id}, body, {new:true});
+        return res.status(200).json({
+            success: true,
+            app: updatedApp
+        })
+    } catch (error) {
+        return res.status(400).json({
+            errorMessage: error
+        })
+    }
+}
+
 
 const getApps = async (req, res) => {
     try {  
@@ -151,6 +178,28 @@ const getViews = async (req, res) => {
     }
 }
 
+const updateView = async (req, res) => {
+    const body = req.body;
+    if (!body) {
+        return res.status(400).json({
+            errorMessage: 'Improperly formatted request',
+        })
+    }
+    try {
+        const updatedView = View.findOneAndUpdate({_id:body._id}, body, {new:true});
+        return res.status(200).json({
+            success: true,
+            view: updatedView
+        })
+    } catch (error) {
+        return res.status(400).json({
+            errorMessage: error
+        })
+
+    }
+}
+
+
 const getReferencedTable = async (req, res) => {
     const body = req.body;
     if (!body) {
@@ -187,11 +236,13 @@ const getReferencedTable = async (req, res) => {
 
 module.exports = {
     createApp,
+    updateApp,
     getApps,
     createTable,
     updateTable,
     getTables,
     createView,
+    updateView,
     getViews,
     getReferencedTable
 }

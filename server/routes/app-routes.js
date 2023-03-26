@@ -10,6 +10,10 @@ router.get('/getApps', AppController.getApps);
 router.get('/getTables', AppController.getTables);
 router.get('/getViews', AppController.getViews);
 
+router.get('/updateApp', AppController.updateApp);
+router.get('/updateTable', AppController.updateTable);
+router.get('/updateView', AppController.updateView);
+
 router.post('/getReferencedTable', AppController.getReferencedTable);
 
 
