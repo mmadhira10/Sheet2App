@@ -63,7 +63,7 @@ export default function AppsPage() {
     }, []);
 
     function createApp() {
-        setOpen(true); // open view settings module
+        setOpen(true); 
         if(count == 1) {
           setCount(2);
         }
@@ -73,14 +73,6 @@ export default function AppsPage() {
     }
 
     console.log(apps);
-    const listcard = apps.map((app) => (
-        <List>
-            <AppCard
-            key = {app._id}
-            appInfo = {app}
-            />
-        </List>
-    ))
 
     //map through array of apps and create an AppCard for each one
 
@@ -94,7 +86,11 @@ export default function AppsPage() {
                 <Typography variant = "h2">My Apps</Typography>
             </Box>
             <Box sx = {appsList}>
-                {listcard}
+                <List >
+                    {apps.map((app) => (
+                        <ViewCard appInfo = {app} key ={app._id}/>
+                    ))}
+                </List>
             </Box>
             <Button onClick = {createApp} sx = {{position: "absolute", top: "85%", width: "80%"}}>Create New App</Button>
         </div>
