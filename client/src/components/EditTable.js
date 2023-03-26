@@ -10,18 +10,18 @@ import TextField from '@mui/material/TextField';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import axios from 'axios';
-import ColumnSet from "./ColumnSet.js"
+import EditColumn from "./EditColumn.js"
 
 export default function TableSettings(props) {
-
+    const {table} = props;
     const [open, setOpen] = useState(props.open);
     const [openCol, setOpenCol] = useState(false);
-    const [tableName, setTableName] = useState("");
-    const [URL, setURL] = useState("");
-    const [key, setKey] = useState("");
+    const [tableName, setTableName] = useState(table.name);
+    const [URL, setURL] = useState(table.URL);
+    const [key, setKey] = useState(table.key);
 
 
-    const [columnNames, setColumnNames] = useState([]);
+    //const [columnNames, setColumnNames] = useState([]);
 
     const tableSet = {
         position: 'absolute',
@@ -171,7 +171,7 @@ export default function TableSettings(props) {
                 <Grid container rowSpacing = {2} columnSpacing = {2}>
                     <Grid item xs = {3}/>
                     <Grid item xs = {6} sx = {{display: "flex", justifyContent: "center"}}>
-                        <Button  onClick = {getColumns} fullWidth sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "contained" >Import Columns</Button>
+                        <Button  onClick = {getColumns} fullWidth sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "contained" >Edit Columns</Button>
                     </Grid>
                     <Grid item xs = {3}/>
                 </Grid>
@@ -180,8 +180,8 @@ export default function TableSettings(props) {
                         <Box sx = {{display: "block", width: "100%", height: "80%", overflow: "auto", margin: "auto", borderBottom: "2px solid black"}}>
                             <List>
                                 {
-                                    columnNames.map((column) => (
-                                        <ColumnSet column = {column} key = {column}/>
+                                    table.columns.map((column) => (
+                                        <EditColumn column = {column} key = {column}/>
                                     ))
                                 }
                             </List>
