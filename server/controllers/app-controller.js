@@ -108,7 +108,7 @@ const createTable = async (req, res) => {
     }
 }
 
-const getDataFromSheetID = async (spid,sid) => {
+const getDataFromSheetID = async (spid,sid, dim) => {
     const SPREADSHEET_ID = spid;
     const SHEET_ID = sid;
     // TODO: replace above values with real IDs.
@@ -125,6 +125,7 @@ const getDataFromSheetID = async (spid,sid) => {
     const sheet = await sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
         range: sheetName,
+        majorDimension: dim
         });
     
     
@@ -147,7 +148,35 @@ const getDataFromURL = async (req, res) => {
     
 
     try {
-        const data = await getDataFromSheetID(spid,sid);
+        const data = await getDataFromSheetID(spid,sid, 'ROWS');
+        console.log(data)
+        return res.status(200).json({
+            success: true,
+            data: data
+        })
+    }
+    catch (error) {
+        return res.status(400).json({
+            errorMessage: error
+        })
+    }
+}
+
+const getDataFromURLCol = async (req, res) => {
+    const url = req.body.url;
+    if (!url) {
+        return res.status(400).json({
+            errorMessage: 'Improperly formatted request',
+        })
+    }
+    spid = url.split('/')[5];
+    sid = url.split('/')[6].substring(9);
+
+    //console.log(sid);
+    
+
+    try {
+        const data = await getDataFromSheetID(spid,sid, 'COLUMNS');
         console.log(data)
         return res.status(200).json({
             success: true,
@@ -173,7 +202,7 @@ const getColumnsFromURL = async (req, res) => {
     sid = url.split('/')[6].substring(9);
 
     try {
-        const data = await getDataFromSheetID(spid,sid);
+        const data = await getDataFromSheetID(spid,sid, 'ROWS');
         const columns = data[0];
         return res.status(200).json({
             success: true,
@@ -261,6 +290,28 @@ const getTables = async (req, res) => {
     }
 }
 
+const getTablesByAppId = async (req, res) => {
+    const appId = req.params.appId;
+    if (!appId) {
+        return res.status(400).json({
+            errorMessage: 'Improperly formatted request',
+        })
+    }
+    try {
+        const foundApp = await App.findOne({_id:appId}).populate('tables');
+        return res.status(200).json({
+            success: true,
+            tables: foundApp.tables
+        })
+    } catch (error) {
+        return res.status(400).json({
+            errorMessage: error
+        })
+    }
+}
+
+
+
 const updateTable = async (req, res) => {
     const body = req.body;
     if (!body) {
@@ -321,6 +372,27 @@ const getViews = async (req, res) => {
         })
     }
 }
+
+const getViewsByAppId = async (req, res) => {
+    const appid = req.params.appid;
+    if (!appid) {
+        return res.status(400).json({
+            errorMessage: 'Improperly formatted request',
+        })
+    }
+    try {
+        const foundApp = await App.findOne({appid:appid}).populate('views');
+        return res.status(200).json({
+            success: true,
+            views: foundApp.views
+        })
+    } catch (error) {
+        return res.status(400).json({
+            errorMessage: error
+        })
+    }
+}
+
 
 const updateView = async (req, res) => {
     const body = req.body;
@@ -390,7 +462,10 @@ module.exports = {
     getViews,
     getReferencedTable,
     getDataFromURL,
+    getDataFromURLCol,
     getDataFromURLAndSheetName,
-    getColumnsFromURL
+    getColumnsFromURL,
+    getTablesByAppId,
+    getViewsByAppId
 }
 
