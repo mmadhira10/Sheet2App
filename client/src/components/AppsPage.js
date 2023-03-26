@@ -5,49 +5,80 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import List from '@mui/material/List';
 import AppCard from "./AppCard.js";
+import ViewSettings from "./ViewSettings.js";
+import AppSettings from "./AppSettings.js";
+import axios from 'axios'
+
+
+const testInfo = {
+    creator: "John Doe",
+    name: "Test App",
+    isPublished: false,
+    _id: "testing"
+};
+
+const titleStyle = {
+    position: "absolute",
+    top: "0%",
+    width: "100%",
+    height: "25%"
+};
+
+const myAppsStyle = {
+    position: "absolute",
+    top: "25%",
+    width: "80%",
+    height: "10%"
+}
+
+const appsList = {
+    position: "absolute",
+    top: "35%",
+    width: "80%",
+    height: "50%",
+
+}
 
 export default function AppsPage() {
-    function getMyApps() {
+    const [open, setOpen] = useState(false);
+    const [count, setCount] = useState(1);
 
-    }
+    const [apps, setApps] = useState([]);
+
+
+    //function to get all apps from database
+    async function getMyApps() {
+        try {
+            const response = await axios.get("http://127.0.0.1:4000/getApps");
+            console.log(response.data);
+            setApps(response.data.apps);
+        }
+        catch (error) {
+            console.log(error);
+        }
+     }
 
     useEffect(() => {
-        getMyApps()
+        getMyApps();
     }, []);
 
-    //const Apps;
-    
-    const testInfo = {
-        creator: "John Doe",
-        name: "Test App",
-        isPublished: false,
-        _id: "testing"
-    };
-
-    const titleStyle = {
-        position: "absolute",
-        top: "0%",
-        width: "100%",
-        height: "25%"
-    };
-
-    const myAppsStyle = {
-        position: "absolute",
-        top: "25%",
-        width: "80%",
-        height: "10%"
+    function createApp() {
+        setOpen(true); 
+        if(count == 1) {
+          setCount(2);
+        }
+        else {
+          setCount(1);
+        }
     }
 
-    const appsList = {
-        position: "absolute",
-        top: "35%",
-        width: "80%",
-        height: "50%"
-    }
+    console.log(apps);
 
+    //map through array of apps and create an AppCard for each one
 
     return(
         <div>
+            <AppSettings open = {open} key = {count}/>
             <Box sx = {titleStyle}>
                 <Typography align = "center" variant = "h1">Sheet 2 App</Typography>
             </Box>
@@ -55,14 +86,13 @@ export default function AppsPage() {
                 <Typography variant = "h2">My Apps</Typography>
             </Box>
             <Box sx = {appsList}>
-                <List>
-                    <AppCard
-                    key = {"123456"}
-                    appInfo = {testInfo}
-                    />
+                <List >
+                    {apps.map((app) => (
+                        <ViewCard appInfo = {app} key ={app._id}/>
+                    ))}
                 </List>
             </Box>
-            <Button sx = {{position: "absolute", top: "85%", width: "80%"}}>Create New App</Button>
+            <Button onClick = {createApp} sx = {{position: "absolute", top: "85%", width: "80%"}}>Create New App</Button>
         </div>
     )
 }

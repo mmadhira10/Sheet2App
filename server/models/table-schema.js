@@ -15,8 +15,7 @@ const TableSchema = new Schema(
         URL: { type: String, required: true },
         sheet_index: {type: Number,required:true},
         key: { type: Number, required: true},
-        columns: { type: [ColumnNested], required: true},
-        published: {type:Boolean, required:true}
+        columns: { type: [ColumnNested], required: true}
     },
     { timestamps: true },
 )
