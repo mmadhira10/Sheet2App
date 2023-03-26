@@ -7,7 +7,8 @@ import List from '@mui/material/List';
 import AppCard from "./AppCard.js";
 import ViewSettings from "./ViewSettings.js";
 import AppSettings from "./AppSettings.js";
-import axios from 'axios'
+import ViewCard from "./ViewCard.js";
+import axios from 'axios';
 
 
 const testInfo = {

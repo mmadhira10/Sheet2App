@@ -14,9 +14,8 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Header auth={auth} />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Header auth={auth} />} />
         <Route path="/apps" element={<AppsPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/tableview" element={<TableView />} />
