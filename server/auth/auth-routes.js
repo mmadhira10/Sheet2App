@@ -1,4 +1,5 @@
 const router = require("express").Router();
+require("./passport");
 const passport = require("passport");
 
 router.get("/login/success", (req, res) => {
@@ -20,12 +21,12 @@ router.get("/login/failed", (req, res) => {
 	});
 });
 
-router.get("/google", passport.authenticate("google", ["profile", "email"]));
+router.get("/google", passport.authenticate("google", {scope: ["profile", "email"]}));
 
 router.get(
 	"/google/callback",
 	passport.authenticate("google", {
-		successRedirect: process.env.CLIENT_URL,
+		successRedirect:  "http://localhost:3000/apps",
 		failureRedirect: "/login/failed",
 	})
 );
