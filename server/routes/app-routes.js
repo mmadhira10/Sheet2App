@@ -7,6 +7,7 @@ router.post('/createTable', AppController.createTable)
 router.post('/createView', AppController.createView)
 
 router.post('/getDataFromURL', AppController.getDataFromURL);
+router.post('/getDataFromURLCol', AppController.getDataFromURLCol);
 router.post('/getDataFromURLAndSheetName', AppController.getDataFromURLAndSheetName);
 router.post('/getColumnsFromURL', AppController.getColumnsFromURL);
 // router.post('/generateTable', AppController.generateTable);
