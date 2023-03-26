@@ -2,6 +2,8 @@ import React from 'react'
 import Button, { ButtonProps } from '@mui/material/Button'
 import { purple } from '@mui/material/colors'
 import { styled } from '@mui/material/styles'
+import { Typography } from '@mui/material'
+
 import './Header.css'
 
 const Header = (props) => {
@@ -13,11 +15,12 @@ const Header = (props) => {
 	};
 
   return (
-    <div className='header'>
-      <h1>Sheet2App Home Page/Welcome back, John Doe!</h1>
-      <div className='header-right'>
-        <Button variant='contained' onClick={googleAuth}>Login</Button>
-        <Button variant='contained'>Sign In</Button>
+    <div className='header' style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)",}}>
+      <div>
+        <Typography variant="h4">Sheet2App Log In</Typography>
+      </div>
+      <div>
+        <Button variant='contained' onClick={googleAuth}>Login with Google</Button>
       </div>
     </div>
   )

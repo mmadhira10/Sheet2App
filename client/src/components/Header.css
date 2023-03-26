@@ -1,7 +1,8 @@
 .header {
     overflow: hidden;
     background-color: #f1f1f1;
-    padding: 20px 10px;
+    padding: 50px 75px;
+    box-shadow: 10px 5px 5px grey;
   }
   
   .header Button {
