@@ -6,6 +6,11 @@ router.post('/createApp', AppController.createApp)
 router.post('/createTable', AppController.createTable)
 router.post('/createView', AppController.createView)
 
+router.post('/getDataFromURL', AppController.getDataFromURL);
+router.post('/getDataFromURLAndSheetName', AppController.getDataFromURLAndSheetName);
+router.post('/getColumnsFromURL', AppController.getColumnsFromURL);
+// router.post('/generateTable', AppController.generateTable);
+
 router.get('/getApps', AppController.getApps);
 router.get('/getTables', AppController.getTables);
 router.get('/getViews', AppController.getViews);
