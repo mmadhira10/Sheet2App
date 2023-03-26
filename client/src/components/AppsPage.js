@@ -89,7 +89,7 @@ export default function AppsPage() {
             <Box sx = {appsList}>
                 <List >
                     {apps.map((app) => (
-                        <ViewCard appInfo = {app} key ={app._id}/>
+                        <AppCard appInfo = {app} key ={app._id}/>
                     ))}
                 </List>
             </Box>

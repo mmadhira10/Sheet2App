@@ -17,7 +17,6 @@ function App() {
   return (
     <BrowserRouter>
       <GlobalStoreContextProvider>
-        <Header auth={auth} />
         <Routes>
           <Route path="/" element={<Header auth={auth} />} />
           <Route path="/apps" element={<AppsPage />} />

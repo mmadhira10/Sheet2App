@@ -9,6 +9,6 @@
     "mongoose": "^7.0.2",
     "mongoose-findorcreate": "^3.0.0",
     "passport": "^0.5.3",
-    "passport-google-oauth20": "^2.0.4"
+    "passport-google-oauth20": "^2.0.0"
   }
 }
