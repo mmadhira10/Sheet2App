@@ -52,7 +52,8 @@ export default function EditApp() {
           }
 
         try {
-            const response = await axios.post("http://127.0.0.1:4000/updateApp/", app);
+            const response = await axios.post("http://127.0.0.1:4000/updateApp/" + currentApp._id, app);
+            setCurrentApp(response.data.app);
             console.log(response.data);
 
         }
@@ -71,6 +72,8 @@ export default function EditApp() {
 
         try {
             const response = await axios.post("http://127.0.0.1:4000/updateApp/" + currentApp._id, app);
+            setCurrentApp(response.data.app);
+
             console.log(response.data);
             setPublish(true);
 
@@ -104,7 +107,7 @@ export default function EditApp() {
                         <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Role Membership Sheet: </Typography>
                     </Box>
                     <Box sx = {rightItem} gridColumn = "span 4">
-                        <TextField id = "roleMemSet" value = {roleMem}  variant = "outlined" sx = {{margin: "5px"}}  size = "small"></TextField>
+                        <TextField id = "roleMemSet" value = {roleMem}  onChange = {handleChange} variant = "outlined" sx = {{margin: "5px"}}  size = "small"></TextField>
                     </Box>
                     <Box sx = {leftItem} gridColumn = "span 8">
                         <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}}>Publish Status: </Typography>

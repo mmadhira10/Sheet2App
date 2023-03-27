@@ -44,7 +44,7 @@ export default function ViewSettings(props) {
     }, [tableOpts]);
 
     useEffect(() => {
-
+        getRoles();
     }, [])
 
 

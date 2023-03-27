@@ -43,7 +43,7 @@ export default function AppCard(props) {
                     <Typography variant = "body" sx = {{fontSize: "30px", fontWeight: "bold"}}>{appInfo.name}</Typography>
                 </Grid>
                 <Grid item xs = {2}>
-                    <Typography variant = "body" sx = {{fontSize: "15px", fontStyle: "italic"}}>{appInfo.isPublished ? "" : "Unpublished"}</Typography>
+                    <Typography variant = "body" sx = {{fontSize: "15px", fontStyle: "italic"}}>{appInfo.published ? "" : "Unpublished"}</Typography>
                 </Grid>
                 <Grid item xs = {6}>
                     <Typography variant = "body" sx = {{fontSize: "15px", fontWeight: "bold"}}>Creator: </Typography>
