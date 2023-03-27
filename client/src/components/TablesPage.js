@@ -8,6 +8,7 @@ import TableCard from "./TableCard.js";
 import TableSettings from "./TableSettings";
 import { GlobalStoreContext } from "../store";
 import axios from 'axios';
+import NavBar from "./NavBar"
 
 const testTable = {
     name: "Testing",
@@ -76,10 +77,11 @@ export default function TablesPage() {
 
     return(
        <Box sx = {{position: "absolute", display: "block", width: "100%", height: "100%"}}>
-            <Box sx = {{position: "absolute", display: "block", height: "10%", left: "5%"}}>
+            <NavBar/>
+            <Box sx = {{position: "absolute", display: "block", height: "10%", left: "5%", top: "10%"}}>
                 <Typography variant = "h2">Tables</Typography>
             </Box>
-            <Box sx = {{overflow: "auto", position: "absolute", display: "block", top:"10%", left: "5%", width: "80%", border: "2px solid black", height: "60%"}}>
+            <Box sx = {{overflow: "auto", position: "absolute", display: "block", top:"20%", left: "5%", width: "80%", border: "2px solid black", height: "60%"}}>
                 <List sx = {{margin: "10px"}}>
                     {
                         testing.map((table) => (
@@ -88,7 +90,7 @@ export default function TablesPage() {
                     }
                 </List>
             </Box>
-            <Button onClick = {createTable} variant = "contained"sx = {{position: "absolute", top: "75%", left: "40%"}}>Add Table</Button>
+            <Button onClick = {createTable} variant = "contained"sx = {{position: "absolute", top: "85%", left: "40%"}}>Add Table</Button>
             <TableSettings open = {openTable} key = {count}/>
        </Box> 
     )

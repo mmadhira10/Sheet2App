@@ -78,17 +78,18 @@ export default function ViewsPage() {
 
     return(
        <Box sx = {{position: "absolute", display: "block", width: "100%", height: "100%"}}>
+            <NavBar/>
             <Box sx = {{position: "absolute", display: "block", height: "10%", left: "5%"}}>
                 <Typography variant = "h2">Views</Typography>
             </Box>
-            <Box sx = {{overflow: "auto", position: "absolute", display: "block", top:"10%", left: "5%", width: "80%", border: "2px solid black", height: "60%"}}>
+            <Box sx = {{overflow: "auto", position: "absolute", display: "block", top:"20%", left: "5%", width: "80%", border: "2px solid black", height: "60%"}}>
                 <List sx = {{margin: "10px"}}>
                     {testArray.map((info) => (
                         <ViewCard settings = {info} key ={info._id}/>
                     ))}
                 </List>
             </Box>
-            <Button onClick = {createView} variant = "contained"sx = {{position: "absolute", top: "75%", left: "40%"}}>Create New View</Button>
+            <Button onClick = {createView} variant = "contained"sx = {{position: "absolute", top: "85%", left: "40%"}}>Create New View</Button>
             <ViewSettings open = {openView} key = {count} settings = {newView} opType = "create"/>
        </Box> 
     )
