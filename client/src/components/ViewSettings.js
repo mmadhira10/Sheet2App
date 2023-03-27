@@ -36,9 +36,14 @@ export default function ViewSettings(props) {
             let currTableName = tableOpts.find(table => table._id === settings.table).name
             console.log(currTableName);
             setTable(currTableName);
+
+            let newTable = tableOpts.find(element => element.name == currTableName);
+            setColumnOpts(newTable.columns);
+
         };
     }, [tableOpts]);
 
+    console.log("Current App:")
     console.log(currentApp);
     
 
@@ -48,8 +53,8 @@ export default function ViewSettings(props) {
     const [allowAct, setAllowAct] = useState(settings.allowed_actions);
     const [editColumns, setEditColumns] = useState(settings.editable_columns);
     const [filter, setFilter] = useState(settings.filter);
-    const [userFilter, setUserFilter] = useState(settings.userFilter);
-    const [editFilter, setEditFilter] = useState(settings.editFilter);
+    const [userFilter, setUserFilter] = useState(settings.user_filter);
+    const [editFilter, setEditFilter] = useState(settings.edit_filter);
     const [roles, setRoles] = useState(settings.roles);
 
     const [columnOpts, setColumnOpts] = useState([]);
@@ -117,6 +122,7 @@ export default function ViewSettings(props) {
     async function getTables() {
         try {
             const response = await axios.get("http://127.0.0.1:4000/getTables/" + currentApp._id);
+            console.log("Tables")
             console.log(response.data);
             setTableOpts(response.data.tables);
         }
@@ -154,13 +160,16 @@ export default function ViewSettings(props) {
 
     function handleTableDropDown(event) {
         //console.log(event.target.id);
-        console.log(event.target.value);
+        //console.log(event.target.value);
         setTable(event.target.value);
 
         //When the table changes, we need to load in the columns from that table for the other dropdown
         let table_name = event.target.value;
         let newTable = tableOpts.find(element => element.name == table_name);
         setColumnOpts(newTable.columns);
+
+        setColumns([]);
+        setEditColumns([]);
     }
 
     function handleColDropDown(event) {
@@ -192,6 +201,22 @@ export default function ViewSettings(props) {
         setAllowAct(event.target.value);
     }
 
+    function handleFilterDropDown(event) {
+        console.log(event.target.value);
+        setFilter(event.target.value);
+    }
+
+    function handleUserFilterDropDown(event) {
+        console.log(event.target.value);
+        setUserFilter(event.target.value);
+    }
+
+    function handleEditFilterDropDown(event) {
+        console.log(event.target.value);
+        setEditFilter(event.target.value);
+    }
+
+
     function saveView() {
         if(opType == "create") {
             createView();
@@ -202,29 +227,56 @@ export default function ViewSettings(props) {
         handleBack();
     }
 
-    function createView() {
-    //     let allowArray = [];
-    //     if(addRec == 1) {allowArray.push("add")};
-    //     if(editRec == 1) {allowArray.push("edit")};
-    //     if(delRec == 1) {allowArray.push("delete")};
-
-    //     axios.post("/createView", {
-    //         name: viewName,
-    //         table: table,
-    //         columns: columns,
-    //         view_type: viewType,
-    //         allowed_actions: allowArray,
-    //         roles: roles
-    //       })
-    //       .then(function (response) {
-    //         console.log(response);
-    //       })
-    //       .catch(function (error) {
-    //         console.log(error);
-    //       });
+    async function createView() {
+        let allowArray = [];
+        let tableId = tableOpts.find(foundTable => foundTable.name === table)._id;
+        try {
+            const response = await axios.post("http://127.0.0.1:4000/createView/" + currentApp._id, {
+                name: viewName,
+                table: tableId,
+                columns: columns,
+                view_type: viewType,
+                allowed_actions: allowAct,
+                roles: roles,
+                editable_columns: editColumns,
+                filter: filter,
+                user_filter: userFilter,
+                edit_filter: editFilter
+            });
+            console.log(response);
+            setCurrentApp(response.data.app);
+        }
+        catch (error) {
+            console.log(error);
+        }
     }
 
-    function editView() {};
+    function editView() {
+        let allowArray = [];
+        console.log("editview");
+        let tableId = tableOpts.find(foundTable => foundTable.name === table)._id;
+        let body = {
+            _id: settings._id,
+            name: viewName,
+            table: tableId,
+            columns: columns,
+            view_type: viewType,
+            allowed_actions: allowAct,
+            roles: roles,
+            editable_columns: editColumns,
+            filter: filter,
+            user_filter: userFilter,
+            edit_filter: editFilter
+          }
+        console.log(body);
+        axios.post("http://127.0.0.1:4000/updateView", body)
+          .then(function (response) {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+    };
 
       
     return(
@@ -324,20 +376,37 @@ export default function ViewSettings(props) {
                                 <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Filter: </Typography>
                             </Box>
                             <Box sx = {rightItem} gridColumn = "span 4">
-                                <TextField  value = {filter}  variant = "outlined" sx = {{margin: "5px"}} size = "small"></TextField>
-                            </Box>
+                                <Select onChange={handleFilterDropDown} value={filter} fullWidth size="small" variant="outlined" sx={{ margin: "5px" }}>
+                                    {
+                                        columnOpts.map((column) => (
+                                            <MenuItem key={column.name} value={column.name}>{column.name}</MenuItem>
+                                        ))
+                                    }
+                                </Select>                             </Box>
                             <Box sx = {leftItem} gridColumn = "span 8">
                                 <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Edit Filter: </Typography>
                             </Box>
                             <Box sx = {rightItem} gridColumn = "span 4">
-                                <TextField value = {editFilter} variant = "outlined" sx = {{margin: "5px"}} size = "small"></TextField>
-                            </Box>
+                                <Select onChange={handleEditFilterDropDown} value={editFilter} fullWidth size="small" variant="outlined" sx={{ margin: "5px" }}
+                                    >
+                                    {
+                                        columnOpts.map((column) => (
+                                            <MenuItem key={column.name} value={column.name}>{column.name}</MenuItem>
+                                        ))
+                                    }
+                                </Select>                             </Box>
                             <Box sx = {leftItem} gridColumn = "span 8">
                                 <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >User Filter: </Typography>
                             </Box>
                             <Box sx = {rightItem} gridColumn = "span 4">
-                                <TextField  value = {userFilter} variant = "outlined" sx = {{margin: "5px"}} size = "small"></TextField>
-                            </Box>
+                                <Select onChange={handleUserFilterDropDown} value={userFilter} fullWidth size="small" variant="outlined" sx={{ margin: "5px" }}
+                                    >
+                                    {
+                                        columnOpts.map((column) => (
+                                            <MenuItem key={column.name} value={column.name}>{column.name}</MenuItem>
+                                        ))
+                                    }
+                                </Select>                             </Box>
                         </Box>
                         <Grid container rowSpacing = {2} columnSpacing = {2} sx = {{paddingTop: "20px"}}>
                             <Grid item xs = {3}></Grid>
@@ -356,8 +425,11 @@ export default function ViewSettings(props) {
                             </Box>
                             <Box sx = {rightItem} gridColumn = "span 4">
                                 <Select MenuProps = {MenuProps} multiple onChange = {handleRolesDropDown} value = {roles} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}>
-                                    <MenuItem value = {"Table"}>Table</MenuItem>
-                                    <MenuItem value = {"Detail"}>Detail</MenuItem>
+                                {
+                                    roles.map((role) => (
+                                        <MenuItem key = {role} value = {role}>{role}</MenuItem>
+                                    ))
+                                }
                                 </Select> 
                             </Box>
                         </Box>

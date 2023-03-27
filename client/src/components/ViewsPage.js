@@ -15,14 +15,13 @@ const newView = {
     name: "",
     table: "",
     columns: [],
-    viewType:"Table",
-    allowedActions: [],
+    view_type:"Table",
+    allowed_actions: [],
     roles: [],
     filter: "",
-    userFilter: "",
-    editFilter: "",
-    editColumns:[],
-    _id: "testingNew"
+    user_filter: "",
+    edit_filter: "",
+    editable_columns:[]
 };
 
 const testInfo = {

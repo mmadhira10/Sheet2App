@@ -410,7 +410,9 @@ const updateView = async (req, res) => {
         })
     }
     try {
-        const updatedView = View.findOneAndUpdate({_id:body._id}, body, {new:true});
+        console.log("updateview")
+        console.log(body)
+        const updatedView = await View.findOneAndUpdate({_id:body._id}, body, {new:true});
         return res.status(200).json({
             success: true,
             view: updatedView
