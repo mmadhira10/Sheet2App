@@ -82,6 +82,7 @@ const getApps = async (req, res) => {
 }
 
 const createTable = async (req, res) => {
+    const appId = req.params.appId;
     const body = req.body;
     if (!body) {
         return res.status(400).json({
@@ -97,9 +98,11 @@ const createTable = async (req, res) => {
 
     try {
         const savedTable = await newTable.save();
+        const updatedApp = await App.findOneAndUpdate({_id:appId}, {$push: {tables: savedTable._id}}, {new:true});
         return res.status(200).json({
             success: true,
-            table: savedTable
+            table: savedTable,
+            app: updatedApp
         })
     } catch (error) {
         return res.status(400).json({
@@ -333,6 +336,7 @@ const updateTable = async (req, res) => {
 }
 
 const createView = async (req, res) => {
+    const appId = req.params.appId;
     const body = req.body;
     if (!body) {
         return res.status(400).json({
@@ -348,9 +352,11 @@ const createView = async (req, res) => {
     
     try {
         const savedView = await newView.save();
+        const updatedApp = await App.findOneAndUpdate({_id:appId}, {$push: {views: savedView._id}}, {new:true});
         return res.status(200).json({
             success: true,
-            view: savedView
+            view: savedView,
+            app: updatedApp
         })
     } catch (error) {
         return res.status(400).json({
@@ -416,6 +422,8 @@ const updateView = async (req, res) => {
 }
 
 
+
+//
 const getReferencedTable = async (req, res) => {
     const body = req.body;
     if (!body) {
