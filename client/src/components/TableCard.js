@@ -14,7 +14,13 @@ export default function TableCard(props) {
 
     const [openEdit, setOpenEdit] = useState(false);
     const [count, setCount] = useState(1);
+
+    const [curTable, setCurTable] = useState(table);
+
+
     
+    
+
     function editTable() {
         setOpenEdit(true);
         if(count == 1) {
@@ -27,10 +33,10 @@ export default function TableCard(props) {
 
     return(
         <ListItem sx = {{display: "block", border: "1px solid black", width: "100%", marginBottom: "10px"}}>
-            <EditTable open = {openEdit} table = {table} key = {count}/>
+            <EditTable open = {openEdit} table = {curTable} key = {count} setCurTable = {setCurTable} />
             <Grid container>
                 <Grid item xs = {10}>
-                    <Typography variant = "body" sx = {{fontSize: "30px", fontWeight: "bold"}}>{table.name}</Typography>
+                    <Typography variant = "body" sx = {{fontSize: "30px", fontWeight: "bold"}}>{curTable.name}</Typography>
                 </Grid>
                 <Grid item xs = {2} sx = {{display: "flex", justifyContent: "end"}}>
                     <Button variant = "contained" onClick = {editTable}>Edit</Button>

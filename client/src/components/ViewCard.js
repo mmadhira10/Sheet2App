@@ -13,6 +13,8 @@ export default function ViewCard(props) {
 
     const [openEdit, setOpenEdit] = useState(false);
     const [count, setCount] = useState(1);
+
+    const [curView, setCurView] = useState(settings);
     
     function editView() {
         console.log(settings);
@@ -27,10 +29,10 @@ export default function ViewCard(props) {
 
     return(
         <ListItem sx = {{display: "block", border: "1px solid black", width: "100%", marginBottom: "10px"}}>
-            <ViewSettings open = {openEdit} key = {count} settings = {settings} opType = "edit"/>
+            <ViewSettings open = {openEdit} key = {count} settings = {settings} opType = "edit" setCurView={setCurView}/>
             <Grid container>
                 <Grid item xs = {10}>
-                    <Typography variant = "body" sx = {{fontSize: "30px", fontWeight: "bold"}}>{settings.name}</Typography>
+                    <Typography variant = "body" sx = {{fontSize: "30px", fontWeight: "bold"}}>{curView.name}</Typography>
                 </Grid>
                 <Grid item xs = {2} sx = {{display: "flex", justifyContent: "end"}}>
                     <Button variant = "contained" onClick = {editView}>Edit</Button>

@@ -15,7 +15,7 @@ import axios from 'axios';
 export default function ViewSettings(props) {
     const { currentApp, setCurrentApp } = useContext(GlobalStoreContext);
 
-    const {settings, opType} = props;
+    const {settings, opType, setCurView} = props;
     const [open, setOpen] = useState(props.open);
     const [openFilter, setOpenFilter] = useState(false);
     const [openRoles, setOpenRoles] = useState(false);
@@ -287,6 +287,7 @@ export default function ViewSettings(props) {
         console.log(body);
         axios.post("http://127.0.0.1:4000/updateView", body)
           .then(function (response) {
+            setCurView(response.data.view);
             console.log(response);
           })
           .catch(function (error) {

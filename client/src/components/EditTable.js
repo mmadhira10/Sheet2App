@@ -13,7 +13,8 @@ import axios from 'axios';
 import EditColumn from "./EditColumn.js"
 
 export default function EditTable(props) {
-    const {table} = props;
+    const {table, setCurTable} = props;
+    console.log(setCurTable)
     const [open, setOpen] = useState(props.open);
     const [openCol, setOpenCol] = useState(false);
     const [tableName, setTableName] = useState(table.name);
@@ -136,7 +137,7 @@ export default function EditTable(props) {
         console.log(newTable);
         try {
             const response = await axios.post("http://127.0.0.1:4000/updateTable", newTable);
-
+            setCurTable(response.data.table);
             console.log(response.data);
 
         }
@@ -159,8 +160,9 @@ export default function EditTable(props) {
 
         try {
             const response = await axios.post("http://127.0.0.1:4000/updateTable", newTable);
-
+            setCurTable(response.data.table);
             console.log(response.data);
+
 
         }
         catch (error) {
