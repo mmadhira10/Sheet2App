@@ -7,6 +7,7 @@ import List from '@mui/material/List';
 import AppCard from "./AppCard.js";
 import ViewSettings from "./ViewSettings.js";
 import ViewCard from "./ViewCard.js";
+import NavBar from "./NavBar";
 
 const newView = {
     name: "",
