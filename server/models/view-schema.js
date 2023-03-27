@@ -7,6 +7,8 @@ const ViewSchema = new Schema(
         table: { type: Schema.Types.ObjectId, ref: "Table"},
         columns: { type: [String], required: true},
         view_type: {type: String,required:true},
+        allowed_actions: { type: [String], required: true},
+        roles: { type: [String], required: true},
         filter: { type: String},
         user_filter: { type: String},
         edit_filter: { type: String},

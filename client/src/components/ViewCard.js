@@ -15,6 +15,7 @@ export default function ViewCard(props) {
     const [count, setCount] = useState(1);
     
     function editView() {
+        console.log(settings);
         setOpenEdit(true);
         if(count == 1) {
             setCount(2);

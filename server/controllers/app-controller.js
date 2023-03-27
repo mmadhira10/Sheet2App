@@ -349,7 +349,7 @@ const createView = async (req, res) => {
             errorMessage: 'Improperly formatted request',
         })
     }
-    
+
     try {
         const savedView = await newView.save();
         const updatedApp = await App.findOneAndUpdate({_id:appId}, {$push: {views: savedView._id}}, {new:true});
@@ -380,14 +380,15 @@ const getViews = async (req, res) => {
 }
 
 const getViewsByAppId = async (req, res) => {
-    const appid = req.params.appid;
-    if (!appid) {
+    const appId = req.params.appId;
+    console.log(appId)
+    if (!appId) {
         return res.status(400).json({
             errorMessage: 'Improperly formatted request',
         })
     }
     try {
-        const foundApp = await App.findOne({appid:appid}).populate('views');
+        const foundApp = await App.findOne({_id:appId}).populate('views');
         return res.status(200).json({
             success: true,
             views: foundApp.views

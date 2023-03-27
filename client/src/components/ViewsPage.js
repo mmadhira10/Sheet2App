@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -8,6 +8,8 @@ import AppCard from "./AppCard.js";
 import ViewSettings from "./ViewSettings.js";
 import ViewCard from "./ViewCard.js";
 import NavBar from "./NavBar.js";
+import { GlobalStoreContext } from "../store";
+import axios from 'axios';
 
 const newView = {
     name: "",
@@ -56,9 +58,20 @@ const testArray = [testInfo, testInfo2];
 export default function ViewsPage() {
     const [openView, setOpenView] = useState(false);
     const [count, setCount] = useState(1);
+    const [views, setViews] = useState([]);
 
-    function getViews() {
+    const {currentApp, setCurrentApp} = useContext(GlobalStoreContext);
 
+    async function getViews() {
+        try {
+            console.log("getting views")
+            const response = await axios.get("http://127.0.0.1:4000/getViews/" + currentApp._id);
+            console.log(response.data);
+            setViews(response.data.views);
+        }
+        catch (error) {
+            console.log(error);
+        }
     }
     
     function createView() {
@@ -74,7 +87,7 @@ export default function ViewsPage() {
 
     useEffect(() => {
         getViews()
-    }, []);
+    }, [currentApp]);
 
 
     return(
@@ -85,8 +98,8 @@ export default function ViewsPage() {
             </Box>
             <Box sx = {{overflow: "auto", position: "absolute", display: "block", top:"20%", left: "5%", width: "80%", border: "2px solid black", height: "60%"}}>
                 <List sx = {{margin: "10px"}}>
-                    {testArray.map((info) => (
-                        <ViewCard settings = {info} key ={info._id}/>
+                    {views.map((view) => (
+                        <ViewCard settings = {view} key ={view._id}/>
                     ))}
                 </List>
             </Box>

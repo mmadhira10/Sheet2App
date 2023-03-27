@@ -20,17 +20,35 @@ export default function ViewSettings(props) {
     const [openFilter, setOpenFilter] = useState(false);
     const [openRoles, setOpenRoles] = useState(false);
     const [viewName, setName] = useState(settings.name);
-    const [table, setTable] = useState(settings.table);
+    const [tableOpts, setTableOpts] = useState([]);
+    const [table, setTable] = useState(settings.name); //this is the table name
+
+
+    useEffect(() => {
+        getTables().then(() => {
+            if (opType === "edit") {
+                console.log(tableOpts);
+                //find the matching table from the array and then get its name
+                let currTableName = tableOpts.find(table => table._id === settings.table).name
+                console.log(currTableName);
+                setTable(currTableName);
+            }
+        });
+    }, []);
+
+    console.log(currentApp);
+    
+
+    
     const [columns, setColumns] = useState(settings.columns);
-    const [viewType, setViewType] = useState(settings.viewType);
-    const [allowAct, setAllowAct] = useState(settings.allowedActions);
-    const [editColumns, setEditColumns] = useState(settings.editColumns);
+    const [viewType, setViewType] = useState(settings.view_type);
+    const [allowAct, setAllowAct] = useState(settings.allowed_actions);
+    const [editColumns, setEditColumns] = useState(settings.editable_columns);
     const [filter, setFilter] = useState(settings.filter);
     const [userFilter, setUserFilter] = useState(settings.userFilter);
     const [editFilter, setEditFilter] = useState(settings.editFilter);
     const [roles, setRoles] = useState(settings.roles);
 
-    const [tableOpts, setTableOpts] = useState([]);
     const [columnOpts, setColumnOpts] = useState([]);
     const [roleOpts, setRoleOpts] = useState([]);
 
@@ -104,9 +122,7 @@ export default function ViewSettings(props) {
         }
      }
 
-    useEffect(() => {
-        getTables()
-    }, []);
+    
 
     //functions for opening and closing this modal and nested ones
     function handleBack() {
@@ -133,7 +149,7 @@ export default function ViewSettings(props) {
         setName(event.target.value)
     }
 
-    function handleTableDropDown(event: SelectChangeEvent) {
+    function handleTableDropDown(event) {
         //console.log(event.target.id);
         console.log(event.target.value);
         setTable(event.target.value);
@@ -193,8 +209,8 @@ export default function ViewSettings(props) {
     //         name: viewName,
     //         table: table,
     //         columns: columns,
-    //         viewType: viewType,
-    //         allowedActions: allowArray,
+    //         view_type: viewType,
+    //         allowed_actions: allowArray,
     //         roles: roles
     //       })
     //       .then(function (response) {
@@ -242,7 +258,8 @@ export default function ViewSettings(props) {
                         <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Columns: </Typography>
                     </Box>
                     <Box sx = {rightItem} gridColumn = "span 4">
-                        <Select onChange = {handleColDropDown} value = {columns} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}>
+                        <Select onChange = {handleColDropDown} value = {columns} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}
+                            multiple>
                             {
                                 columnOpts.map((column) => (
                                     <MenuItem key = {column.name} value = {column.name}>{column.name}</MenuItem>
@@ -273,7 +290,8 @@ export default function ViewSettings(props) {
                         <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Editable Columns: </Typography>
                     </Box>
                     <Box sx = {rightItem} gridColumn = "span 4">
-                        <Select onChange = {handleEditColDropDown} value = {editColumns} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}>
+                        <Select onChange = {handleEditColDropDown} value = {editColumns} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}
+                            multiple>
                             {
                                 columns.map((column) => (
                                     <MenuItem key = {column} value = {column}>{column}</MenuItem>

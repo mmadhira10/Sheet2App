@@ -50,6 +50,7 @@ export default function AppsPage() {
     //function to get all apps from database
     async function getMyApps() {
         try {
+            console.log("getting apps");
             const response = await axios.get("http://127.0.0.1:4000/getApps");
             console.log(response.data);
             setApps(response.data.apps);
@@ -57,7 +58,7 @@ export default function AppsPage() {
         catch (error) {
             console.log(error);
         }
-     }
+     }  
 
     useEffect(() => {
         getMyApps();
