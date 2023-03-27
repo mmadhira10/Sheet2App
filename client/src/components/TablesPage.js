@@ -85,7 +85,7 @@ export default function TablesPage() {
                 <List sx = {{margin: "10px"}}>
                     {
                         tables.map((table) => (
-                            <TableCard table = {table} key = {table._id} />
+                            <TableCard table = {table} key = {table._id} tablesList = {tables}/>
                         ))
                     }
                 </List>

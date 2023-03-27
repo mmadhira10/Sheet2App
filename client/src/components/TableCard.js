@@ -10,7 +10,7 @@ import EditTable from "./EditTable.js";
 
 export default function TableCard(props) {
 
-    const {table} = props;
+    const {table, tablesList} = props;
 
     const [openEdit, setOpenEdit] = useState(false);
     const [count, setCount] = useState(1);
@@ -33,7 +33,7 @@ export default function TableCard(props) {
 
     return(
         <ListItem sx = {{display: "block", border: "1px solid black", width: "100%", marginBottom: "10px"}}>
-            <EditTable open = {openEdit} table = {curTable} key = {count} setCurTable = {setCurTable} />
+            <EditTable open = {openEdit} table = {curTable} key = {count} setCurTable = {setCurTable} tablesList = {tablesList}/>
             <Grid container>
                 <Grid item xs = {10}>
                     <Typography variant = "body" sx = {{fontSize: "30px", fontWeight: "bold"}}>{curTable.name}</Typography>
