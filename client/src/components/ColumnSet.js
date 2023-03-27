@@ -4,10 +4,12 @@ import Typography from '@mui/material/Typography';
 import ListItem from '@mui/material/ListItem';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 
 
 export default function columnSet(props) {
-    const {column} = props;
+    const {column, tablesList} = props;
     // return (
     //     <ListItem sx = {{border: "2px solid black", margin: "5px" }}>
     //         <Typography>{props.name}</Typography>
@@ -30,7 +32,14 @@ export default function columnSet(props) {
                 </Grid>
                 <Grid item xs = {2}>
                     <Typography variant = "body">Reference:</Typography>
-                    <TextField id = {"ref-" + column}/>
+                    <Select inputProps = {{id: "ref-" + column }} defaultValue = "" fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}>
+                        <MenuItem key = "blank" value = "">None</MenuItem>
+                        {
+                        tablesList.map((table) => (
+                            <MenuItem key = {table.name} value = {table._id}>{table.name}</MenuItem>
+                        ))
+                        }
+                    </Select>
                 </Grid>
                 <Grid item xs = {2}>
                     <Typography variant = "body">Type:</Typography>

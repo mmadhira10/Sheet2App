@@ -15,6 +15,8 @@ import { GlobalStoreContext } from '../store';
 
 export default function TableSettings(props) {
 
+    const {tablesList} = props;
+
     const [open, setOpen] = useState(props.open);
     const [openCol, setOpenCol] = useState(false);
     const [tableName, setTableName] = useState("");
@@ -123,7 +125,7 @@ export default function TableSettings(props) {
             };
 
             if (refText.value !== "") {
-                columnObj.reference = refText.value;
+                columnObj.reference = refText.value;    
             }
 
             columnsArray.push(columnObj);
@@ -198,7 +200,7 @@ export default function TableSettings(props) {
                             <List>
                                 {
                                     columnNames.map((column) => (
-                                        <ColumnSet column = {column} key = {column}/>
+                                        <ColumnSet column = {column} key = {column} tablesList = {tablesList}/>
                                     ))
                                 }
                             </List>

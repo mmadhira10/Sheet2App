@@ -40,6 +40,7 @@ export default function AppSettings(props) {
     const [open, setOpen] = useState(props.open);
     const [name, setName] = useState("");
     const [roleMem, setRoleMem] = useState("");
+    const {apps, setApps} = props;
 
     function handleBack() {
         setOpen(false);
@@ -68,6 +69,7 @@ export default function AppSettings(props) {
 
         try {
             const response = await axios.post("http://127.0.0.1:4000/createApp/", newApp);
+            setApps(apps => [...apps, response.data.app])
             console.log(response.data);
 
         }

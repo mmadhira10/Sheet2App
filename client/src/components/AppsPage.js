@@ -62,7 +62,7 @@ export default function AppsPage() {
 
     useEffect(() => {
         getMyApps();
-    }, []);
+    }, [apps]);
 
     function createApp() {
         setOpen(true); 
@@ -80,7 +80,7 @@ export default function AppsPage() {
 
     return(
         <div>
-            <AppSettings open = {open} key = {count}/>
+            <AppSettings open = {open} key = {count} apps= {apps} setApps = {setApps}/>
             <Box sx = {titleStyle}>
                 <Typography align = "center" variant = "h1">Sheet 2 App</Typography>
             </Box>

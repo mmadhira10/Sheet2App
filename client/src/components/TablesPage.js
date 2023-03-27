@@ -91,7 +91,7 @@ export default function TablesPage() {
                 </List>
             </Box>
             <Button onClick = {createTable} variant = "contained"sx = {{position: "absolute", top: "85%", left: "40%"}}>Add Table</Button>
-            <TableSettings open = {openTable} key = {count}/>
+            <TableSettings open = {openTable} key = {count} tablesList = {tables}/>
        </Box> 
     )
 
