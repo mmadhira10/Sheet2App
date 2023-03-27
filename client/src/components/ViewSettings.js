@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -9,9 +9,12 @@ import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import { GlobalStoreContext } from "../store";
+import axios from 'axios';
 
 export default function ViewSettings(props) {
-    
+    const { currentApp, setCurrentApp } = useContext(GlobalStoreContext);
+
     const {settings, opType} = props;
     const [open, setOpen] = useState(props.open);
     const [openFilter, setOpenFilter] = useState(false);
@@ -26,7 +29,11 @@ export default function ViewSettings(props) {
     const [userFilter, setUserFilter] = useState(settings.userFilter);
     const [editFilter, setEditFilter] = useState(settings.editFilter);
     const [roles, setRoles] = useState(settings.roles);
-    console.log(viewName);
+
+    const [tableOpts, setTableOpts] = useState([]);
+    const [columnOpts, setColumnOpts] = useState([]);
+    const [roleOpts, setRoleOpts] = useState([]);
+
     const viewSet = {
         position: 'absolute',
         top: '30%',
@@ -82,9 +89,24 @@ export default function ViewSettings(props) {
             style: {
               maxHeight: 240,
             },
-          },
-        };
+        },
+    };
 
+    //get tables and columns from table and rolemembership sheet
+    async function getTables() {
+        try {
+            const response = await axios.get("http://127.0.0.1:4000/getTables/" + currentApp._id);
+            console.log(response.data);
+            setTableOpts(response.data.tables);
+        }
+        catch (error) {
+            console.log(error);
+        }
+     }
+
+    useEffect(() => {
+        getTables()
+    }, []);
 
     //functions for opening and closing this modal and nested ones
     function handleBack() {
@@ -108,31 +130,39 @@ export default function ViewSettings(props) {
     }
 
     function handleChange(event) {
-        let change = event.target.id;
-        if(change == "nameText") {
-            setName(event.target.value)
-        }
-        else if(change == "columnText") {
-            setColumns(event.target.value);
-        }
-        else if(change == "editColumnText") {
-            setEditColumns(event.target.value);
-        }
+        setName(event.target.value)
     }
 
     function handleTableDropDown(event: SelectChangeEvent) {
         //console.log(event.target.id);
         console.log(event.target.value);
         setTable(event.target.value);
+
+        //When the table changes, we need to load in the columns from that table for the other dropdown
+        let table_name = event.target.value;
+        let newTable = tableOpts.find(element => element.name == table_name);
+        setColumnOpts(newTable.columns);
     }
 
-    function handleTypeDropDown(event: SelectChangeEvent) {
+    function handleColDropDown(event) {
+        //console.log(event.target.id);
+        console.log(event.target.value);
+        setColumns(event.target.value);
+    }
+
+    function handleEditColDropDown(event) {
+        //console.log(event.target.id);
+        console.log(event.target.value);
+        setEditColumns(event.target.value);
+    }
+
+    function handleTypeDropDown(event) {
         //console.log(event.target.id);
         console.log(event.target.value);
         setViewType(event.target.value);
     }
 
-    function handleRolesDropDown(event: SelectChangeEvent) {
+    function handleRolesDropDown(event) {
         //console.log(event.target.id);
         console.log(event.target.value);
         setRoles(event.target.value);
@@ -201,15 +231,24 @@ export default function ViewSettings(props) {
                     </Box>
                     <Box sx = {rightItem} gridColumn = "span 4">
                         <Select onChange = {handleTableDropDown} value = {table} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}>
-                            <MenuItem value = {"Gradebook"}>Gradebook</MenuItem>
-                            <MenuItem value = {"Attendance"}>Attendance</MenuItem>
+                            {
+                                tableOpts.map((table) => (
+                                    <MenuItem key = {table.name} value = {table.name}>{table.name}</MenuItem>
+                                ))
+                            }
                         </Select> 
                     </Box>
                     <Box sx = {leftItem} gridColumn = "span 8">
                         <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Columns: </Typography>
                     </Box>
                     <Box sx = {rightItem} gridColumn = "span 4">
-                        <TextField value = {columns} id = "columnText" onChange = {handleChange} variant = "outlined" sx = {{margin: "5px"}} size = "small"></TextField>
+                        <Select onChange = {handleColDropDown} value = {columns} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}>
+                            {
+                                columnOpts.map((column) => (
+                                    <MenuItem key = {column.name} value = {column.name}>{column.name}</MenuItem>
+                                ))
+                            }
+                        </Select> 
                     </Box> 
                     <Box sx = {leftItem} gridColumn = "span 8">
                         <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >View Type: </Typography>
@@ -234,7 +273,13 @@ export default function ViewSettings(props) {
                         <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Editable Columns: </Typography>
                     </Box>
                     <Box sx = {rightItem} gridColumn = "span 4">
-                        <TextField value = {editColumns} id = "editColumnText" onChange = {handleChange} variant = "outlined" sx = {{margin: "5px"}} inputProps={{min: 0, style: { textAlign: 'right', background: "#FFFFFF"}}}  size = "small"></TextField>
+                        <Select onChange = {handleEditColDropDown} value = {editColumns} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}>
+                            {
+                                columns.map((column) => (
+                                    <MenuItem key = {column} value = {column}>{column}</MenuItem>
+                                ))
+                            }
+                        </Select> 
                     </Box>
                 </Box>
                 <Grid container rowSpacing = {2} columnSpacing = {2}>
