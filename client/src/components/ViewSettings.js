@@ -442,7 +442,7 @@ export default function ViewSettings(props) {
                             <Box sx = {rightItem} gridColumn = "span 4">
                                 <Select MenuProps = {MenuProps} multiple onChange = {handleRolesDropDown} value = {roles} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}>
                                 {
-                                    roles.map((role) => (
+                                    roleOpts.map((role) => (
                                         <MenuItem key = {role} value = {role}>{role}</MenuItem>
                                     ))
                                 }
