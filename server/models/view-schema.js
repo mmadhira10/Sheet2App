@@ -5,11 +5,12 @@ const ViewSchema = new Schema(
     {
         name: { type: String, required: true },
         table: { type: Schema.Types.ObjectId, ref: "Table"},
+        columns: { type: [String], required: true},
         view_type: {type: String,required:true},
-        filter: { type: Number, required: true},
-        user_filter: { type: Number, required: true},
-        edit_filter: { type: Number, required: true},
-        editable_columns: { type: [Number], required: true},
+        filter: { type: String, required: true},
+        user_filter: { type: String, required: true},
+        edit_filter: { type: String, required: true},
+        editable_columns: { type: [String], required: true},
     },
     { timestamps: true },
 )

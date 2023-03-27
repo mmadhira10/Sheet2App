@@ -3,8 +3,8 @@ const router = express.Router()
 const AppController = require('../controllers/app-controller')
 
 router.post('/createApp', AppController.createApp)
-router.post('/createTable', AppController.createTable)
-router.post('/createView', AppController.createView)
+router.post('/createTable/:appId', AppController.createTable)
+router.post('/createView/:appId', AppController.createView)
 
 router.post('/getDataFromURL', AppController.getDataFromURL);
 router.post('/getDataFromURLCol', AppController.getDataFromURLCol);

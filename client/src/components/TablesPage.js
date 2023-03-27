@@ -72,7 +72,7 @@ export default function TablesPage() {
 
     useEffect(() => {
         getTables()
-    }, []);
+    }, [currentApp]);
 
 
     return(
@@ -84,7 +84,7 @@ export default function TablesPage() {
             <Box sx = {{overflow: "auto", position: "absolute", display: "block", top:"20%", left: "5%", width: "80%", border: "2px solid black", height: "60%"}}>
                 <List sx = {{margin: "10px"}}>
                     {
-                        testing.map((table) => (
+                        tables.map((table) => (
                             <TableCard table = {table} key = {table._id}/>
                         ))
                     }

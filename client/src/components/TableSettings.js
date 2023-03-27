@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useContext } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
@@ -11,6 +11,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import axios from 'axios';
 import ColumnSet from "./ColumnSet.js"
+import { GlobalStoreContext } from '../store';
 
 export default function TableSettings(props) {
 
@@ -19,6 +20,8 @@ export default function TableSettings(props) {
     const [tableName, setTableName] = useState("");
     const [URL, setURL] = useState("");
     const [key, setKey] = useState("");
+
+    const { currentApp, setCurrentApp } = useContext(GlobalStoreContext);
 
 
     const [columnNames, setColumnNames] = useState([]);
@@ -97,7 +100,7 @@ export default function TableSettings(props) {
         console.log(openCol);
     }
 
-    function saveColumnsAndTable() {
+    async function saveColumnsAndTable() {
         let columnsArray = [];
         console.log(columnNames.length);
         for (let i = 0; i < columnNames.length; i++) {
@@ -111,13 +114,17 @@ export default function TableSettings(props) {
             //console.log(labelText == null);
             console.log(labelText.value);
 
+
             let columnObj = {
                 name: name,
                 initial_val: initValText.value,
                 label: labelText.value,
-                reference: refText.value,
                 type: typeText.value
             };
+
+            if (refText.value !== "") {
+                columnObj.reference = refText.value;
+            }
 
             columnsArray.push(columnObj);
         }
@@ -131,7 +138,17 @@ export default function TableSettings(props) {
         };
 
         console.log(newTable);
-        //make axios request here
+
+        try {
+            const response = await axios.post("http://127.0.0.1:4000/createTable/" + currentApp._id, newTable);
+            setCurrentApp(response.data.app);
+            console.log(response.data);
+
+        }
+        catch (error) {
+            console.log(error);
+        }
+    
         setOpenCol(false);
         setOpen(false);
     }
