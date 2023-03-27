@@ -47,6 +47,7 @@ const createApp = async (req, res) => {
 }
 
 const updateApp = async (req, res) => {
+    const appId = req.params.appId;
     const body = req.body;
     if (!body) {
         return res.status(400).json({
@@ -54,7 +55,7 @@ const updateApp = async (req, res) => {
         })
     }
     try {
-        const updatedApp = await App.findOneAndUpdate({_id:body._id}, body, {new:true});
+        const updatedApp = await App.findOneAndUpdate({_id:appId}, body, {new:true});
         return res.status(200).json({
             success: true,
             app: updatedApp

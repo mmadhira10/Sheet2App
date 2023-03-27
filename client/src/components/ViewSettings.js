@@ -25,16 +25,19 @@ export default function ViewSettings(props) {
 
 
     useEffect(() => {
-        getTables().then(() => {
-            if (opType === "edit") {
-                console.log(tableOpts);
-                //find the matching table from the array and then get its name
-                let currTableName = tableOpts.find(table => table._id === settings.table).name
-                console.log(currTableName);
-                setTable(currTableName);
-            }
-        });
+        getTables()
     }, []);
+
+    useEffect(() => {
+        if (opType === "edit" && tableOpts.length > 0) {
+            console.log("tableopts: ");
+            console.log(tableOpts);
+            //find the matching table" from the array and then get its name
+            let currTableName = tableOpts.find(table => table._id === settings.table).name
+            console.log(currTableName);
+            setTable(currTableName);
+        };
+    }, [tableOpts]);
 
     console.log(currentApp);
     

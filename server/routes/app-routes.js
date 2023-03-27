@@ -19,7 +19,7 @@ router.get('/getViews', AppController.getViews);
 router.get('/getTables/:appId', AppController.getTablesByAppId);
 router.get('/getViews/:appId', AppController.getViewsByAppId);
 
-router.post('/updateApp', AppController.updateApp);
+router.post('/updateApp/:appId', AppController.updateApp);
 router.post('/updateTable', AppController.updateTable);
 router.post('/updateView', AppController.updateView);
 
