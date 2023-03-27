@@ -5,6 +5,7 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
+import axios from 'axios';
 
 
 const appSet = {
@@ -57,19 +58,22 @@ export default function AppSettings(props) {
         }
     }
 
-    function createApp() {
-        // axios.post("/createApp", {
-        //     creator: "John Doe",
-        //     name: name,
-        //     roleMembershipSheet: roleMem,
-        //     isPublished: false
-        //   })
-        //   .then(function (response) {
-        //     console.log(response);
-        //   })
-        //   .catch(function (error) {
-        //     console.log(error);
-        //   });
+    async function createApp() {
+        let newApp = {
+            creator: "John Doe",
+            name: name,
+            role_membership_sheet: roleMem,
+            isPublished: false
+          }
+
+        try {
+            const response = await axios.post("http://127.0.0.1:4000/createApp/", newApp);
+            console.log(response.data);
+
+        }
+        catch (error) {
+            console.log(error);
+        }
 
         handleBack();
     }

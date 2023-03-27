@@ -5,6 +5,7 @@ import Home from './Home';
 import TableView from './TableView';
 import TablesPage from './TablesPage';
 import ViewsPage from './ViewsPage';
+import EditApp from "./EditApp";
 
 export {
     AppsPage,
@@ -13,5 +14,6 @@ export {
     Home,
     TableView,
     TablesPage,
-    ViewsPage
+    ViewsPage,
+    EditApp
 }

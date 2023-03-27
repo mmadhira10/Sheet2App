@@ -8,7 +8,8 @@ import {
   Home,
   TableView,
   TablesPage,
-  ViewsPage
+  ViewsPage,
+  EditApp
 } from './components';
 
 import { GlobalStoreContextProvider } from './store';
@@ -26,6 +27,7 @@ function App() {
           <Route path="/tableview" element={<TableView />} />
           <Route path="/tables" element={<TablesPage />} />
           <Route path="/views" element={<ViewsPage />} />
+          <Route path="/editApp" element={<EditApp />} />
         </Routes>
       </GlobalStoreContextProvider>
     </BrowserRouter>
