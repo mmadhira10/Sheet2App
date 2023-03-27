@@ -43,6 +43,22 @@ export default function ViewSettings(props) {
         };
     }, [tableOpts]);
 
+    useEffect(() => {
+
+    }, [])
+
+
+    async function getRoles() {
+        try {
+            const response = await axios.post("http://127.0.0.1:4000/getColumnsFromURL/", {url: currentApp.role_membership_sheet});
+            console.log(response.data);
+            let roleArr = response.data.columns.slice(1);
+            setRoleOpts(roleArr);
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
     console.log("Current App:")
     console.log(currentApp);
     
