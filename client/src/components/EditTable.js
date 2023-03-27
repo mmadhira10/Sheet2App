@@ -12,8 +12,9 @@ import MenuItem from '@mui/material/MenuItem';
 import axios from 'axios';
 import EditColumn from "./EditColumn.js"
 
+
 export default function EditTable(props) {
-    const {table} = props;
+    const {table, tablesList} = props;
     const [open, setOpen] = useState(props.open);
     const [openCol, setOpenCol] = useState(false);
     const [tableName, setTableName] = useState(table.name);
@@ -112,14 +113,24 @@ export default function EditTable(props) {
 
             //console.log(labelText == null);
             //console.log(labelText.value);
-
-            let columnObj = {
-                name: name,
-                initial_val: initValText.value,
-                label: labelText.value,
-                reference: refText.value,
-                type: typeText.value
-            };
+            let columnObj;
+            if(refText.value == "") {
+                columnObj = {
+                    name: name,
+                    initial_val: initValText.value,
+                    label: labelText.value,
+                    type: typeText.value,
+                };
+            }
+            else {
+                columnObj = {
+                    name: name,
+                    initial_val: initValText.value,
+                    label: labelText.value,
+                    reference: refText.value,
+                    type: typeText.value,
+                }; 
+            }
 
             columnsArray.push(columnObj);
         }
@@ -220,7 +231,7 @@ export default function EditTable(props) {
                             <List>
                                 {
                                     table.columns.map((column) => (
-                                        <EditColumn column = {column} key = {column.name}/>
+                                        <EditColumn column = {column} key = {column.name} tablesList  = {tablesList}/>
                                     ))
                                 }
                             </List>
