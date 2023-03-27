@@ -47,6 +47,8 @@ export default function EditApp() {
         let app = {
             creator: "John Doe",
             name: name,
+            tables: currentApp.tables,
+            views: currentApp.views,
             role_membership_sheet: roleMem,
             published: publish
           }
@@ -66,6 +68,8 @@ export default function EditApp() {
         let app = {
             creator: currentApp.creator,
             name: name,
+            tables: currentApp.tables,
+            views: currentApp.views,
             role_membership_sheet: roleMem,
             published: true
           }

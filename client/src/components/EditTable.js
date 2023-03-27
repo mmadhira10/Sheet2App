@@ -12,7 +12,7 @@ import MenuItem from '@mui/material/MenuItem';
 import axios from 'axios';
 import EditColumn from "./EditColumn.js"
 
-export default function TableSettings(props) {
+export default function EditTable(props) {
     const {table} = props;
     const [open, setOpen] = useState(props.open);
     const [openCol, setOpenCol] = useState(false);
@@ -98,7 +98,7 @@ export default function TableSettings(props) {
         setOpenCol(true);
     }
 
-    function saveColumnsAndTable() {
+    async function saveColumnsAndTable() {
         let columns = table.columns;
         let columnsArray = [];
         console.log(columns.length);
@@ -129,13 +129,46 @@ export default function TableSettings(props) {
             URL: table.URL,
             sheet_id: table.sheet_id,
             key: key,
-            columns: columnsArray
+            columns: columnsArray,
+            _id: table._id
         };
 
         console.log(newTable);
-        //make axios request here
+        try {
+            const response = await axios.post("http://127.0.0.1:4000/updateTable", newTable);
+
+            console.log(response.data);
+
+        }
+        catch (error) {
+            console.log(error);
+        }
         setOpenCol(false);
         setOpen(false);
+    }
+
+    async function saveTable() {
+        let newTable = {
+            name: tableName,
+            URL: table.URL,
+            sheet_id: table.sheet_id,
+            key: key,
+            columns: table.columns,
+            _id: table._id
+        };
+
+        try {
+            const response = await axios.post("http://127.0.0.1:4000/updateTable", newTable);
+
+            console.log(response.data);
+
+        }
+        catch (error) {
+            console.log(error);
+        }
+
+        setOpen(false);
+
     }
 
       
@@ -170,12 +203,16 @@ export default function TableSettings(props) {
                         <TextField value = {key} id = "keyText" onChange = {handleChange} variant = "outlined" sx = {{margin: "5px"}} size = "small"></TextField>
                     </Box> 
                 </Box>
-                <Grid container rowSpacing = {2} columnSpacing = {2}>
-                    <Grid item xs = {3}/>
-                    <Grid item xs = {6} sx = {{display: "flex", justifyContent: "center"}}>
+                <Grid container rowSpacing = {2} columnSpacing = {2} columns = {10}>
+                    <Grid item xs = {2}/>
+                    <Grid item xs = {2}>
+                        <Button  onClick = {saveTable} fullWidth sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "contained" >Save</Button>
+                    </Grid>
+                    <Grid item xs = {2}/>
+                    <Grid item xs = {2} sx = {{display: "flex", justifyContent: "center"}}>
                         <Button  onClick = {editColumns} fullWidth sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "contained" >Edit Columns</Button>
                     </Grid>
-                    <Grid item xs = {3}/>
+                    <Grid item xs = {2}/>
                 </Grid>
                 <Modal open = {openCol}>
                     <Box sx = {columnSet}>
