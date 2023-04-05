@@ -1,12 +1,26 @@
 import React from 'react'
-import Button, { ButtonProps } from '@mui/material/Button'
-import { purple } from '@mui/material/colors'
-import { styled } from '@mui/material/styles'
-import { Typography } from '@mui/material'
+import Button, { ButtonProps } from '@mui/material/Button';
+import { purple } from '@mui/material/colors';
+import { styled } from '@mui/material/styles';
+import { Typography } from '@mui/material';
+
+import AuthContext from '../auth';
+import { useContext, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 
 import './Header.css'
 
 const Header = (props) => {
+  const { auth } = useContext(AuthContext);
+  const { navigate } = useNavigate();
+
+  useEffect(() => {
+    if(auth.loggedIn) {
+      navigate('/apps');
+    }
+  }, []);
+
 	const googleAuth = () => {
 		window.open(
 			`http://localhost:4000/auth/google/callback`,

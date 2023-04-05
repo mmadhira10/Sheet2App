@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -8,6 +9,9 @@ import AppCard from "./AppCard.js";
 import ViewSettings from "./ViewSettings.js";
 import AppSettings from "./AppSettings.js";
 import ViewCard from "./ViewCard.js";
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import LogoutButton from "./LogoutButton";
 import axios from 'axios';
 
 
@@ -22,7 +26,7 @@ const titleStyle = {
     position: "absolute",
     top: "0%",
     width: "100%",
-    height: "25%"
+    height: "25%",
 };
 
 const myAppsStyle = {
@@ -43,16 +47,14 @@ const appsList = {
 export default function AppsPage() {
     const [open, setOpen] = useState(false);
     const [count, setCount] = useState(1);
-
     const [apps, setApps] = useState([]);
-
 
     //function to get all apps from database
     async function getMyApps() {
         try {
-            console.log("getting apps");
+            // console.log("getting apps");
             const response = await axios.get("http://127.0.0.1:4000/getApps");
-            console.log(response.data);
+            // console.log(response.data);
             setApps(response.data.apps);
         }
         catch (error) {
@@ -74,15 +76,19 @@ export default function AppsPage() {
         }
     }
 
-    console.log(apps);
-
     //map through array of apps and create an AppCard for each one
 
     return(
         <div>
             <AppSettings open = {open} key = {count} apps= {apps} setApps = {setApps}/>
             <Box sx = {titleStyle}>
-                <Typography align = "center" variant = "h1">Sheet 2 App</Typography>
+                <AppBar sx = {{position:"static", height: "60%", bgcolor: "#F5F5F5", borderBottom: "2px solid black"}}>
+                    <Toolbar>
+                        <Typography align = "center" variant = "h1" color="black">Sheet 2 App</Typography>
+                        <Box sx={{ flexGrow: 8 }}></Box>
+                        <LogoutButton />
+                    </Toolbar>
+                </AppBar>
             </Box>
             <Box sx = {myAppsStyle}>
                 <Typography variant = "h2">My Apps</Typography>

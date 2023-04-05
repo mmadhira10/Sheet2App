@@ -27,12 +27,11 @@ const rightItem = {
 
 export default function EditApp() {
     const { currentApp, setCurrentApp } = useContext(GlobalStoreContext);
-
     const [name, setName] = useState(currentApp.name);
     const [roleMem, setRoleMem] = useState(currentApp.role_membership_sheet);
     const [publish, setPublish] = useState(currentApp.published);
 
-
+    
     function handleChange(event) {
         let change = event.target.id;
         if(change == "appNameSet") {
