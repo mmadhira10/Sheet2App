@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 const session = require("cookie-session");
 const passportStrat = require("./auth/passport");
 const passport = require("passport");
-const authRoute = require("./auth/auth-routes");
+const authRouter = require("./auth/auth-routes");
 
 dotenv.config();
 const PORT = process.env.PORT || 4000;
@@ -31,7 +31,7 @@ app.use(passport.session());
 const db = require('./db')
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
-app.use("/auth", authRoute);
+app.use("/auth", authRouter);
 const appRouter = require('./routes/app-routes');
 app.use('/', appRouter);
 

@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import { Link } from 'react-router-dom';
+import LogoutButton from "./LogoutButton";
 
 export default function NavBar() {
     const navigate = useNavigate()
@@ -31,10 +32,12 @@ export default function NavBar() {
     return (
         <AppBar sx = {{position:"static", height: "10%", bgcolor: "#F5F5F5", borderBottom: "2px solid black"}}>
             <Toolbar sx = {{justifyContent: "end"}}>
-            <Link to="/tables"> <Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined">Tables</Button></Link>
-            <Link to="/views"> <Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined" >Views</Button> </Link>
-            <Link to= "/editApp"> <Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined" >App Settings</Button> </Link>
-            <Link to="/apps"> <Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined" >Exit App</Button> </Link>
+            <Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined" href="/tables">Tables</Button>
+            <Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined" href="/views">Views</Button> 
+            <Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined" href="/editApp">App Settings</Button> 
+            <Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined" href="/apps">Exit App</Button> 
+            <Box sx={{flexGrow: 3}}></Box>
+            <LogoutButton/>
             </Toolbar>
         </AppBar>
     )

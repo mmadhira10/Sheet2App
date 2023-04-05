@@ -139,13 +139,13 @@ export default function TableSettings(props) {
             columns: columnsArray
         };
 
-        console.log(newTable);
+        
 
         try {
+            console.log(newTable);
             const response = await axios.post("http://127.0.0.1:4000/createTable/" + currentApp._id, newTable);
             setCurrentApp(response.data.app);
             console.log(response.data);
-
         }
         catch (error) {
             console.log(error);
