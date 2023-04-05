@@ -260,26 +260,6 @@ const getDataFromURLAndSheetName = async (req, res) => {
 
 
 
-
-
-
-
-
-
-
-// const generateTable = async (req, res) => {
-//     const url = req.body.url;
-//     if (!url) {
-//         return res.status(400).json({
-//             errorMessage: 'Improperly formatted request',
-//         })
-//     }
-
-//     const res = await sheets.spreadsheets.values.get({
-//         spreadsheetId: url,
-//         range: ''
-
-
 const getTables = async (req, res) => {
     try {
         const tables = await Table.find();
