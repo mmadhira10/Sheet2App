@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const AppController = require('../controllers/app-controller')
+const SheetsController = require('../controllers/sheets-controller')
 
 
 //Create Routes
@@ -10,10 +11,9 @@ router.post('/createView/:appId', AppController.createView)
 
 
 //Sheets API requests
-router.post('/getDataFromURL', AppController.getDataFromURL);
-router.post('/getDataFromURLCol', AppController.getDataFromURLCol);
-router.post('/getDataFromURLAndSheetName', AppController.getDataFromURLAndSheetName);
-router.post('/getColumnsFromURL', AppController.getColumnsFromURL);
+router.post('/getDataFromURL', SheetsController.getDataFromURL);
+router.post('/getDataFromURLCol', SheetsController.getDataFromURLCol);
+router.post('/getColumnsFromURL', SheetsController.getColumnsFromURL);
 // router.post('/generateTable', AppController.generateTable);
 
 
