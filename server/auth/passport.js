@@ -9,29 +9,34 @@ passport.use(new GoogleStrategy({
     passReqToCallback: true,
     scope: ["profile", "email"]
 }, async (req, accessToken, refreshToken, profile, done) => {
-    // const prof = profile._json;
-    // const userData = {
-    //     username: prof.email,
-    //     firstname: prof.given_name,
-    //     lastname: prof.family_name,
-    //     picture: prof.picture
+    
+    // let strid = (user.id).toString();
+    // if (users.size == 0 || users.has(strid))
+    // {
+    //     users.set(strid, user);
     // }
-    // req._user = userData;
-    // console.log(req.body);
-    // console.log(accessToken);
-    // console.log(refreshToken);
-    // console.log(profile._json);
-    // console.log(done(null, profile));
     done(null, profile);
 }));
 
 passport.serializeUser((user, done) => {
-    // console.log("serialize");
+    console.log("serialize");
+    // let strid = (user.id).toString();
+    // if (users.size == 0 || users.has(strid))
+    // {
+    //     users.set(strid, user);
+    // }
 	done(null, user);
 });
 
 passport.deserializeUser((user, done) => {
-    // console.log("deserialize")
-	done(null, user);
+    console.log("deserialize")
+    // let strid = id.toString();
+    // if (users.has(strid)){
+    //     done(null, users[strid]);
+    // }
+    // else {
+    //     done(null, user)
+    // }
+    done(null, user);
 });
 
