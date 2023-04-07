@@ -7,8 +7,9 @@ import List from '@mui/material/List';
 import TableCard from "./TableCard.js";
 import TableSettings from "./TableSettings";
 import { GlobalStoreContext } from "../store";
-import axios from 'axios';
 import NavBar from "./NavBar"
+
+import api from "../app-routes";
 
 const testTable = {
     name: "Testing",
@@ -50,7 +51,7 @@ export default function TablesPage() {
     //function to get all tables for current app
     async function getTables() {
         try {
-            const response = await axios.get("http://127.0.0.1:4000/getTables/" + currentApp._id);
+            const response = await api.get('/getTables/' + currentApp._id);
             console.log(response.data);
             setTables(response.data.tables);
         }

@@ -5,7 +5,10 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
-import axios from 'axios';
+
+import api from "../app-routes";
+
+
 
 
 const appSet = {
@@ -68,7 +71,7 @@ export default function AppSettings(props) {
           }
 
         try {
-            const response = await axios.post("http://127.0.0.1:4000/createApp/", newApp);
+            const response = await api.post("/createApp/", newApp);
             setApps(apps => [...apps, response.data.app])
             console.log(response.data);
 

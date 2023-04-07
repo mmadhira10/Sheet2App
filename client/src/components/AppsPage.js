@@ -12,7 +12,8 @@ import ViewCard from "./ViewCard.js";
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import LogoutButton from "./LogoutButton";
-import axios from 'axios';
+
+import api from "../app-routes";
 
 
 const testInfo = {
@@ -53,7 +54,7 @@ export default function AppsPage() {
     async function getMyApps() {
         try {
             // console.log("getting apps");
-            const response = await axios.get("http://127.0.0.1:4000/getApps");
+            const response = await api.get("/getApps/");
             // console.log(response.data);
             setApps(response.data.apps);
         }

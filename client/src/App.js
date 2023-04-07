@@ -2,10 +2,8 @@ import './App.css';
 import React from "react";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
-  AppsPage,
+  HomeWrapper,
   Dashboard,
-  Header,
-  Home,
   TableView,
   TablesPage,
   ViewsPage,
@@ -14,7 +12,6 @@ import {
 import { useEffect, useState } from "react";
 import { GlobalStoreContextProvider } from './store';
 import { AuthContextProvider } from './auth';
-import axios from 'axios';
 
 
 function App() {
@@ -25,8 +22,7 @@ function App() {
       <AuthContextProvider>
         <GlobalStoreContextProvider>
           <Routes>
-            <Route path="/" element={<Header auth={auth} />} />
-            <Route path="/apps" element={<AppsPage />} />
+            <Route path="/" element={<HomeWrapper/>} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/tableview" element={<TableView />} />
             <Route path="/tables" element={<TablesPage />} />

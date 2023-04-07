@@ -9,9 +9,12 @@ import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import axios from 'axios';
 import ColumnSet from "./ColumnSet.js"
 import { GlobalStoreContext } from '../store';
+
+import api from "../app-routes";
+
+
 
 export default function TableSettings(props) {
 
@@ -90,7 +93,7 @@ export default function TableSettings(props) {
 
     async function getColumns() {
         try {
-            const response = await axios.post("http://127.0.0.1:4000/getColumnsFromURL", {url: URL});
+            const response = await api.post("/getColumnsFromURL/", {url: URL});
             console.log(response.data);
             setColumnNames(response.data.columns);
             setOpenCol(true);
@@ -143,7 +146,7 @@ export default function TableSettings(props) {
 
         try {
             console.log(newTable);
-            const response = await axios.post("http://127.0.0.1:4000/createTable/" + currentApp._id, newTable);
+            const response = await api.post("/createTable/" + currentApp._id, newTable);
             setCurrentApp(response.data.app);
             console.log(response.data);
         }

@@ -11,15 +11,9 @@ import { useNavigate } from 'react-router-dom';
 
 import './Header.css'
 
-const Header = (props) => {
+const Login = (props) => {
   const { auth } = useContext(AuthContext);
-  const { navigate } = useNavigate();
-
-  useEffect(() => {
-    if(auth.loggedIn) {
-      navigate('/apps');
-    }
-  }, []);
+  const navigate = useNavigate();
 
 	const googleAuth = () => {
 		window.open(
@@ -40,4 +34,4 @@ const Header = (props) => {
   )
 }
 
-export default Header
+export default Login

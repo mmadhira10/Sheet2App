@@ -132,7 +132,7 @@ const getTables = async (req, res) => {
 
 const getTablesByAppId = async (req, res) => {
     const appId = req.params.appId;
-    console.log(req);
+    // console.log(req);
     if (!appId) {
         return res.status(400).json({
             errorMessage: 'Improperly formatted request',
