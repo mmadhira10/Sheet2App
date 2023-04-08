@@ -69,7 +69,8 @@ const updateApp = async (req, res) => {
 
 
 const getApps = async (req, res) => {
-    // console.log(req.session);
+    console.log("72");
+    // console.log(req);
     try {  
         const apps = await App.find();
         return res.status(200).json({
@@ -131,6 +132,7 @@ const getTables = async (req, res) => {
 
 const getTablesByAppId = async (req, res) => {
     const appId = req.params.appId;
+    // console.log(req);
     if (!appId) {
         return res.status(400).json({
             errorMessage: 'Improperly formatted request',

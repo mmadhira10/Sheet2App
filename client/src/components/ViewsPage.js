@@ -9,7 +9,9 @@ import ViewSettings from "./ViewSettings.js";
 import ViewCard from "./ViewCard.js";
 import NavBar from "./NavBar.js";
 import { GlobalStoreContext } from "../store";
-import axios from 'axios';
+
+import api from "../app-routes";
+
 
 const newView = {
     name: "",
@@ -64,7 +66,7 @@ export default function ViewsPage() {
     async function getViews() {
         try {
             console.log("getting views")
-            const response = await axios.get("http://127.0.0.1:4000/getViews/" + currentApp._id);
+            const response = await api.get("/getViews/" + currentApp._id);
             console.log(response.data);
             setViews(response.data.views);
         }

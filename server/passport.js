@@ -6,7 +6,7 @@ passport.use(
     new GoogleStrategy({
         clientID: process.env.CLIENT_ID,
         clientSecret: process.env.CLIENT_SECRET,
-        callbackURL: "/apps",
+        callbackURL: "",
         scope: ["profile", "email"]
     },
     function (accessToken, refreshToken, profile, callback) {

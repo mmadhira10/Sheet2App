@@ -5,8 +5,10 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { GlobalStoreContext } from "../store";
-import axios from 'axios';
 import NavBar from "./NavBar.js";
+
+import api from "../app-routes";
+
 
 const leftItem = {
     display: "flex",
@@ -53,7 +55,7 @@ export default function EditApp() {
           }
 
         try {
-            const response = await axios.post("http://127.0.0.1:4000/updateApp/" + currentApp._id, app);
+            const response = await api.post("/updateApp/" + currentApp._id, app);
             setCurrentApp(response.data.app);
             console.log(response.data);
 
@@ -74,7 +76,7 @@ export default function EditApp() {
           }
 
         try {
-            const response = await axios.post("http://127.0.0.1:4000/updateApp/" + currentApp._id, app);
+            const response = await api.post("/updateApp/" + currentApp._id, app);
             setCurrentApp(response.data.app);
 
             console.log(response.data);

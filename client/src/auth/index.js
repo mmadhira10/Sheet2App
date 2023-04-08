@@ -3,6 +3,11 @@ import { useNavigate } from 'react-router-dom';
 // import { useHistory } from 'react-router-dom'
 import axios from 'axios';
 
+const api = axios.create({
+    baseURL: 'http://localhost:4000/auth',
+    withCredentials: true
+})
+
 const AuthContext = createContext();
 
 function AuthContextProvider(props) {
@@ -14,16 +19,20 @@ function AuthContextProvider(props) {
     });
     // const history = useHistory();
 
+    useEffect(() => {
+        auth.loginUser();
+    }, [])
+
     auth.loginUser = async function () {
         try {
-            //    console.log("hi")
-            const response = await axios.get("http://localhost:4000/auth/login/success", {withCredentials: true});
-            console.log(response.data.user);
+            const response = await api.get('/login/success/');
+            // console.log(response);
+            // console.log(response.data);
             setAuth({
                 email: response.data.user.emails[0].value,
                 loggedIn: true
             });
-            console.log(auth.email);
+            // console.log(auth.email);
         }
         catch (error) {
             console.log(error);
@@ -32,7 +41,7 @@ function AuthContextProvider(props) {
 
     auth.logoutUser = async function () {
         try {
-            const response = await axios.get("http://localhost:4000/auth/logout");
+            const response = await api.get('/logout/');
             setAuth({
                 email: null,
                 loggedIn: false

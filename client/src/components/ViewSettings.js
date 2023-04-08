@@ -10,7 +10,8 @@ import TextField from '@mui/material/TextField';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { GlobalStoreContext } from "../store";
-import axios from 'axios';
+
+import api from "../app-routes";
 
 export default function ViewSettings(props) {
     const { currentApp, setCurrentApp } = useContext(GlobalStoreContext);
@@ -50,7 +51,7 @@ export default function ViewSettings(props) {
 
     async function getRoles() {
         try {
-            const response = await axios.post("http://127.0.0.1:4000/getColumnsFromURL/", {url: currentApp.role_membership_sheet});
+            const response = await api.post("/getColumnsFromURL/", {url: currentApp.role_membership_sheet});
             console.log(response.data);
             let roleArr = response.data.columns.slice(1);
             setRoleOpts(roleArr);
@@ -137,7 +138,7 @@ export default function ViewSettings(props) {
     //get tables and columns from table and rolemembership sheet
     async function getTables() {
         try {
-            const response = await axios.get("http://127.0.0.1:4000/getTables/" + currentApp._id);
+            const response = await api.get("/getTables/" + currentApp._id, {withCredentials: true});
             console.log("Tables")
             console.log(response.data);
             setTableOpts(response.data.tables);
@@ -247,7 +248,7 @@ export default function ViewSettings(props) {
         let allowArray = [];
         let tableId = tableOpts.find(foundTable => foundTable.name === table)._id;
         try {
-            const response = await axios.post("http://127.0.0.1:4000/createView/" + currentApp._id, {
+            const response = await api.post("/createView/" + currentApp._id, {
                 name: viewName,
                 table: tableId,
                 columns: columns,
@@ -285,7 +286,7 @@ export default function ViewSettings(props) {
             edit_filter: editFilter
           }
         console.log(body);
-        axios.post("http://127.0.0.1:4000/updateView", body)
+        api.post("/updateView", body)
           .then(function (response) {
             setCurView(response.data.view);
             console.log(response);

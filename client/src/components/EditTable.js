@@ -9,8 +9,10 @@ import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import axios from 'axios';
 import EditColumn from "./EditColumn.js"
+
+import api from "../app-routes";
+
 
 
 export default function EditTable(props) {
@@ -147,7 +149,7 @@ export default function EditTable(props) {
 
         console.log(newTable);
         try {
-            const response = await axios.post("http://127.0.0.1:4000/updateTable", newTable);
+            const response = await api.post("/updateTable/", newTable);
             setCurTable(response.data.table);
             console.log(response.data);
 
@@ -170,7 +172,7 @@ export default function EditTable(props) {
         };
 
         try {
-            const response = await axios.post("http://127.0.0.1:4000/updateTable", newTable);
+            const response = await api.post("/updateTable/", newTable);
             setCurTable(response.data.table);
             console.log(response.data);
 
