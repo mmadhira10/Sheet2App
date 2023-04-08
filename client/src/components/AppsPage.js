@@ -56,9 +56,9 @@ export default function AppsPage() {
     try {
       // console.log("getting apps");
       // comment this line and uncomment below lines to get filtered apps by role
-      const response = await api.get('/getApps/')
+      //const response = await api.get('/getApps/')
       // filter apps with correct role memberships here
-      //   const response = await api.get('/getRoleApps/', auth.email)
+      const response = await api.get('/getRoleApps/'+ auth.email)
 
       setApps(response.data.apps)
     } catch (error) {
@@ -67,8 +67,9 @@ export default function AppsPage() {
   }
 
   useEffect(() => {
+    console.log("getMyApps");
     getMyApps()
-  }, [apps])
+  }, []) // no dependencies, only run once
 
   function createApp() {
     setOpen(true)

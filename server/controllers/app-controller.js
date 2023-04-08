@@ -87,9 +87,9 @@ const getApps = async (req, res) => {
 }
 
 const getRoleApps = async (req, res) => {
-  const body = req.body
-  console.log(body)
-  if (!body) {
+  const email = req.params.email;
+  console.log(email)
+  if (!email) {
     return res.status(400).json({
       errorMessage: 'Improperly formatted request',
     })
@@ -99,7 +99,7 @@ const getRoleApps = async (req, res) => {
     let filteredApps = []
     for (let index = 0; index < apps.length; index++) {
       const app = apps[index]
-      const url = app.url
+      const url = app.role_membership_sheet
       if (!url) {
         return res.status(400).json({
           errorMessage: 'Improperly formatted request',
@@ -111,8 +111,9 @@ const getRoleApps = async (req, res) => {
       const data = await getDataFromSheetID(spid, sid, 'COLUMNS')
       console.log('getDataFromSheetID output: ', data)
       // if data is just a 2d array
-      let found = getRoleType(data, body)
-      if (found !== NULL) {
+      let found = await getRoleType(data, email)
+      if (found !== null) {
+        console.log(found);
         filteredApps.push(app)
       }
     }
@@ -131,16 +132,18 @@ const getRoleApps = async (req, res) => {
 const getRoleType = async (roleSheet, email) => {
   let roleType = ''
   for (let i = 0; i < roleSheet.length; i++) {
-    const column = array[i]
+    const column = roleSheet[i];
     for (let j = 0; j < column.length; j++) {
       const arrEmail = column[j]
       if (arrEmail === email) {
-        roleType = column[0]
+        console.log("found column")
+        console.log(column);
+        roleType = column[0];
         return roleType
       }
     }
   }
-  return NULL
+  return null;
 }
 
 const createTable = async (req, res) => {
