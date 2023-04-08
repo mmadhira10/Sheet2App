@@ -19,7 +19,7 @@ passport.use(new GoogleStrategy({
 }));
 
 passport.serializeUser((user, done) => {
-    console.log("serialize");
+    // console.log("serialize");
     // let strid = (user.id).toString();
     // if (users.size == 0 || users.has(strid))
     // {
@@ -29,7 +29,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((user, done) => {
-    console.log("deserialize")
+    // console.log("deserialize")
     // let strid = id.toString();
     // if (users.has(strid)){
     //     done(null, users[strid]);

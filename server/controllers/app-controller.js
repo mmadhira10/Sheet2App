@@ -69,7 +69,6 @@ const updateApp = async (req, res) => {
 
 
 const getApps = async (req, res) => {
-    console.log("72");
     // console.log(req);
     try {  
         const apps = await App.find();

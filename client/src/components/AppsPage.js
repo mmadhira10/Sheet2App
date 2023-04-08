@@ -65,7 +65,7 @@ export default function AppsPage() {
 
     useEffect(() => {
         getMyApps();
-    }, [apps]);
+    }, []);
 
     function createApp() {
         setOpen(true); 
