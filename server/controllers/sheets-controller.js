@@ -6,8 +6,6 @@ const sheets = google.sheets({
     auth: process.env.GOOGLE_API_KEY
 })
 
-
-
 const getDataFromSheetID = async (spid,sid, dim) => {
     const SPREADSHEET_ID = spid;
     const SHEET_ID = sid;
@@ -27,9 +25,6 @@ const getDataFromSheetID = async (spid,sid, dim) => {
         range: sheetName,
         majorDimension: dim
         });
-    
-    
-
     return sheet.data.values;
   }
 
@@ -115,6 +110,12 @@ const getColumnsFromURL = async (req, res) => {
         })
     }
 }
+
+
+
+
+
+
 
 
 module.exports = {
