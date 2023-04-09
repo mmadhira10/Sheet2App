@@ -87,7 +87,7 @@ const getApps = async (req, res) => {
 }
 
 const getRoleApps = async (req, res) => {
-  const email = req.params.email;
+  const email = req.params.email
   console.log(email)
   if (!email) {
     return res.status(400).json({
@@ -113,7 +113,7 @@ const getRoleApps = async (req, res) => {
       // if data is just a 2d array
       let found = await getRoleType(data, email)
       if (found !== null) {
-        console.log(found);
+        console.log(found)
         filteredApps.push(app)
       }
     }
@@ -132,18 +132,18 @@ const getRoleApps = async (req, res) => {
 const getRoleType = async (roleSheet, email) => {
   let roleType = ''
   for (let i = 0; i < roleSheet.length; i++) {
-    const column = roleSheet[i];
+    const column = roleSheet[i]
     for (let j = 0; j < column.length; j++) {
       const arrEmail = column[j]
       if (arrEmail === email) {
-        console.log("found column")
-        console.log(column);
-        roleType = column[0];
+        console.log('found column')
+        console.log(column)
+        roleType = column[0]
         return roleType
       }
     }
   }
-  return null;
+  return null
 }
 
 const createTable = async (req, res) => {
