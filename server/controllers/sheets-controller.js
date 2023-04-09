@@ -6,42 +6,32 @@ const sheets = google.sheets({
   auth: process.env.GOOGLE_API_KEY,
 })
 
+async function authSheets() {
+  //Function for authentication object
+  const auth = new google.auth.GoogleAuth({
+    keyFile: 'credentials.json',
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  })
+
+  //Create client instance for auth
+  const authClient = await auth.getClient()
+
+  //Instance of the Sheets API
+  const sheets = google.sheets({ version: 'v4', auth: authClient })
+
+  return {
+    auth,
+    authClient,
+    sheets,
+  }
+}
+
 const getDataFromSheetID = async (spid, sid, dim) => {
+  const { sheets } = await authSheets()
+
   const SPREADSHEET_ID = spid
   const SHEET_ID = sid
   // TODO: replace above values with real IDs.
-
-  const spsheet = await sheets.spreadsheets.get({
-    spreadsheetId: SPREADSHEET_ID,
-  })
-
-  console.log(sid)
-async function authSheets() {
-    //Function for authentication object
-    const auth = new google.auth.GoogleAuth({
-      keyFile: "credentials.json",
-      scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-    });
-  
-    //Create client instance for auth
-    const authClient = await auth.getClient();
-  
-    //Instance of the Sheets API
-    const sheets = google.sheets({ version: "v4", auth: authClient });
-  
-    return {
-      auth,
-      authClient,
-      sheets,
-    };
-  }
-
-const getDataFromSheetID = async (spid,sid, dim) => {
-    const { sheets } = await authSheets();
-
-    const SPREADSHEET_ID = spid;
-    const SHEET_ID = sid;
-    // TODO: replace above values with real IDs.
 
   const sheetName = spsheet.data.sheets.filter(
     (sheet) => sheet.properties.sheetId == SHEET_ID
