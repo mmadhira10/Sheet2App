@@ -21,15 +21,18 @@ export default function AppCard(props) {
     function editApp(e) {
         setCurrentApp(appInfo);
         navigate("/tables");
-        console.log(currentApp);    }
+        console.log(currentApp);    
+    }
 
     function handleClick() {
         
 
     }
 
-    function runApp() {
-
+    function runApp() 
+    {
+        setCurrentApp(appInfo);
+        navigate("/runApp");
     }
 
     return(

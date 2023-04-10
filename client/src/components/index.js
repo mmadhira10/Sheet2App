@@ -5,6 +5,7 @@ import TableView from './TableView';
 import TablesPage from './TablesPage';
 import ViewsPage from './ViewsPage';
 import EditApp from "./EditApp";
+import RunApp from "./RunApp";
 
 export {
     HomeWrapper,
@@ -12,5 +13,6 @@ export {
     TableView,
     TablesPage,
     ViewsPage,
-    EditApp
+    EditApp,
+    RunApp
 }
