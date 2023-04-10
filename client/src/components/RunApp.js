@@ -20,7 +20,7 @@ const titleStyle = {
 };
 
 export default function RunApp() {
-    const { currentApp } = useContext(GlobalStoreContext);
+    const { currentApp, setCurrentApp } = useContext(GlobalStoreContext);
     const [ views, setViews ] = useState([]);
 
     useEffect(() => {
@@ -37,6 +37,10 @@ export default function RunApp() {
         }
     }
 
+    // function exitApp() {
+    //     setCurrentApp(null);
+    // }
+
     return(
         <div>
             <AppBar sx = {{position:"static", height: "10%", bgcolor: "#F5F5F5", borderBottom: "2px solid black"}}>
@@ -47,7 +51,7 @@ export default function RunApp() {
                         ))
                     }
                     <Box sx={{flexGrow: 3}}></Box>
-                    <Link to="/"><Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined">Exit the {currentApp.name} App</Button></Link>
+                    {/* <Link to="/"><Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined" onClick={exitApp}>Exit the {currentApp.name} App</Button></Link> */}
                     <LogoutButton/>
                 </Toolbar>
             </AppBar>

@@ -1,20 +1,30 @@
 import AuthContext from '../auth';
+import { GlobalStoreContext } from "../store";
 import { useContext, useState, useEffect} from 'react';
+import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 export default function LogoutButton() {
     const { auth } = useContext(AuthContext);
+    const { currentApp, setCurrentApp } = useContext(GlobalStoreContext);
     const [anchorEl, setAnchorEl] = useState(null);
     const isMenuOpen = Boolean(anchorEl);
+    const [ click, setClick ] = useState(0);
+    const navigate = useNavigate();
+
 
     const handleProfileMenuOpen = (event) => {
+        setClick(1);
         setAnchorEl(event.currentTarget);
     };
 
     const handleMenuClose = () => {
+        setClick(0);
         setAnchorEl(null);
     };
 
@@ -23,13 +33,19 @@ export default function LogoutButton() {
         auth.logoutUser();
     }
 
+    const exitApp = () => {
+        setCurrentApp(null);
+        navigate("/");
+    }
+
     useEffect(() => {
         auth.loginUser();
     }, []);
 
-    return(
-        <Box>
-            <Button 
+    let role;
+    let app;
+    let button = 
+    <Button 
                 sx = {{marginLeft: "5px", marginRight: "5px"}} 
                 variant = "outlined" 
                 aria-haspopup="true" 
@@ -37,11 +53,43 @@ export default function LogoutButton() {
                 onClick={handleProfileMenuOpen}
             >
                 {auth.email}
-            </Button>
+                <ExpandMoreIcon />
+            </Button>;
+    
+    if (click)
+    {
+        button = 
+        <Button 
+                sx = {{marginLeft: "10px", marginRight: "10px"}} 
+                variant = "outlined" 
+                aria-haspopup="true" 
+                aria-controls='primary-search-account-menu'
+                onClick={handleProfileMenuOpen}
+            >
+                {auth.email}
+                <ExpandLessIcon />
+            </Button>;
+    }
+
+    if(currentApp) {
+        role = 
+        <MenuItem style={{ backgroundColor: 'transparent' }}>
+            Developer@{currentApp.name}</MenuItem>;
+        app = 
+        <MenuItem onClick={exitApp}>
+            Exit {currentApp.name}</MenuItem>;
+    }
+
+
+    return(
+        <Box>
+            {
+                button
+            }
             <Menu
                 anchorEl={anchorEl}
                 anchorOrigin={{
-                    vertical: 'top',
+                    vertical: 'bottom',
                     horizontal: 'right',
                 }}
                 id='primary-search-account-menu'
@@ -52,7 +100,13 @@ export default function LogoutButton() {
                 }}
                 open={isMenuOpen}
                 onClose={handleMenuClose}>
-                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                {
+                    role
+                }
+                {
+                    app
+                }
+                <MenuItem onClick={handleLogout}>Logout Sheet2App</MenuItem>
             </Menu>
         </Box>
     );
