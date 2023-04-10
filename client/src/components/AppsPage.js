@@ -48,8 +48,18 @@ export default function AppsPage() {
   const [open, setOpen] = useState(false)
   const [count, setCount] = useState(1)
   const [apps, setApps] = useState([])
+  const [creatorApps, setCreatorApps] = useState([])
 
   const { auth } = useContext(AuthContext)
+
+  async function getCreatorApps() {
+    try {
+      const creatorApps = await api.get('/getCreatorApps/' + auth.email)
+      setCreatorApps(creatorApps.data.apps)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   //function to get all apps from database
   async function getMyApps() {
@@ -59,7 +69,6 @@ export default function AppsPage() {
       // const response = await api.get('/getApps/')
       // filter apps with correct role memberships here
       const response = await api.get('/getRoleApps/' + auth.email)
-
       setApps(response.data.apps)
     } catch (error) {
       console.log(error)
@@ -68,6 +77,7 @@ export default function AppsPage() {
 
   useEffect(() => {
     console.log('getMyApps')
+    // getCreatorApps()
     getMyApps()
   }, []) // no dependencies, only run once
 

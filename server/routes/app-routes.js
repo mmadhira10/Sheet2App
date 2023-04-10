@@ -25,7 +25,13 @@ router.post(
 
 //Get Routes
 router.get('/getApps', verifyUser, AppController.getApps)
+router.get(
+  '/isGlobalDevCreator/:email',
+  verifyUser,
+  AppController.isGlobalDevCreator
+)
 router.get('/getRoleApps/:email', verifyUser, AppController.getRoleApps)
+router.get('/getCreatorApps/:email', verifyUser, AppController.getCreatorApps)
 router.get('/getTables', verifyUser, AppController.getTables)
 router.get('/getViews', verifyUser, AppController.getViews)
 

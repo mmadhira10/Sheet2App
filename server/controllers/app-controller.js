@@ -86,6 +86,70 @@ const getApps = async (req, res) => {
   }
 }
 
+const isGlobalDevCreator = async (req, res) => {
+  let isCreator = false
+  const email = req.params.email
+  if (!email) {
+    return res.status(400).json({
+      errorMessage: 'Improperly formatted request',
+    })
+  }
+  try {
+    const url = process.env.GLOBAL_DEV_LIST_URL
+    if (!url) {
+      return res.status(400).json({
+        errorMessage: 'Improperly formatted request',
+      })
+    }
+    spid = url.split('/')[5]
+    sid = url.split('/')[6].substring(9)
+    const data = await getDataFromSheetID(spid, sid, 'COLUMNS')
+    console.log('getDataFromSheetID output: ', data)
+    for (let i = 0; i < data.length; i++) {
+      const element = data[i]
+      if (element === email) {
+        isCreator = true
+      }
+    }
+    return res.status(200).json({
+      success: true,
+      isCreator: isCreator,
+    })
+  } catch (error) {
+    return res.status(400).json({
+      errorMessage: error,
+    })
+  }
+}
+
+const getCreatorApps = async (req, res) => {
+  const email = req.params.email
+  console.log(email)
+  if (!email) {
+    return res.status(400).json({
+      errorMessage: 'Improperly formatted request',
+    })
+  }
+  try {
+    const apps = await App.find() // gets all apps in db
+    let creatorApps = []
+    for (let index = 0; index < apps.length; index++) {
+      const app = apps[index]
+      if (app.creator === email) {
+        creatorApps.push(app)
+      }
+    }
+    return res.status(200).json({
+      success: true,
+      apps: creatorApps,
+    })
+  } catch (error) {
+    return res.status(400).json({
+      errorMessage: error,
+    })
+  }
+}
+
 const getRoleApps = async (req, res) => {
   const email = req.params.email
   console.log(email)
@@ -113,7 +177,7 @@ const getRoleApps = async (req, res) => {
       // if data is just a 2d array
       let found = await getRoleType(data, email)
       if (found !== null) {
-        console.log(found)
+        console.log('found email: ', found)
         filteredApps.push(app)
       }
     }
@@ -372,4 +436,6 @@ module.exports = {
   getTablesByAppId,
   getViewsByAppId,
   getRoleApps,
+  getCreatorApps,
+  isGlobalDevCreator,
 }
