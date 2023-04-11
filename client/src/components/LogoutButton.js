@@ -12,6 +12,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 export default function LogoutButton() {
     const { auth } = useContext(AuthContext);
     const { currentApp, setCurrentApp } = useContext(GlobalStoreContext);
+
     const [anchorEl, setAnchorEl] = useState(null);
     const isMenuOpen = Boolean(anchorEl);
     const [ click, setClick ] = useState(0);
@@ -29,12 +30,13 @@ export default function LogoutButton() {
     };
 
     const handleLogout = () => {
+        setCurrentApp(null);
         handleMenuClose();
         auth.logoutUser();
     }
 
     const exitApp = () => {
-        // setCurrentApp(null);
+        setCurrentApp(null);
         navigate("/");
     }
 
