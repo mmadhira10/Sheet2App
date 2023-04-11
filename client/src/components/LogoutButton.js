@@ -34,7 +34,7 @@ export default function LogoutButton() {
     }
 
     const exitApp = () => {
-        setCurrentApp(null);
+        // setCurrentApp(null);
         navigate("/");
     }
 

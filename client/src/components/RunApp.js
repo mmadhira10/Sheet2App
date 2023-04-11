@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import api from "../app-routes";
 import LogoutButton from "./LogoutButton";
+import TableView from "./TableView";
 
 
 const titleStyle = {
@@ -22,9 +23,12 @@ const titleStyle = {
 export default function RunApp() {
     const { currentApp, setCurrentApp } = useContext(GlobalStoreContext);
     const [ views, setViews ] = useState([]);
+    const [ tables, setTables ] = useState([]);
+    const [ index, setIndex ] = useState(-1);
 
     useEffect(() => {
         getViews();
+        getTables();
     }, []);
 
     async function getViews() {
@@ -37,17 +41,52 @@ export default function RunApp() {
         }
     }
 
-    // function exitApp() {
-    //     setCurrentApp(null);
-    // }
+    async function getTables() {
+        try {
+            const response = await api.get("/getTables/" + currentApp._id);
+            setTables(response.data.tables);
+        } 
+        catch(error)
+        {
+            console.log(error);
+        }
+    }
+
+    let display = 
+        <Typography 
+        align="center" 
+        variant="h1" 
+        sx={{fontWeight: 'bold', fontStyle:'italic'}}
+        >Welcome to {currentApp.name}!</Typography>
+
+    if ( index > -1 ){
+        let currentView = views[index];
+        let tableIndex = 0;
+        for (let i = 0; i < tables.length; i ++)
+        {
+            if (currentView.table == tables[i]._id) {
+                tableIndex = i;
+            }
+        }
+        display = <TableView view={views[index]} table={tables[tableIndex]}/>
+    }
 
     return(
         <div>
             <AppBar sx = {{position:"static", height: "10%", bgcolor: "#F5F5F5", borderBottom: "2px solid black"}}>
                 <Toolbar sx = {{justifyContent: "end"}}>
+                    <Button 
+                        sx={{marginLeft: "5px", marginRight: "5px"}} 
+                        variant="outlined"
+                        onClick={() => setIndex(-1)}
+                    >HOME</Button>
                     {
-                        views.map((view) => ( 
-                            <Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined">{view.name}</Button>
+                        views.map((view, index) => ( 
+                            <Button 
+                                sx={{marginLeft: "5px", marginRight: "5px"}} 
+                                variant="outlined"
+                                onClick={() => setIndex(index)}
+                            >{view.name}</Button>
                         ))
                     }
                     <Box sx={{flexGrow: 3}}></Box>
@@ -55,8 +94,10 @@ export default function RunApp() {
                     <LogoutButton/>
                 </Toolbar>
             </AppBar>
-            <Box>
-                <Typography align="center" variant="h1" sx={{fontWeight: 'bold', fontStyle:'italic'}}>Welcome to {currentApp.name}!</Typography>
+            <Box sx={{paddingTop: 5}}>
+                {
+                    display
+                }
             </Box>
         </div>
     )
