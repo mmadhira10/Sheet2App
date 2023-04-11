@@ -12,6 +12,8 @@ import api from "../app-routes";
 import LogoutButton from "./LogoutButton";
 import TableView from "./TableView";
 
+import AuthContext from "../auth";
+
 
 const titleStyle = {
     position: "absolute",
@@ -25,10 +27,12 @@ export default function RunApp() {
     const [ views, setViews ] = useState([]);
     const [ tables, setTables ] = useState([]);
     const [ index, setIndex ] = useState(-1);
+    const { auth } = useContext(AuthContext)
 
     useEffect(() => {
         getViews();
         getTables();
+        console.log(auth);
     }, []);
 
     async function getViews() {
@@ -57,7 +61,7 @@ export default function RunApp() {
         align="center" 
         variant="h1" 
         sx={{fontWeight: 'bold', fontStyle:'italic'}}
-        >Welcome to {currentApp.name}!</Typography>
+        >Welcome to {currentApp.name}, Developer {auth.name}!</Typography>
 
     if ( index > -1 ){
         let currentView = views[index];
@@ -90,7 +94,7 @@ export default function RunApp() {
                         ))
                     }
                     <Box sx={{flexGrow: 3}}></Box>
-                    {/* <Link to="/"><Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined" onClick={exitApp}>Exit the {currentApp.name} App</Button></Link> */}
+                    <Link to="/"><Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined" >Exit the {currentApp.name} App</Button></Link>
                     <LogoutButton/>
                 </Toolbar>
             </AppBar>

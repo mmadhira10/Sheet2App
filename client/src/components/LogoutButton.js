@@ -30,13 +30,13 @@ export default function LogoutButton() {
     };
 
     const handleLogout = () => {
-        setCurrentApp(null);
+        // setCurrentApp(null);
         handleMenuClose();
         auth.logoutUser();
     }
 
     const exitApp = () => {
-        setCurrentApp(null);
+        // setCurrentApp(null);
         navigate("/");
     }
 
@@ -73,14 +73,14 @@ export default function LogoutButton() {
             </Button>;
     }
 
-    if(currentApp) {
-        role = 
-        <MenuItem style={{ backgroundColor: 'transparent' }}>
-            Developer@{currentApp.name}</MenuItem>;
-        app = 
-        <MenuItem onClick={exitApp}>
-            Exit {currentApp.name}</MenuItem>;
-    }
+    // if(currentApp) {
+    //     role = 
+    //     <MenuItem style={{ backgroundColor: 'transparent' }}>
+    //         Developer@{currentApp.name}</MenuItem>;
+    //     app = 
+    //     <MenuItem onClick={exitApp}>
+    //         Exit {currentApp.name}</MenuItem>;
+    // }
 
 
     return(
@@ -102,12 +102,12 @@ export default function LogoutButton() {
                 }}
                 open={isMenuOpen}
                 onClose={handleMenuClose}>
-                {
+                {/* {
                     role
                 }
                 {
                     app
-                }
+                } */}
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
         </Box>
