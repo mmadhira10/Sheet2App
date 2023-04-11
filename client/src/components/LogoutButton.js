@@ -106,7 +106,7 @@ export default function LogoutButton() {
                 {
                     app
                 }
-                <MenuItem onClick={handleLogout}>Logout Sheet2App</MenuItem>
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
         </Box>
     );
