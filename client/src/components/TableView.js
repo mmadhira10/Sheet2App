@@ -102,7 +102,7 @@ export default function TableView(props) {
     }, [view]);
 
 
-    let del, delCol, add, edit, editCol;
+    let del, delCol, add;
     
     if (view.allowed_actions.includes("Add"))
     {
@@ -121,13 +121,6 @@ export default function TableView(props) {
         delCol = <TableCell></TableCell>
     }
 
-    if (view.allowed_actions.includes("Edit")){
-        edit = 
-        <TableCell sx = {{width: "50px"}} align = "center">
-            <Button variant = "contained"><CreateRoundedIcon/></Button>
-        </TableCell>
-        editCol = <TableCell></TableCell>
-    }
     console.log(view);
     return(
         <div>
@@ -144,9 +137,6 @@ export default function TableView(props) {
                 {
                     delCol
                 }
-                {
-                    editCol
-                }
                 <TableCell></TableCell>
               </TableRow>
             </TableHead>
@@ -158,9 +148,6 @@ export default function TableView(props) {
                         ))}
                         {
                             del
-                        }
-                        {
-                            edit
                         }
                         <TableCell sx = {{width: "150px"}} align = "center">
                             <Button variant = "contained">Detail View</Button>
