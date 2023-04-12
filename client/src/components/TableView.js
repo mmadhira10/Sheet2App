@@ -10,7 +10,11 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
+
 import { GlobalStoreContext } from "../store";
+import AuthContext from "../auth";
 
 import api from "../app-routes";
 
@@ -22,7 +26,9 @@ const rows = [["Sameer", "Khan", "1", "90", "95"], ["Moh", "How", "2", "100", "9
 export default function TableView(props) {
     const [ colNames, setColNames ] = useState([]);
     const [ rows, setRows ] = useState([])
+    // const { filter, setFilter } = setState([])
     const { view, table } = props;
+    const { auth } = useContext(AuthContext);
 
     //get data by rows
     //first row is column headings
@@ -45,6 +51,7 @@ export default function TableView(props) {
             })
             rowRes.shift();
             console.log(rowRes)
+            rowRes = filterOptions(rowRes);
 
             setRows(rowRes);
         }
@@ -54,6 +61,37 @@ export default function TableView(props) {
         }
     }
 
+    function filterOptions(rows) {
+        let filter = view.filter;
+        let userFilter = view.user_filter;
+        if (filter != "")
+        {
+            let newArr = []
+            let filterIndex = view.columns.indexOf(filter);
+            rows.forEach(function(row) {
+                if (row[filterIndex].toUpperCase() == "TRUE")
+                {
+                    newArr.push(row);
+                }
+            })
+            rows = newArr;
+        }
+
+        if (userFilter != "")
+        {
+            let newArr = []
+            let filterIndex = view.columns.indexOf(userFilter);
+            rows.forEach(function(row) {
+                if (row[filterIndex] == auth.email)
+                {
+                    newArr.push(row);
+                }
+            })
+            rows = newArr;
+        }
+
+        return rows;
+    }
 
     useEffect(() => {
         //get the view data
@@ -64,18 +102,51 @@ export default function TableView(props) {
     }, [view]);
 
 
+    let del, delCol, add, edit, editCol;
+    
+    if (view.allowed_actions.includes("Add"))
+    {
+        add =
+        <Box sx={{paddingTop: 5}} align="center">
+            <Button variant = "contained" sx={{ width: '75%'}}>Add Record</Button>
+        </Box>
+    }
+
+    if (view.allowed_actions.includes("Delete"))
+    {
+        del = 
+        <TableCell sx = {{width: "50px"}} align = "center">
+            <Button variant = "contained"><DeleteRoundedIcon/></Button>
+        </TableCell>
+        delCol = <TableCell></TableCell>
+    }
+
+    if (view.allowed_actions.includes("Edit")){
+        edit = 
+        <TableCell sx = {{width: "50px"}} align = "center">
+            <Button variant = "contained"><CreateRoundedIcon/></Button>
+        </TableCell>
+        editCol = <TableCell></TableCell>
+    }
+    console.log(view);
     return(
         <div>
             <Box sx={{paddingBottom: 5}}>
-                <Typography sx = {{borderBottom: "2px solid black", width: "100%"}} variant = "h2">{view.name}</Typography>
+                <Typography sx = {{borderBottom: "2px solid black", width: "100%"}} variant = "h2" align="center">{view.name}</Typography>
             </Box>
         <TableContainer sx = {{maxWidth: "100%"}} component={Paper}>
           <Table sx={{ }} aria-label='simple table'>
             <TableHead>
               <TableRow>
                 {colNames.map((column) => (
-                    <TableCell key = {column} align = "center" key = {column}>{column}</TableCell>
+                    <TableCell key = {column} align = "center" key={column} style={{fontWeight: 'bold'}}>{column}</TableCell>
                 ))}
+                {
+                    delCol
+                }
+                {
+                    editCol
+                }
                 <TableCell></TableCell>
               </TableRow>
             </TableHead>
@@ -85,6 +156,12 @@ export default function TableView(props) {
                         {row.map((value) => (
                             <TableCell align = "center">{value}</TableCell>
                         ))}
+                        {
+                            del
+                        }
+                        {
+                            edit
+                        }
                         <TableCell sx = {{width: "150px"}} align = "center">
                             <Button variant = "contained">Detail View</Button>
                         </TableCell>
@@ -93,6 +170,9 @@ export default function TableView(props) {
             </TableBody>
           </Table>
         </TableContainer>
+        {
+            add
+        }
       </div>    
     )
 

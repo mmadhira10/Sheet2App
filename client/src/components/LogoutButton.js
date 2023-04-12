@@ -6,8 +6,8 @@ import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandLessRoundedIcon from '@mui/icons-material/ExpandLessRounded';
+import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 
 export default function LogoutButton() {
     const { auth } = useContext(AuthContext);
@@ -55,7 +55,7 @@ export default function LogoutButton() {
                 onClick={handleProfileMenuOpen}
             >
                 {auth.email}
-                <ExpandMoreIcon />
+                <ExpandMoreRoundedIcon />
             </Button>;
     
     if (click)
@@ -69,7 +69,7 @@ export default function LogoutButton() {
                 onClick={handleProfileMenuOpen}
             >
                 {auth.email}
-                <ExpandLessIcon />
+                <ExpandLessRoundedIcon />
             </Button>;
     }
 

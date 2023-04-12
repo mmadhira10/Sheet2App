@@ -96,11 +96,11 @@ export default function RunApp() {
                         ))
                     }
                     <Box sx={{flexGrow: 3}}></Box>
-                    <Link to="/"><Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined" >Exit {currentApp.name} App</Button></Link>
+                    <Link to="/"><Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined" >Exit App</Button></Link>
                     <LogoutButton/>
                 </Toolbar>
             </AppBar>
-            <Box sx={{paddingTop: 5}}>
+            <Box sx={{paddingTop: 2}}>
                 {
                     display
                 }

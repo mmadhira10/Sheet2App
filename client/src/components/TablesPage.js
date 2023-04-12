@@ -72,7 +72,7 @@ export default function TablesPage() {
     }
 
     useEffect(() => {
-        getTables()
+        getTables();
     }, [currentApp]);
 
 
