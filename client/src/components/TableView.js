@@ -61,7 +61,7 @@ export default function TableView(props) {
         // console.log(table.URL);
         setColNames(view.columns);
         getDataUrl();
-    }, []);
+    }, [view]);
 
 
     return(

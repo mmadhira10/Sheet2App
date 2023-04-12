@@ -26,6 +26,7 @@ export default function RunApp() {
     const { currentApp, setCurrentApp } = useContext(GlobalStoreContext);
     const [ views, setViews ] = useState([]);
     const [ tables, setTables ] = useState([]);
+    const [ currView, setCurrView ] = useState(null);
     const [ index, setIndex ] = useState(-1);
     const { auth } = useContext(AuthContext)
 
@@ -72,7 +73,8 @@ export default function RunApp() {
                 tableIndex = i;
             }
         }
-        display = <TableView view={views[index]} table={tables[tableIndex]}/>
+        console.log(currentView);
+        display = <TableView view={currentView} table={tables[tableIndex]} />
     }
 
     return(
@@ -94,7 +96,7 @@ export default function RunApp() {
                         ))
                     }
                     <Box sx={{flexGrow: 3}}></Box>
-                    <Link to="/"><Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined" >Exit the {currentApp.name} App</Button></Link>
+                    <Link to="/"><Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined" >Exit {currentApp.name} App</Button></Link>
                     <LogoutButton/>
                 </Toolbar>
             </AppBar>
