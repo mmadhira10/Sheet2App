@@ -32,6 +32,7 @@ router.get(
 )
 router.get('/getRoleApps/:email', verifyUser, AppController.getRoleApps)
 router.get('/getCreatorApps/:email', verifyUser, AppController.getCreatorApps)
+router.get('/getDevApps/:email', verifyUser, AppController.getDevApps)
 router.get('/getTables', verifyUser, AppController.getTables)
 router.get('/getViews', verifyUser, AppController.getViews)
 

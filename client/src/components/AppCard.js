@@ -10,10 +10,12 @@ import { GlobalStoreContext } from '../store';
 import { useNavigate } from 'react-router-dom';
 
 export default function AppCard(props) {
-    const { appInfo } = props;
+    const { appInfo, isCreator, isDev, isEndUser } = props;
     const { currentApp, setCurrentApp } = useContext(GlobalStoreContext);
     const navigate = useNavigate();
 
+
+    console.log(isEndUser);
     function deleteApp() {
 
     }
@@ -50,13 +52,13 @@ export default function AppCard(props) {
                     <Typography variant = "body" sx = {{fontSize: "15px"}}>{appInfo.creator}</Typography>
                 </Grid>
                 <Grid item xs ={2}>
-                    <Button onClick = {deleteApp}>Delete</Button>
+                    <Button disabled = {!(isCreator || isDev)} onClick = {deleteApp}>Delete</Button>
                 </Grid>
                 <Grid item xs ={2}>
-                    <Button onClick = {editApp}>Edit</Button>
+                    <Button disabled = {!(isCreator || isDev)} onClick = {editApp}>Edit</Button>
                 </Grid>
                 <Grid item xs ={2}>
-                    <Button onClick = {runApp}>Run</Button>
+                    <Button disabled = {!(isEndUser)} onClick = {runApp}>Run</Button>
                 </Grid>
             </Grid>
 

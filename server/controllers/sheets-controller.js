@@ -27,23 +27,27 @@ async function authSheets() {
 }
 
 const getDataFromSheetID = async (spid, sid, dim) => {
-  const { sheets } = await authSheets()
+  const { sheets } = await authSheets();
 
-  const SPREADSHEET_ID = spid
-  const SHEET_ID = sid
+  const SPREADSHEET_ID = spid;
+  const SHEET_ID = sid;
   // TODO: replace above values with real IDs.
 
-  const sheetName = spsheet.data.sheets.filter(
-    (sheet) => sheet.properties.sheetId == SHEET_ID
-  )[0].properties.title
+  const spsheet = await sheets.spreadsheets.get({
+      spreadsheetId: SPREADSHEET_ID,
+      });
+
+  console.log(sid);
+
+  const sheetName = spsheet.data.sheets.filter(sheet => sheet.properties.sheetId == SHEET_ID)[0].properties.title;
+
 
   const sheet = await sheets.spreadsheets.values.get({
-    spreadsheetId: SPREADSHEET_ID,
-    range: sheetName,
-    majorDimension: dim,
-  })
-
-  return sheet.data.values
+      spreadsheetId: SPREADSHEET_ID,
+      range: sheetName,
+      majorDimension: dim
+      });
+  return sheet.data.values;
 }
 
 const getDataFromURL = async (req, res) => {

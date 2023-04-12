@@ -132,16 +132,20 @@ const getCreatorApps = async (req, res) => {
   }
   try {
     const apps = await App.find() // gets all apps in db
-    let creatorApps = []
+    //console.log(apps);
+    let creatorApps = [];
+    let creatorAppsID = [];
     for (let index = 0; index < apps.length; index++) {
       const app = apps[index]
       if (app.creator === email) {
-        creatorApps.push(app)
+        creatorApps.push(app);
+        creatorAppsID.push(app._id);
       }
     }
     return res.status(200).json({
       success: true,
       apps: creatorApps,
+      appsID: creatorAppsID
     })
   } catch (error) {
     return res.status(400).json({
@@ -151,6 +155,7 @@ const getCreatorApps = async (req, res) => {
 }
 
 const getRoleApps = async (req, res) => {
+  console.log("this is get role apps v");
   const email = req.params.email
   console.log(email)
   if (!email) {
@@ -160,7 +165,8 @@ const getRoleApps = async (req, res) => {
   }
   try {
     const apps = await App.find() // gets all apps in db
-    let filteredApps = []
+    let filteredApps = [];
+    let filteredAppsID = [];
     for (let index = 0; index < apps.length; index++) {
       const app = apps[index]
       const url = app.role_membership_sheet
@@ -175,16 +181,71 @@ const getRoleApps = async (req, res) => {
       const data = await getDataFromSheetID(spid, sid, 'COLUMNS')
       console.log('getDataFromSheetID output: ', data)
       // if data is just a 2d array
-      let found = await getRoleType(data, email)
-      if (found !== null) {
-        console.log('found email: ', found)
-        filteredApps.push(app)
+      let found = await isEndUser(data, email);
+      if (found == true) {
+        //console.log('found email: ', found)
+        //user is an end user of this app
+        if(app.published == true) {
+          //end user can only see the app if it is published
+          filteredApps.push(app);
+          filteredAppsID.push(app._id);
+        }
       }
     }
     console.log('all filtered apps', filteredApps)
     return res.status(200).json({
       success: true,
       apps: filteredApps,
+      appsID: filteredAppsID,
+    })
+  } catch (error) {
+    return res.status(400).json({
+      errorMessage: error,
+    })
+  }
+}
+
+const getDevApps = async (req, res) => {
+  const email = req.params.email
+  //console.log(email)
+  console.log("before if statement");
+  if (!email) {
+    return res.status(400).json({
+      errorMessage: 'Improperly formatted request',
+    })
+  }
+  console.log("right before the try");
+  try {
+    const apps = await App.find() // gets all apps in db
+    console.log("app length is: " + apps.length);
+    let filteredApps = [];
+    let filteredAppsID = [];
+    for (let index = 0; index < apps.length; index++) {
+      const app = apps[index];
+      const url = app.role_membership_sheet;
+      if (!url) {
+        return res.status(400).json({
+          errorMessage: 'Improperly formatted request',
+        })
+      }
+      spid = url.split('/')[5];
+      sid = url.split('/')[6].substring(9);
+      console.log(spid + "\n" + sid);
+      const data = await getDataFromSheetID(spid, sid, 'COLUMNS');
+      console.log('getDataFromSheetID output: ', data);
+      // if data is just a 2d array
+      let found = await isDev(data, email);
+      if (found == true) {
+        //console.log('found email: ', found)
+        filteredApps.push(app);
+        filteredAppsID.push(app._id);
+      }
+    }
+    console.log('all filtered apps', filteredApps)
+    return res.status(200).json({
+      success: true,
+      apps: filteredApps,
+      appsID: filteredAppsID
     })
   } catch (error) {
     return res.status(400).json({
@@ -210,6 +271,39 @@ const getRoleType = async (roleSheet, email) => {
   return null
 }
 
+const isEndUser = async (roleSheet, email) => {
+  let endUser = false;
+  //start i at 1 to skip the first column (dev column)
+  for (let i = 1; i < roleSheet.length; i++) {
+    const column = roleSheet[i]
+    for (let j = 0; j < column.length; j++) {
+      const arrEmail = column[j]
+      if (arrEmail === email) {
+        console.log('is end user');
+        console.log(column);
+        endUser = true;
+        return endUser;
+      }
+    }
+  }
+  return endUser;
+
+}
+
+const isDev = async (roleSheet, email) => {
+  let dev = false;
+  const devColumn = roleSheet[0]; //developers column
+  for(let i = 0; i < devColumn.length; i++) {
+    let devEmail = devColumn[i];
+    if (devEmail == email) {
+      console.log("is dev");
+      console.log(devColumn);
+      dev = true;
+      return dev;
+    }
+  }
+  return dev;
+}
 const createTable = async (req, res) => {
   const appId = req.params.appId
   const body = req.body
@@ -437,5 +531,6 @@ module.exports = {
   getViewsByAppId,
   getRoleApps,
   getCreatorApps,
+  getDevApps,
   isGlobalDevCreator,
 }

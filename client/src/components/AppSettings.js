@@ -41,7 +41,7 @@ export default function AppSettings(props) {
   const [open, setOpen] = useState(props.open)
   const [name, setName] = useState('')
   const [roleMem, setRoleMem] = useState('')
-  const { apps, setApps } = props
+  const { apps, setApps, creatingApp, setCreatingApp } = props
 
   const { auth } = useContext(AuthContext)
 
@@ -65,12 +65,13 @@ export default function AppSettings(props) {
       creator: auth.email,
       name: name,
       role_membership_sheet: roleMem,
-      isPublished: false,
+      published: false,
     }
 
     try {
       const response = await api.post('/createApp/', newApp)
       setApps((apps) => [...apps, response.data.app])
+      setCreatingApp(!creatingApp);
       console.log(response.data)
     } catch (error) {
       console.log(error)

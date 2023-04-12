@@ -49,37 +49,99 @@ export default function AppsPage() {
   const [count, setCount] = useState(1)
   const [apps, setApps] = useState([])
   const [creatorApps, setCreatorApps] = useState([])
+  const [devApps, setDevApps] = useState([]);
+  const [endUserApps, setEndUserApps] = useState([]);
+  const [creatorID, setCreatorID] = useState([])
+  const [devID, setDevID] = useState([]);
+  const [endUserID, setEndUserID] = useState([]);
+
+  const [creatingApp, setCreatingApp] = useState(false);
 
   const { auth } = useContext(AuthContext)
 
-  async function getCreatorApps() {
-    try {
-      const creatorApps = await api.get('/getCreatorApps/' + auth.email)
-      setCreatorApps(creatorApps.data.apps)
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  // async function getCreatorApps() {
+  //   try {
+  //     const response = await api.get('/getCreatorApps/' + auth.email)
+  //     setCreatorApps(response.data.apps);
+  //     setCreatorID(response.data.appsID);
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 
   //function to get all apps from database
   async function getMyApps() {
+    let cApps;
+    let dApps;
+    let euApps;
+
     try {
-      // console.log("getting apps");
-      // comment this line and uncomment below lines to get filtered apps by role
-      // const response = await api.get('/getApps/')
-      // filter apps with correct role memberships here
       const response = await api.get('/getRoleApps/' + auth.email)
-      setApps(response.data.apps)
+      setEndUserApps(response.data.apps);
+      setEndUserID(response.data.appsID);
+      console.log(response.data.apps);
+      console.log(response.data.appsID);
+      euApps = response.data.apps;
     } catch (error) {
       console.log(error)
     }
+
+    try {
+      const response = await api.get('/getDevApps/' + auth.email)
+      setDevApps(response.data.apps)
+      setDevID(response.data.appsID);
+      dApps = response.data.apps;
+      // console.log("My Dev Apps");
+      // console.log(response.data);
+    } catch (error) {
+      console.log(error)
+    }
+
+    try {
+      const response = await api.get('/getCreatorApps/' + auth.email)
+      setCreatorApps(response.data.apps);
+      setCreatorID(response.data.appsID);
+      // console.log("My Creator Apps");
+      // console.log(response.data);
+      cApps = response.data.apps;
+    } catch (error) {
+      console.log(error)
+    }
+    let allApps = cApps.concat(dApps, euApps);
+    // console.log("all apps:");
+    // console.log(allApps);
+    let myApps = [];
+    let myAppsID = [];
+
+    for(let i = 0; i < allApps.length; i++) {
+      let currApp = allApps[i];
+      if(!(myAppsID.includes(currApp._id))) {
+        myApps.push(currApp);
+        myAppsID.push(currApp._id);
+      }
+    }
+
+    // console.log("array of unique apps");
+    // console.log(myApps);
+    //console.log(myApps);
+    setApps(myApps);
   }
+
+  // async function getDevApps() {
+  //   try {
+  //     const response = await api.get('/getDevApps/' + auth.email)
+  //     setDevApps(response.data.apps)
+  //     setDevID(response.data.appsID);
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 
   useEffect(() => {
     console.log('getMyApps')
-    // getCreatorApps()
     getMyApps()
-  }, []) // no dependencies, only run once
+  }, [creatingApp]) // everytime we create a new app, repeat
+
 
   function createApp() {
     setOpen(true)
@@ -94,7 +156,7 @@ export default function AppsPage() {
 
   return (
     <div>
-      <AppSettings open={open} key={count} apps={apps} setApps={setApps} />
+      <AppSettings open={open} key={count} apps={apps} setApps={setApps} creatingApp={creatingApp} setCreatingApp={setCreatingApp}/>
       <Box sx={titleStyle}>
         <AppBar
           sx={{
@@ -119,7 +181,10 @@ export default function AppsPage() {
       <Box sx={appsList}>
         <List>
           {apps.map((app) => (
-            <AppCard appInfo={app} key={app._id} />
+            <AppCard appInfo={app} key={app._id}
+              isCreator = {creatorID.includes(app._id)}
+              isDev = {devID.includes(app._id)}
+              isEndUser = {endUserID.includes(app._id)}/>
           ))}
         </List>
       </Box>
