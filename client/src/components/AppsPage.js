@@ -54,6 +54,7 @@ export default function AppsPage() {
   const [creatorID, setCreatorID] = useState([])
   const [devID, setDevID] = useState([]);
   const [endUserID, setEndUserID] = useState([]);
+  const [isGlobalDev, setIsGlobalDev] = useState(false);
 
   const [creatingApp, setCreatingApp] = useState(false);
 
@@ -137,10 +138,25 @@ export default function AppsPage() {
   //   }
   // }
 
+  async function getGlobalDev() {
+    try {
+      const response = await api.get('/isGlobalDevCreator/' + auth.email);
+      setIsGlobalDev(response.data.isCreator);
+      console.log(response.data.isCreator);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     console.log('getMyApps')
     getMyApps()
   }, [creatingApp]) // everytime we create a new app, repeat
+
+  useEffect(() => {
+    getGlobalDev();
+    
+  }, []) // call once
 
 
   function createApp() {
@@ -184,7 +200,8 @@ export default function AppsPage() {
             <AppCard appInfo={app} key={app._id}
               isCreator = {creatorID.includes(app._id)}
               isDev = {devID.includes(app._id)}
-              isEndUser = {endUserID.includes(app._id)}/>
+              isEndUser = {endUserID.includes(app._id)}
+              isGlobalDev = {isGlobalDev}/>
           ))}
         </List>
       </Box>

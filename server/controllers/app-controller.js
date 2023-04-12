@@ -87,15 +87,18 @@ const getApps = async (req, res) => {
 }
 
 const isGlobalDevCreator = async (req, res) => {
-  let isCreator = false
-  const email = req.params.email
+  let isCreator = false;
+  //const email = req.user.email;
+  const email = req.params.email;
+  console.log("GLOBAL DEV: " + email);
   if (!email) {
     return res.status(400).json({
       errorMessage: 'Improperly formatted request',
     })
   }
   try {
-    const url = process.env.GLOBAL_DEV_LIST_URL
+    const url = process.env.GLOBAL_DEV_LIST_URL;
+    console.log(url);
     if (!url) {
       return res.status(400).json({
         errorMessage: 'Improperly formatted request',
@@ -104,11 +107,13 @@ const isGlobalDevCreator = async (req, res) => {
     spid = url.split('/')[5]
     sid = url.split('/')[6].substring(9)
     const data = await getDataFromSheetID(spid, sid, 'COLUMNS')
-    console.log('getDataFromSheetID output: ', data)
-    for (let i = 0; i < data.length; i++) {
-      const element = data[i]
+    console.log('getDataFromSheetID for GLOBAL DEV output: ', data)
+    let column = data[0];
+    for (let i = 0; i < column.length; i++) {
+      const element = column[i]
+      console.log(element);
       if (element === email) {
-        isCreator = true
+        isCreator = true;
       }
     }
     return res.status(200).json({
@@ -124,7 +129,7 @@ const isGlobalDevCreator = async (req, res) => {
 
 const getCreatorApps = async (req, res) => {
   const email = req.params.email
-  console.log(email)
+  //console.log(email)
   if (!email) {
     return res.status(400).json({
       errorMessage: 'Improperly formatted request',
@@ -155,9 +160,9 @@ const getCreatorApps = async (req, res) => {
 }
 
 const getRoleApps = async (req, res) => {
-  console.log("this is get role apps v");
+  //console.log("this is get role apps v");
   const email = req.params.email
-  console.log(email)
+  //console.log(email)
   if (!email) {
     return res.status(400).json({
       errorMessage: 'Improperly formatted request',
@@ -208,16 +213,13 @@ const getRoleApps = async (req, res) => {
 const getDevApps = async (req, res) => {
   const email = req.params.email
   //console.log(email)
-  console.log("before if statement");
   if (!email) {
     return res.status(400).json({
       errorMessage: 'Improperly formatted request',
     })
   }
-  console.log("right before the try");
   try {
     const apps = await App.find() // gets all apps in db
-    console.log("app length is: " + apps.length);
     let filteredApps = [];
     let filteredAppsID = [];
     for (let index = 0; index < apps.length; index++) {
@@ -230,7 +232,6 @@ const getDevApps = async (req, res) => {
       }
       spid = url.split('/')[5];
       sid = url.split('/')[6].substring(9);
-      console.log(spid + "\n" + sid);
       const data = await getDataFromSheetID(spid, sid, 'COLUMNS');
       console.log('getDataFromSheetID output: ', data);
       // if data is just a 2d array
@@ -279,8 +280,8 @@ const isEndUser = async (roleSheet, email) => {
     for (let j = 0; j < column.length; j++) {
       const arrEmail = column[j]
       if (arrEmail === email) {
-        console.log('is end user');
-        console.log(column);
+        // console.log('is end user');
+        // console.log(column);
         endUser = true;
         return endUser;
       }
@@ -296,8 +297,8 @@ const isDev = async (roleSheet, email) => {
   for(let i = 0; i < devColumn.length; i++) {
     let devEmail = devColumn[i];
     if (devEmail == email) {
-      console.log("is dev");
-      console.log(devColumn);
+      // console.log("is dev");
+      // console.log(devColumn);
       dev = true;
       return dev;
     }
