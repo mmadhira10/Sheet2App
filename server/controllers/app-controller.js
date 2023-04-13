@@ -305,6 +305,7 @@ const isDev = async (roleSheet, email) => {
   }
   return dev;
 }
+
 const createTable = async (req, res) => {
   const appId = req.params.appId
   const body = req.body
@@ -489,7 +490,6 @@ const updateView = async (req, res) => {
   }
 }
 
-//
 const getReferencedTable = async (req, res) => {
   const body = req.body
   if (!body) {
@@ -517,6 +517,45 @@ const getReferencedTable = async (req, res) => {
   }
 }
 
+const getUserRoles = async (req, res) => {
+  const user = req.user.emails[0].value;
+  const url = req.body.url;
+  console.log(user);
+
+  if (!url) {
+    return res.status(400).json({
+      errorMessage: 'Improperly formatted request',
+    })
+  }  
+  
+  spid = url.split('/')[5];
+  sid = url.split('/')[6].substring(9);
+
+  try {
+    const roles = await getDataFromSheetID(spid, sid, 'COLUMNS');
+    let user_roles = [];
+
+    for (let i = 1; i < roles.length; i++ )
+    {
+        let curr_row = roles[i];
+        if( curr_row.includes(user) )
+        {
+          user_roles.push(roles[i][0]);
+        }
+    }
+
+    console.log(user_roles);
+    return res.status(200).json({
+      roles: user_roles
+    });
+  }
+  catch(error) {
+    return res.status(400).json({
+      errorMessage: error,
+    })
+  }
+}
+
 module.exports = {
   createApp,
   updateApp,
@@ -534,4 +573,5 @@ module.exports = {
   getCreatorApps,
   getDevApps,
   isGlobalDevCreator,
+  getUserRoles
 }

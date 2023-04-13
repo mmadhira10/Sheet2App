@@ -44,7 +44,9 @@ router.get('/getViews/:appId', verifyUser, AppController.getViewsByAppId)
 router.post('/updateApp/:appId', verifyUser, AppController.updateApp)
 router.post('/updateTable', verifyUser, AppController.updateTable)
 router.post('/updateView', verifyUser, AppController.updateView)
+router.post('/userRoles', verifyUser, AppController.getUserRoles)
 
 router.post('/getReferencedTable', verifyUser, AppController.getReferencedTable)
+
 
 module.exports = router
