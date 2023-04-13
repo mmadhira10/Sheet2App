@@ -38,22 +38,24 @@ export default function TableView(props) {
             const response = await api.post('/getDataFromURL', {url: table.URL});
             // console.log(response.data);
             let indicesCol = []
-
+            let tableCol = response.data.data[0];
+            let rowRes = response.data.data.toSpliced(0,1) //get all rows except column names
+            rowRes = filterOptions(rowRes, tableCol);
             view.columns.forEach((name) => {
                 indicesCol.push(response.data.data[0].indexOf(name));
             })
 
-            let rowRes = [];
-
-            response.data.data.forEach((arr) => {
+            let viewRows = [];
+            rowRes.forEach((arr) => {
                 let val = indicesCol.map(i => arr[i]);
-                rowRes.push(val);
+                viewRows.push(val);
             })
-            rowRes.shift();
+            //rowRes.shift();
+            console.log(tableCol);
             // console.log(rowRes)
-            rowRes = filterOptions(rowRes);
+            //rowRes = filterOptions(rowRes, tableCol);
 
-            setRows(rowRes);
+            setRows(viewRows);
         }
         catch(error)
         {
@@ -61,13 +63,14 @@ export default function TableView(props) {
         }
     }
 
-    function filterOptions(rows) {
+    function filterOptions(rows, columns) {
         let filter = view.filter;
         let userFilter = view.user_filter;
         if (filter != "")
         {
             let newArr = []
-            let filterIndex = view.columns.indexOf(filter);
+            let filterIndex = columns.indexOf(filter);
+            console.log("filter index is: " + filterIndex);
             rows.forEach(function(row) {
                 if (row[filterIndex].toUpperCase() == "TRUE")
                 {
@@ -80,7 +83,7 @@ export default function TableView(props) {
         if (userFilter != "")
         {
             let newArr = []
-            let filterIndex = view.columns.indexOf(userFilter);
+            let filterIndex = columns.indexOf(userFilter);
             rows.forEach(function(row) {
                 if (row[filterIndex] == auth.email)
                 {

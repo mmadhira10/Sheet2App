@@ -93,7 +93,7 @@ export default function RunApp() {
         align="center" 
         variant="h1" 
         sx={{fontWeight: 'bold', fontStyle:'italic'}}
-        >Welcome to {currentApp.name}, Developer {auth.name}!</Typography>
+        >Welcome to {currentApp.name}  {auth.name}!</Typography>
 
     if ( index > -1 ){
         let currentView = views[index];
