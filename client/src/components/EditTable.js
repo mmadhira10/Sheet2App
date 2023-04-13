@@ -17,7 +17,7 @@ import api from "../app-routes";
 
 export default function EditTable(props) {
     const {table, setCurTable, tablesList} = props;
-    console.log(setCurTable)
+    // console.log(setCurTable)
     const [open, setOpen] = useState(props.open);
     const [openCol, setOpenCol] = useState(false);
     const [tableName, setTableName] = useState(table.name);
@@ -105,10 +105,10 @@ export default function EditTable(props) {
     async function saveColumnsAndTable() {
         let columns = table.columns;
         let columnsArray = [];
-        console.log(columns.length);
+        // console.log(columns.length);
         for (let i = 0; i < columns.length; i++) {
             let name = columns[i].name;
-            console.log(name);
+            // console.log(name);
             let initValText = document.getElementById("initValue-" + name);
             let labelText = document.getElementById("label-" + name);
             let refText = document.getElementById("ref-" + name);
@@ -147,11 +147,11 @@ export default function EditTable(props) {
             _id: table._id
         };
 
-        console.log(newTable);
+        // console.log(newTable);
         try {
             const response = await api.post("/updateTable/", newTable);
             setCurTable(response.data.table);
-            console.log(response.data);
+            // console.log(response.data);
 
         }
         catch (error) {
@@ -174,7 +174,7 @@ export default function EditTable(props) {
         try {
             const response = await api.post("/updateTable/", newTable);
             setCurTable(response.data.table);
-            console.log(response.data);
+            // console.log(response.data);
 
 
         }
@@ -234,7 +234,7 @@ export default function EditTable(props) {
                         <Box sx = {{display: "block", width: "100%", height: "80%", overflow: "auto", margin: "auto", borderBottom: "2px solid black"}}>
                             <List>
                                 {
-                                    table.columns.map((column) => (
+                                    table.columns.map((column, key) => (
                                         <EditColumn column = {column} key = {column.name} tablesList  = {tablesList}/>
                                     ))
                                 }

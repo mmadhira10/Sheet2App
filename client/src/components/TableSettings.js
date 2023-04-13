@@ -94,30 +94,30 @@ export default function TableSettings(props) {
     async function getColumns() {
         try {
             const response = await api.post("/getColumnsFromURL/", {url: URL});
-            console.log(response.data);
+            // console.log(response.data);
             setColumnNames(response.data.columns);
             setOpenCol(true);
         }
         catch (error) {
             console.log(error);
         }
-        console.log(columnNames);
-        console.log(openCol);
+        // console.log(columnNames);
+        // console.log(openCol);
     }
 
     async function saveColumnsAndTable() {
         let columnsArray = [];
-        console.log(columnNames.length);
+        // console.log(columnNames.length);
         for (let i = 0; i < columnNames.length; i++) {
             let name = columnNames[i];
-            console.log(name);
+            // console.log(name);
             let initValText = document.getElementById("initValue-" + name);
             let labelText = document.getElementById("label-" + name);
             let refText = document.getElementById("ref-" + name);
             let typeText = document.getElementById("type-"+name);
 
             //console.log(labelText == null);
-            console.log(labelText.value);
+            // console.log(labelText.value);
 
 
             let columnObj = {
@@ -145,10 +145,10 @@ export default function TableSettings(props) {
         
 
         try {
-            console.log(newTable);
+            // console.log(newTable);
             const response = await api.post("/createTable/" + currentApp._id, newTable);
             setCurrentApp(response.data.app);
-            console.log(response.data);
+            // console.log(response.data);
         }
         catch (error) {
             console.log(error);
@@ -202,7 +202,7 @@ export default function TableSettings(props) {
                         <Box sx = {{display: "block", width: "100%", height: "80%", overflow: "auto", margin: "auto", borderBottom: "2px solid black"}}>
                             <List>
                                 {
-                                    columnNames.map((column) => (
+                                    columnNames.map((column, key) => (
                                         <ColumnSet column = {column} key = {column} tablesList = {tablesList}/>
                                     ))
                                 }

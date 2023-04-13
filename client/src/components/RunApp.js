@@ -33,13 +33,44 @@ export default function RunApp() {
     useEffect(() => {
         getViews();
         getTables();
-        console.log(auth);
+        getRoles();
+        // console.log(auth);
     }, []);
 
+    async function getRoles() {
+        try {
+            const response = await api.post("/userRoles/", {url: currentApp.role_membership_sheet});
+            console.log(response.data.roles);
+            return response.data.roles
+        }
+        catch(error)
+        {
+            console.log(error);
+        }
+    }
+
     async function getViews() {
+        
         try {
             const response = await api.get("/getViews/" + currentApp._id);
-            setViews(response.data.views);
+            let v = response.data.views; 
+            try{
+                const roles = await getRoles();
+                let role_views = [];
+                for( let i = 0; i < v.length; i ++)
+                {
+                    let inBothLists = v[i].roles.filter(element => roles.includes(element));
+                    if (inBothLists.length != 0)
+                    {
+                        role_views.push(v[i]);
+                    }
+                }
+                setViews(role_views);
+            }
+            catch(error)
+            {
+                console.log(error)
+            }
         }
         catch (error) {
             console.log(error);
@@ -73,7 +104,7 @@ export default function RunApp() {
                 tableIndex = i;
             }
         }
-        console.log(currentView);
+        // console.log(currentView);
         display = <TableView view={currentView} table={tables[tableIndex]} />
     }
 

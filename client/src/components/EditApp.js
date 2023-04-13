@@ -57,7 +57,7 @@ export default function EditApp() {
         try {
             const response = await api.post("/updateApp/" + currentApp._id, app);
             setCurrentApp(response.data.app);
-            console.log(response.data);
+            // console.log(response.data);
 
         }
         catch (error) {
@@ -79,7 +79,7 @@ export default function EditApp() {
             const response = await api.post("/updateApp/" + currentApp._id, app);
             setCurrentApp(response.data.app);
 
-            console.log(response.data);
+            // console.log(response.data);
             setPublish(true);
 
         }

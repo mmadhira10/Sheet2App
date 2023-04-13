@@ -17,7 +17,7 @@ export default function ViewCard(props) {
     const [curView, setCurView] = useState(settings);
     
     function editView() {
-        console.log(settings);
+        // console.log(settings);
         setOpenEdit(true);
         if(count == 1) {
             setCount(2);
@@ -28,7 +28,7 @@ export default function ViewCard(props) {
     }
 
     return(
-        <ListItem sx = {{display: "block", border: "1px solid black", width: "100%", marginBottom: "10px"}}>
+        <ListItem sx = {{display: "block", border: "1px solid black", width: "100%", marginBottom: "10px", boxShadow: 3 }}>
             <ViewSettings open = {openEdit} key = {count} settings = {settings} opType = "edit" setCurView={setCurView}/>
             <Grid container>
                 <Grid item xs = {10}>

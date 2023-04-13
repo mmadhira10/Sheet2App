@@ -35,7 +35,7 @@ export default function columnSet(props) {
                     <Select inputProps = {{id: "ref-" + column }} defaultValue = "" fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}>
                         <MenuItem key = "blank" value = "">None</MenuItem>
                         {
-                        tablesList.map((table) => (
+                        tablesList.map((table, key) => (
                             <MenuItem key = {table.name} value = {table._id}>{table.name}</MenuItem>
                         ))
                         }

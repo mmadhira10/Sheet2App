@@ -32,7 +32,7 @@ const titleStyle = {
 
 const myAppsStyle = {
   position: 'absolute',
-  top: '25%',
+  top: '20%',
   width: '80%',
   height: '10%',
 }
@@ -80,8 +80,8 @@ export default function AppsPage() {
       const response = await api.get('/getRoleApps/' + auth.email)
       setEndUserApps(response.data.apps);
       setEndUserID(response.data.appsID);
-      console.log(response.data.apps);
-      console.log(response.data.appsID);
+      // console.log(response.data.apps);
+      // console.log(response.data.appsID);
       euApps = response.data.apps;
     } catch (error) {
       console.log(error)
@@ -142,20 +142,20 @@ export default function AppsPage() {
     try {
       const response = await api.get('/isGlobalDevCreator/' + auth.email);
       setIsGlobalDev(response.data.isCreator);
-      console.log(response.data.isCreator);
+      // console.log(response.data.isCreator);
     } catch (error) {
       console.log(error);
     }
   }
 
   useEffect(() => {
-    console.log('getMyApps')
+    // console.log('getMyApps')
     getMyApps()
   }, [creatingApp]) // everytime we create a new app, repeat
 
   useEffect(() => {
     getGlobalDev();
-    
+    // console.log("line 158: " + isGlobalDev);
   }, []) // call once
 
 
@@ -196,7 +196,7 @@ export default function AppsPage() {
       </Box>
       <Box sx={appsList}>
         <List>
-          {apps.map((app) => (
+          {apps.map((app, key) => (
             <AppCard appInfo={app} key={app._id}
               isCreator = {creatorID.includes(app._id)}
               isDev = {devID.includes(app._id)}
@@ -207,6 +207,8 @@ export default function AppsPage() {
       </Box>
       <Button
         onClick={createApp}
+        variant="contained"
+        disabled = {!isGlobalDev}
         sx={{ position: 'absolute', top: '85%', width: '80%' }}
       >
         Create New App

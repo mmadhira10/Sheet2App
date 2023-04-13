@@ -22,7 +22,7 @@ export default function AppCard(props) {
     else {
         devFunctions = !(isCreator || isDev);
     }
-    console.log(isEndUser);
+    // console.log(isEndUser);
     function deleteApp() {
 
     }
@@ -46,11 +46,11 @@ export default function AppCard(props) {
 
     return(
         <ListItem 
-            sx = {{margin: "10px", display: "flex", border: "1px solid black"}}
+            sx = {{margin: "10px", display: "flex", border: "1px solid black", boxShadow: 3}}
             key = {appInfo._id}
             // onClick = {handleClick}
         >
-            <Grid container>
+            <Grid container >
                 <Grid item xs = {10}>
                     <Typography variant = "body" sx = {{fontSize: "30px", fontWeight: "bold"}}>{appInfo.name}</Typography>
                 </Grid>
@@ -62,13 +62,13 @@ export default function AppCard(props) {
                     <Typography variant = "body" sx = {{fontSize: "15px"}}>{appInfo.creator}</Typography>
                 </Grid>
                 <Grid item xs ={2}>
-                    <Button disabled = {devFunctions} onClick = {deleteApp}>Delete</Button>
+                    <Button variant="contained" disabled = {devFunctions} onClick = {deleteApp}>Delete</Button>
                 </Grid>
                 <Grid item xs ={2}>
-                    <Button disabled = {devFunctions} onClick = {editApp}>Edit</Button>
+                    <Button variant="contained" disabled = {devFunctions} onClick = {editApp}>Edit</Button>
                 </Grid>
                 <Grid item xs ={2}>
-                    <Button disabled = {!(isEndUser)} onClick = {runApp}>Run</Button>
+                    <Button variant="contained" disabled = {!(isEndUser)} onClick = {runApp}>Run</Button>
                 </Grid>
             </Grid>
 

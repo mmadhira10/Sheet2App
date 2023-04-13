@@ -65,9 +65,9 @@ export default function ViewsPage() {
 
     async function getViews() {
         try {
-            console.log("getting views")
+            // console.log("getting views")
             const response = await api.get("/getViews/" + currentApp._id);
-            console.log(response.data);
+            // console.log(response.data);
             setViews(response.data.views);
         }
         catch (error) {
@@ -83,7 +83,7 @@ export default function ViewsPage() {
         else {
           setCount(1);
         }
-        console.log(openView);
+        // console.log(openView);
     }
 
     useEffect(() => {

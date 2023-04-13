@@ -28,7 +28,7 @@ function AuthContextProvider(props) {
         try {
             const response = await api.get('/login/success/');
             // console.log(response);
-            console.log(response.data);
+            // console.log(response.data);
             setAuth({
                 email: response.data.user.emails[0].value,
                 name: response.data.user.displayName,

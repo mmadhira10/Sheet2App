@@ -53,10 +53,10 @@ export default function AppSettings(props) {
     let change = event.target.id
     if (change == 'appName') {
       setName(event.target.value)
-      console.log(name)
+      // console.log(name)
     } else if (change == 'roleMem') {
       setRoleMem(event.target.value)
-      console.log(roleMem)
+      // console.log(roleMem)
     }
   }
 
@@ -72,7 +72,7 @@ export default function AppSettings(props) {
       const response = await api.post('/createApp/', newApp)
       setApps((apps) => [...apps, response.data.app])
       setCreatingApp(!creatingApp);
-      console.log(response.data)
+      // console.log(response.data)
     } catch (error) {
       console.log(error)
     }

@@ -36,7 +36,7 @@ export default function TableView(props) {
     async function getDataUrl() {
         try {
             const response = await api.post('/getDataFromURL', {url: table.URL});
-            console.log(response.data);
+            // console.log(response.data);
             let indicesCol = []
 
             view.columns.forEach((name) => {
@@ -50,7 +50,7 @@ export default function TableView(props) {
                 rowRes.push(val);
             })
             rowRes.shift();
-            console.log(rowRes)
+            // console.log(rowRes)
             rowRes = filterOptions(rowRes);
 
             setRows(rowRes);
@@ -121,7 +121,7 @@ export default function TableView(props) {
         delCol = <TableCell></TableCell>
     }
 
-    console.log(view);
+    // console.log(view);
     return(
         <div>
             <Box sx={{paddingBottom: 5}}>
@@ -131,7 +131,7 @@ export default function TableView(props) {
           <Table sx={{ }} aria-label='simple table'>
             <TableHead>
               <TableRow>
-                {colNames.map((column) => (
+                {colNames.map((column, key) => (
                     <TableCell key = {column} align = "center" key={column} style={{fontWeight: 'bold'}}>{column}</TableCell>
                 ))}
                 {
@@ -141,9 +141,9 @@ export default function TableView(props) {
               </TableRow>
             </TableHead>
             <TableBody>
-                {rows.map((row) => (
+                {rows.map((row, key) => (
                     <TableRow >
-                        {row.map((value) => (
+                        {row.map((value, key) => (
                             <TableCell align = "center">{value}</TableCell>
                         ))}
                         {

@@ -6,7 +6,7 @@ import AuthContext from '../auth'
 export default function HomeWrapper() {
     const { auth } = useContext(AuthContext);
 
-    console.log(auth.loggedIn);
+    // console.log(auth.loggedIn);
     if (auth.loggedIn) {
         return <AppsPage />
     }
