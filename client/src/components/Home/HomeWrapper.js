@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import AppsPage from './AppsPage'
 import Login from './Login'
-import AuthContext from '../auth'
+import AuthContext from '../../auth'
 
 export default function HomeWrapper() {
     const { auth } = useContext(AuthContext);

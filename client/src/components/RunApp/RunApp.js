@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState} from 'react';
-import { GlobalStoreContext } from "../store";
+import { GlobalStoreContext } from "../../store";
 import { Link } from "react-router-dom";
 import { 
     Box, 
@@ -8,11 +8,11 @@ import {
     Toolbar,
     Button,
 } from '@mui/material';
-import api from "../app-routes";
-import LogoutButton from "./LogoutButton";
+import api from "../../app-routes";
+import LogoutButton from "./../LogoutButton";
 import TableView from "./TableView";
 
-import AuthContext from "../auth";
+import AuthContext from "../../auth";
 
 
 const titleStyle = {

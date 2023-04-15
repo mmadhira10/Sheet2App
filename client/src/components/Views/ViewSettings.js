@@ -9,9 +9,9 @@ import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { GlobalStoreContext } from "../store";
+import { GlobalStoreContext } from "../../store";
 
-import api from "../app-routes";
+import api from "../../app-routes";
 
 export default function ViewSettings(props) {
     const { currentApp, setCurrentApp } = useContext(GlobalStoreContext);

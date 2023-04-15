@@ -4,12 +4,12 @@ import { purple } from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
 import { Typography } from '@mui/material';
 
-import AuthContext from '../auth';
+import AuthContext from '../../auth';
 import { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 
-import './Header.css'
+import './Login.css'
 
 const Login = (props) => {
   const { auth } = useContext(AuthContext);

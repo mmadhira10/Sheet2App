@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useContext } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
@@ -9,23 +9,27 @@ import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import EditColumn from "./EditColumn.js"
+import ColumnSet from "./ColumnSet.js"
+import { GlobalStoreContext } from '../../store';
 
-import api from "../app-routes";
+import api from "../../app-routes";
 
 
 
-export default function EditTable(props) {
-    const {table, setCurTable, tablesList} = props;
-    // console.log(setCurTable)
+export default function TableSettings(props) {
+
+    const {tablesList} = props;
+
     const [open, setOpen] = useState(props.open);
     const [openCol, setOpenCol] = useState(false);
-    const [tableName, setTableName] = useState(table.name);
-    //const [URL, setURL] = useState(table.URL);
-    const [key, setKey] = useState(table.key);
+    const [tableName, setTableName] = useState("");
+    const [URL, setURL] = useState("");
+    const [key, setKey] = useState("");
+
+    const { currentApp, setCurrentApp } = useContext(GlobalStoreContext);
 
 
-    //const [columnNames, setColumnNames] = useState([]);
+    const [columnNames, setColumnNames] = useState([]);
 
     const tableSet = {
         position: 'absolute',
@@ -79,35 +83,33 @@ export default function EditTable(props) {
         if(change == "nameText") {
             setTableName(event.target.value);
         }
+        else if(change == "urlText") {
+            setURL(event.target.value);
+        }
         else if(change == "keyText") {
             setKey(event.target.value);
         }
     }
 
-    // async function getColumns() {
-    //     try {
-    //         const response = await axios.post("http://127.0.0.1:4000/getColumnsFromURL", {url: URL});
-    //         console.log(response.data);
-    //         setColumnNames(response.data.columns);
-    //         setOpenCol(true);
-    //     }
-    //     catch (error) {
-    //         console.log(error);
-    //     }
-    //     console.log(columnNames);
-    //     console.log(openCol);
-    // }
-
-    function editColumns() {
-        setOpenCol(true);
+    async function getColumns() {
+        try {
+            const response = await api.post("/getColumnsFromURL/", {url: URL});
+            // console.log(response.data);
+            setColumnNames(response.data.columns);
+            setOpenCol(true);
+        }
+        catch (error) {
+            console.log(error);
+        }
+        // console.log(columnNames);
+        // console.log(openCol);
     }
 
     async function saveColumnsAndTable() {
-        let columns = table.columns;
         let columnsArray = [];
-        // console.log(columns.length);
-        for (let i = 0; i < columns.length; i++) {
-            let name = columns[i].name;
+        // console.log(columnNames.length);
+        for (let i = 0; i < columnNames.length; i++) {
+            let name = columnNames[i];
             // console.log(name);
             let initValText = document.getElementById("initValue-" + name);
             let labelText = document.getElementById("label-" + name);
@@ -115,75 +117,45 @@ export default function EditTable(props) {
             let typeText = document.getElementById("type-"+name);
 
             //console.log(labelText == null);
-            //console.log(labelText.value);
-            let columnObj;
-            if(refText.value == "") {
-                columnObj = {
-                    name: name,
-                    initial_val: initValText.value,
-                    label: labelText.value,
-                    type: typeText.value,
-                };
-            }
-            else {
-                columnObj = {
-                    name: name,
-                    initial_val: initValText.value,
-                    label: labelText.value,
-                    reference: refText.value,
-                    type: typeText.value,
-                }; 
+            // console.log(labelText.value);
+
+
+            let columnObj = {
+                name: name,
+                initial_val: initValText.value,
+                label: labelText.value,
+                type: typeText.value
+            };
+
+            if (refText.value !== "") {
+                columnObj.reference = refText.value;    
             }
 
             columnsArray.push(columnObj);
         }
-        //let GID = URL.split('/')[6].substring(9);
+        let sheet_id = URL.split('/')[6].substring(9);
         let newTable = {
             name: tableName,
-            URL: table.URL,
-            sheet_id: table.sheet_id,
+            URL: URL,
+            sheet_id: sheet_id,
             key: key,
-            columns: columnsArray,
-            _id: table._id
+            columns: columnsArray
         };
 
-        // console.log(newTable);
-        try {
-            const response = await api.post("/updateTable/", newTable);
-            setCurTable(response.data.table);
-            // console.log(response.data);
+        
 
+        try {
+            // console.log(newTable);
+            const response = await api.post("/createTable/" + currentApp._id, newTable);
+            setCurrentApp(response.data.app);
+            // console.log(response.data);
         }
         catch (error) {
             console.log(error);
         }
+    
         setOpenCol(false);
         setOpen(false);
-    }
-
-    async function saveTable() {
-        let newTable = {
-            name: tableName,
-            URL: table.URL,
-            sheet_id: table.sheet_id,
-            key: key,
-            columns: table.columns,
-            _id: table._id
-        };
-
-        try {
-            const response = await api.post("/updateTable/", newTable);
-            setCurTable(response.data.table);
-            // console.log(response.data);
-
-
-        }
-        catch (error) {
-            console.log(error);
-        }
-
-        setOpen(false);
-
     }
 
       
@@ -209,7 +181,7 @@ export default function EditTable(props) {
                         <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >URL: </Typography>
                     </Box>
                     <Box sx = {rightItem} gridColumn = "span 4">
-                    <TextField id = "urlText" value = {table.URL} label = "Read Only" variant = "outlined" sx = {{margin: "5px", marginTop: "10px"}}  size = "small" InputProps={{readOnly: true,}}></TextField>
+                        <TextField id = "urlText" value = {URL} onChange = {handleChange} variant = "outlined" sx = {{margin: "5px"}}  size = "small"></TextField>
                     </Box>
                     <Box sx = {leftItem} gridColumn = "span 8">
                         <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Key: </Typography>
@@ -218,24 +190,20 @@ export default function EditTable(props) {
                         <TextField value = {key} id = "keyText" onChange = {handleChange} variant = "outlined" sx = {{margin: "5px"}} size = "small"></TextField>
                     </Box> 
                 </Box>
-                <Grid container rowSpacing = {2} columnSpacing = {2} columns = {10}>
-                    <Grid item xs = {2}/>
-                    <Grid item xs = {2}>
-                        <Button  onClick = {saveTable} fullWidth sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "contained" >Save</Button>
+                <Grid container rowSpacing = {2} columnSpacing = {2}>
+                    <Grid item xs = {3}/>
+                    <Grid item xs = {6} sx = {{display: "flex", justifyContent: "center"}}>
+                        <Button  onClick = {getColumns} fullWidth sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "contained" >Import Columns</Button>
                     </Grid>
-                    <Grid item xs = {2}/>
-                    <Grid item xs = {2} sx = {{display: "flex", justifyContent: "center"}}>
-                        <Button  onClick = {editColumns} fullWidth sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "contained" >Edit Columns</Button>
-                    </Grid>
-                    <Grid item xs = {2}/>
+                    <Grid item xs = {3}/>
                 </Grid>
                 <Modal open = {openCol}>
                     <Box sx = {columnSet}>
                         <Box sx = {{display: "block", width: "100%", height: "80%", overflow: "auto", margin: "auto", borderBottom: "2px solid black"}}>
                             <List>
                                 {
-                                    table.columns.map((column, key) => (
-                                        <EditColumn column = {column} key = {column.name} tablesList  = {tablesList}/>
+                                    columnNames.map((column, key) => (
+                                        <ColumnSet column = {column} key = {column} tablesList = {tablesList}/>
                                     ))
                                 }
                             </List>

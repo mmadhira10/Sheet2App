@@ -6,15 +6,15 @@ import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import List from '@mui/material/List'
 import AppCard from './AppCard.js'
-import ViewSettings from './ViewSettings.js'
+// import ViewSettings from './ViewSettings.js'
 import AppSettings from './AppSettings.js'
-import ViewCard from './ViewCard.js'
+// import ViewCard from './ViewCard.js'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
-import LogoutButton from './LogoutButton'
+import LogoutButton from '../LogoutButton'
 
-import api from '../app-routes'
-import AuthContext from '../auth'
+import api from '../../app-routes'
+import AuthContext from '../../auth'
 
 const testInfo = {
   creator: 'John Doe',

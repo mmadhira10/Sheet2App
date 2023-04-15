@@ -13,10 +13,10 @@ import Typography from '@mui/material/Typography';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 
-import { GlobalStoreContext } from "../store";
-import AuthContext from "../auth";
+import { GlobalStoreContext } from "../../store";
+import AuthContext from "../../auth";
 
-import api from "../app-routes";
+import api from "../../app-routes";
 
 const columns = ["First Name", "Last Name", "ID", "HW1", "HW2"];
 const rows = [["Sameer", "Khan", "1", "90", "95"], ["Moh", "How", "2", "100", "99"], ["Sid", "Sham", "3", "95", "96"], 

@@ -3,8 +3,6 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
   HomeWrapper,
-  Dashboard,
-  TableView,
   TablesPage,
   ViewsPage,
   EditApp,
@@ -23,8 +21,8 @@ function App() {
         <GlobalStoreContextProvider>
           <Routes>
             <Route path="/" element={<HomeWrapper />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/tableview" element={<TableView />} />
+            {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+            {/* <Route path="/tableview" element={<TableView />} /> */}
             <Route path="/tables" element={<TablesPage />} />
             <Route path="/views" element={<ViewsPage />} />
             <Route path="/editApp" element={<EditApp />} />

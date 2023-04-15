@@ -6,10 +6,10 @@ import Button from '@mui/material/Button';
 import List from '@mui/material/List';
 import TableCard from "./TableCard.js";
 import TableSettings from "./TableSettings";
-import { GlobalStoreContext } from "../store";
-import NavBar from "./NavBar"
+import { GlobalStoreContext } from "../../store";
+import NavBar from "../NavBar"
 
-import api from "../app-routes";
+import api from "../../app-routes";
 
 const testTable = {
     name: "Testing",

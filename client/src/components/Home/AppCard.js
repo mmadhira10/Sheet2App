@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import ListItem from '@mui/material/ListItem';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import { GlobalStoreContext } from '../store';
+import { GlobalStoreContext } from '../../store';
 import { useNavigate } from 'react-router-dom';
 
 export default function AppCard(props) {

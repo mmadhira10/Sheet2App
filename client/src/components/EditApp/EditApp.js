@@ -4,10 +4,10 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import { GlobalStoreContext } from "../store";
-import NavBar from "./NavBar.js";
+import { GlobalStoreContext } from "../../store";
+import NavBar from "../NavBar.js";
 
-import api from "../app-routes";
+import api from "../../app-routes";
 
 
 const leftItem = {

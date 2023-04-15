@@ -4,13 +4,13 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import List from '@mui/material/List';
-import AppCard from "./AppCard.js";
+// import AppCard from "./AppCard.js";
 import ViewSettings from "./ViewSettings.js";
 import ViewCard from "./ViewCard.js";
-import NavBar from "./NavBar.js";
-import { GlobalStoreContext } from "../store";
+import NavBar from "../NavBar.js";
+import { GlobalStoreContext } from "../../store";
 
-import api from "../app-routes";
+import api from "../../app-routes";
 
 
 const newView = {

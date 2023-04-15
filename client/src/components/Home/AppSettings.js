@@ -5,9 +5,9 @@ import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
 import Modal from '@mui/material/Modal'
 import TextField from '@mui/material/TextField'
-import AuthContext from '../auth'
+import AuthContext from '../../auth'
 
-import api from '../app-routes'
+import api from '../../app-routes'
 
 const appSet = {
   position: 'absolute',
