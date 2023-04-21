@@ -9,9 +9,9 @@ import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { GlobalStoreContext } from "../store";
+import { GlobalStoreContext } from "../../store";
 
-import api from "../app-routes";
+import api from "../../app-routes";
 
 export default function ViewSettings(props) {
     const { currentApp, setCurrentApp } = useContext(GlobalStoreContext);
@@ -31,11 +31,11 @@ export default function ViewSettings(props) {
 
     useEffect(() => {
         if (opType === "edit" && tableOpts.length > 0) {
-            console.log("tableopts: ");
-            console.log(tableOpts);
+            // console.log("tableopts: ");
+            // console.log(tableOpts);
             //find the matching table" from the array and then get its name
             let currTableName = tableOpts.find(table => table._id === settings.table).name
-            console.log(currTableName);
+            // console.log(currTableName);
             setTable(currTableName);
 
             let newTable = tableOpts.find(element => element.name == currTableName);
@@ -52,7 +52,7 @@ export default function ViewSettings(props) {
     async function getRoles() {
         try {
             const response = await api.post("/getColumnsFromURL/", {url: currentApp.role_membership_sheet});
-            console.log(response.data);
+            // console.log(response.data);
             let roleArr = response.data.columns.slice(1);
             setRoleOpts(roleArr);
         }
@@ -60,8 +60,8 @@ export default function ViewSettings(props) {
             console.log(error);
         }
     }
-    console.log("Current App:")
-    console.log(currentApp);
+    // console.log("Current App:")
+    // console.log(currentApp);
     
 
     
@@ -139,8 +139,8 @@ export default function ViewSettings(props) {
     async function getTables() {
         try {
             const response = await api.get("/getTables/" + currentApp._id, {withCredentials: true});
-            console.log("Tables")
-            console.log(response.data);
+            // console.log("Tables")
+            // console.log(response.data);
             setTableOpts(response.data.tables);
         }
         catch (error) {
@@ -191,45 +191,45 @@ export default function ViewSettings(props) {
 
     function handleColDropDown(event) {
         //console.log(event.target.id);
-        console.log(event.target.value);
+        // console.log(event.target.value);
         setColumns(event.target.value);
     }
 
     function handleEditColDropDown(event) {
         //console.log(event.target.id);
-        console.log(event.target.value);
+        // console.log(event.target.value);
         setEditColumns(event.target.value);
     }
 
     function handleTypeDropDown(event) {
         //console.log(event.target.id);
-        console.log(event.target.value);
+        // console.log(event.target.value);
         setViewType(event.target.value);
     }
 
     function handleRolesDropDown(event) {
         //console.log(event.target.id);
-        console.log(event.target.value);
+        // console.log(event.target.value);
         setRoles(event.target.value);
     }
 
     function handleAllowDropDown(event) {
-        console.log(event.target.value);
+        // console.log(event.target.value);
         setAllowAct(event.target.value);
     }
 
     function handleFilterDropDown(event) {
-        console.log(event.target.value);
+        // console.log(event.target.value);
         setFilter(event.target.value);
     }
 
     function handleUserFilterDropDown(event) {
-        console.log(event.target.value);
+        // console.log(event.target.value);
         setUserFilter(event.target.value);
     }
 
     function handleEditFilterDropDown(event) {
-        console.log(event.target.value);
+        // console.log(event.target.value);
         setEditFilter(event.target.value);
     }
 
@@ -260,7 +260,7 @@ export default function ViewSettings(props) {
                 user_filter: userFilter,
                 edit_filter: editFilter
             });
-            console.log(response);
+            // console.log(response);
             setCurrentApp(response.data.app);
         }
         catch (error) {
@@ -270,7 +270,7 @@ export default function ViewSettings(props) {
 
     function editView() {
         let allowArray = [];
-        console.log("editview");
+        // console.log("editview");
         let tableId = tableOpts.find(foundTable => foundTable.name === table)._id;
         let body = {
             _id: settings._id,
@@ -285,11 +285,11 @@ export default function ViewSettings(props) {
             user_filter: userFilter,
             edit_filter: editFilter
           }
-        console.log(body);
+        // console.log(body);
         api.post("/updateView", body)
           .then(function (response) {
             setCurView(response.data.view);
-            console.log(response);
+            // console.log(response);
           })
           .catch(function (error) {
             console.log(error);
@@ -321,7 +321,7 @@ export default function ViewSettings(props) {
                     <Box sx = {rightItem} gridColumn = "span 4">
                         <Select onChange = {handleTableDropDown} value = {table} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}>
                             {
-                                tableOpts.map((table) => (
+                                tableOpts.map((table, key) => (
                                     <MenuItem key = {table.name} value = {table.name}>{table.name}</MenuItem>
                                 ))
                             }
@@ -334,7 +334,7 @@ export default function ViewSettings(props) {
                         <Select onChange = {handleColDropDown} value = {columns} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}
                             multiple>
                             {
-                                columnOpts.map((column) => (
+                                columnOpts.map((column, key) => (
                                     <MenuItem key = {column.name} value = {column.name}>{column.name}</MenuItem>
                                 ))
                             }
@@ -366,7 +366,7 @@ export default function ViewSettings(props) {
                         <Select onChange = {handleEditColDropDown} value = {editColumns} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}
                             multiple>
                             {
-                                columns.map((column) => (
+                                columns.map((column, key) => (
                                     <MenuItem key = {column} value = {column}>{column}</MenuItem>
                                 ))
                             }
@@ -396,7 +396,7 @@ export default function ViewSettings(props) {
                             <Box sx = {rightItem} gridColumn = "span 4">
                                 <Select onChange={handleFilterDropDown} value={filter} fullWidth size="small" variant="outlined" sx={{ margin: "5px" }}>
                                     {
-                                        columnOpts.map((column) => (
+                                        columnOpts.map((column, key) => (
                                             <MenuItem key={column.name} value={column.name}>{column.name}</MenuItem>
                                         ))
                                     }
@@ -408,7 +408,7 @@ export default function ViewSettings(props) {
                                 <Select onChange={handleEditFilterDropDown} value={editFilter} fullWidth size="small" variant="outlined" sx={{ margin: "5px" }}
                                     >
                                     {
-                                        columnOpts.map((column) => (
+                                        columnOpts.map((column, key) => (
                                             <MenuItem key={column.name} value={column.name}>{column.name}</MenuItem>
                                         ))
                                     }
@@ -420,7 +420,7 @@ export default function ViewSettings(props) {
                                 <Select onChange={handleUserFilterDropDown} value={userFilter} fullWidth size="small" variant="outlined" sx={{ margin: "5px" }}
                                     >
                                     {
-                                        columnOpts.map((column) => (
+                                        columnOpts.map((column, key) => (
                                             <MenuItem key={column.name} value={column.name}>{column.name}</MenuItem>
                                         ))
                                     }
@@ -444,7 +444,7 @@ export default function ViewSettings(props) {
                             <Box sx = {rightItem} gridColumn = "span 4">
                                 <Select MenuProps = {MenuProps} multiple onChange = {handleRolesDropDown} value = {roles} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}>
                                 {
-                                    roleOpts.map((role) => (
+                                    roleOpts.map((role, key) => (
                                         <MenuItem key = {role} value = {role}>{role}</MenuItem>
                                     ))
                                 }

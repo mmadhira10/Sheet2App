@@ -15,6 +15,7 @@ function AuthContextProvider(props) {
 
     const [auth, setAuth] = useState({
         email: null,
+        name: null,
         loggedIn: false
     });
     // const history = useHistory();
@@ -30,6 +31,7 @@ function AuthContextProvider(props) {
             // console.log(response.data);
             setAuth({
                 email: response.data.user.emails[0].value,
+                name: response.data.user.displayName,
                 loggedIn: true
             });
             // console.log(auth.email);
@@ -44,6 +46,7 @@ function AuthContextProvider(props) {
             const response = await api.get('/logout/');
             setAuth({
                 email: null,
+                name: null,
                 loggedIn: false
             });
             navigate("/");

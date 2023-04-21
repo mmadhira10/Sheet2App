@@ -6,10 +6,10 @@ import Button from '@mui/material/Button';
 import List from '@mui/material/List';
 import TableCard from "./TableCard.js";
 import TableSettings from "./TableSettings";
-import { GlobalStoreContext } from "../store";
-import NavBar from "./NavBar"
+import { GlobalStoreContext } from "../../store";
+import NavBar from "../NavBar"
 
-import api from "../app-routes";
+import api from "../../app-routes";
 
 const testTable = {
     name: "Testing",
@@ -52,7 +52,7 @@ export default function TablesPage() {
     async function getTables() {
         try {
             const response = await api.get('/getTables/' + currentApp._id);
-            console.log(response.data);
+            // console.log(response.data);
             setTables(response.data.tables);
         }
         catch (error) {
@@ -68,11 +68,11 @@ export default function TablesPage() {
         else {
           setCount(1);
         }
-        console.log(openTable);
+        // console.log(openTable);
     }
 
     useEffect(() => {
-        getTables()
+        getTables();
     }, [currentApp]);
 
 
@@ -85,7 +85,7 @@ export default function TablesPage() {
             <Box sx = {{overflow: "auto", position: "absolute", display: "block", top:"20%", left: "5%", width: "80%", border: "2px solid black", height: "60%"}}>
                 <List sx = {{margin: "10px"}}>
                     {
-                        tables.map((table) => (
+                        tables.map((table, key) => (
                             <TableCard table = {table} key = {table._id} tablesList = {tables}/>
                         ))
                     }

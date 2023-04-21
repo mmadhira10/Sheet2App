@@ -32,7 +32,7 @@ export default function TableCard(props) {
     }
 
     return(
-        <ListItem sx = {{display: "block", border: "1px solid black", width: "100%", marginBottom: "10px"}}>
+        <ListItem sx = {{display: "block", border: "1px solid black", width: "100%", marginBottom: "10px", boxShadow: 3 }} >
             <EditTable open = {openEdit} table = {curTable} key = {count} setCurTable = {setCurTable} tablesList = {tablesList}/>
             <Grid container>
                 <Grid item xs = {10}>

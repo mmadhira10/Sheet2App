@@ -4,10 +4,10 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import { GlobalStoreContext } from "../store";
-import NavBar from "./NavBar.js";
+import { GlobalStoreContext } from "../../store";
+import NavBar from "../NavBar.js";
 
-import api from "../app-routes";
+import api from "../../app-routes";
 
 
 const leftItem = {
@@ -57,7 +57,7 @@ export default function EditApp() {
         try {
             const response = await api.post("/updateApp/" + currentApp._id, app);
             setCurrentApp(response.data.app);
-            console.log(response.data);
+            // console.log(response.data);
 
         }
         catch (error) {
@@ -79,7 +79,7 @@ export default function EditApp() {
             const response = await api.post("/updateApp/" + currentApp._id, app);
             setCurrentApp(response.data.app);
 
-            console.log(response.data);
+            // console.log(response.data);
             setPublish(true);
 
         }

@@ -4,13 +4,13 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import List from '@mui/material/List';
-import AppCard from "./AppCard.js";
+// import AppCard from "./AppCard.js";
 import ViewSettings from "./ViewSettings.js";
 import ViewCard from "./ViewCard.js";
-import NavBar from "./NavBar.js";
-import { GlobalStoreContext } from "../store";
+import NavBar from "../NavBar.js";
+import { GlobalStoreContext } from "../../store";
 
-import api from "../app-routes";
+import api from "../../app-routes";
 
 
 const newView = {
@@ -65,9 +65,9 @@ export default function ViewsPage() {
 
     async function getViews() {
         try {
-            console.log("getting views")
+            // console.log("getting views")
             const response = await api.get("/getViews/" + currentApp._id);
-            console.log(response.data);
+            // console.log(response.data);
             setViews(response.data.views);
         }
         catch (error) {
@@ -83,7 +83,7 @@ export default function ViewsPage() {
         else {
           setCount(1);
         }
-        console.log(openView);
+        // console.log(openView);
     }
 
     useEffect(() => {
