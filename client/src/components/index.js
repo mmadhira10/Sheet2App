@@ -1,8 +1,8 @@
-import HomeWrapper from './Home/HomeWrapper';
-import TablesPage from './Tables/TablesPage';
-import ViewsPage from './Views/ViewsPage';
-import EditApp from "./EditApp/EditApp";
-import RunApp from "./RunApp/RunApp";
+import HomeWrapper from './Home/HomeWrapper.js';
+import TablesPage from './Tables/TablesPage.js';
+import ViewsPage from './Views/ViewsPage.js';
+import EditApp from "./EditApp/EditApp.js";
+import RunApp from "./RunApp/RunApp.js";
 
 export {
     HomeWrapper,
