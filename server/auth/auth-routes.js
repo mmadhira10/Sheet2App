@@ -40,7 +40,7 @@ router.get(
 		failureRedirect: "/login/failed",
 	}),
 	(req, res) => {
-		console.log("hi");
+		//console.log("hi");
 	}	
 );
 

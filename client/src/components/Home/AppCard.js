@@ -28,6 +28,7 @@ export default function AppCard(props) {
     }
 
     function editApp(e) {
+
         setCurrentApp(appInfo);
         navigate("/tables");
         console.log(currentApp);    

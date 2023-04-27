@@ -35,7 +35,7 @@ const createApp = async (req, res) => {
 
   try {
     const savedApp = await newApp.save()
-    console.log(savedApp)
+    //console.log(savedApp)
     return res.status(200).json({
       success: true,
       app: savedApp,
@@ -90,7 +90,7 @@ const isGlobalDevCreator = async (req, res) => {
   let isCreator = false;
   //const email = req.user.email;
   const email = req.params.email;
-  console.log("GLOBAL DEV: " + email);
+  //console.log("GLOBAL DEV: " + email);
   if (!email) {
     return res.status(400).json({
       errorMessage: 'Improperly formatted request',
@@ -98,7 +98,7 @@ const isGlobalDevCreator = async (req, res) => {
   }
   try {
     const url = process.env.GLOBAL_DEV_LIST_URL;
-    console.log(url);
+    //console.log(url);
     if (!url) {
       return res.status(400).json({
         errorMessage: 'Improperly formatted request',
@@ -107,11 +107,11 @@ const isGlobalDevCreator = async (req, res) => {
     spid = url.split('/')[5]
     sid = url.split('/')[6].substring(9)
     const data = await getDataFromSheetID(spid, sid, 'COLUMNS')
-    console.log('getDataFromSheetID for GLOBAL DEV output: ', data)
+    //console.log('getDataFromSheetID for GLOBAL DEV output: ', data)
     let column = data[0];
     for (let i = 0; i < column.length; i++) {
       const element = column[i]
-      console.log(element);
+      //console.log(element);
       if (element === email) {
         isCreator = true;
       }
@@ -184,7 +184,7 @@ const getRoleApps = async (req, res) => {
       sid = url.split('/')[6].substring(9)
 
       const data = await getDataFromSheetID(spid, sid, 'COLUMNS')
-      console.log('getDataFromSheetID output: ', data)
+      //console.log('getDataFromSheetID output: ', data)
       // if data is just a 2d array
       let found = await isEndUser(data, email);
       if (found == true) {
@@ -197,7 +197,7 @@ const getRoleApps = async (req, res) => {
         }
       }
     }
-    console.log('all filtered apps', filteredApps)
+    //console.log('all filtered apps', filteredApps)
     return res.status(200).json({
       success: true,
       apps: filteredApps,
@@ -233,7 +233,7 @@ const getDevApps = async (req, res) => {
       spid = url.split('/')[5];
       sid = url.split('/')[6].substring(9);
       const data = await getDataFromSheetID(spid, sid, 'COLUMNS');
-      console.log('getDataFromSheetID output: ', data);
+      //console.log('getDataFromSheetID output: ', data);
       // if data is just a 2d array
       let found = await isDev(data, email);
       if (found == true) {
@@ -242,7 +242,7 @@ const getDevApps = async (req, res) => {
         filteredAppsID.push(app._id);
       }
     }
-    console.log('all filtered apps', filteredApps)
+    //console.log('all filtered apps', filteredApps)
     return res.status(200).json({
       success: true,
       apps: filteredApps,
@@ -262,8 +262,6 @@ const getRoleType = async (roleSheet, email) => {
     for (let j = 0; j < column.length; j++) {
       const arrEmail = column[j]
       if (arrEmail === email) {
-        console.log('found column')
-        console.log(column)
         roleType = column[0]
         return roleType
       }
@@ -447,7 +445,6 @@ const getViews = async (req, res) => {
 
 const getViewsByAppId = async (req, res) => {
   const appId = req.params.appId
-  console.log(appId)
   if (!appId) {
     return res.status(400).json({
       errorMessage: 'Improperly formatted request',
@@ -474,8 +471,6 @@ const updateView = async (req, res) => {
     })
   }
   try {
-    console.log('updateview')
-    console.log(body)
     const updatedView = await View.findOneAndUpdate({ _id: body._id }, body, {
       new: true,
     })
@@ -520,7 +515,6 @@ const getReferencedTable = async (req, res) => {
 const getUserRoles = async (req, res) => {
   const user = req.user.emails[0].value;
   const url = req.body.url;
-  console.log(user);
 
   if (!url) {
     return res.status(400).json({
@@ -543,8 +537,6 @@ const getUserRoles = async (req, res) => {
           user_roles.push(roles[i][0]);
         }
     }
-
-    console.log(user_roles);
     return res.status(200).json({
       roles: user_roles
     });

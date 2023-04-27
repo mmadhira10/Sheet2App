@@ -37,7 +37,6 @@ const getDataFromSheetID = async (spid, sid, dim) => {
       spreadsheetId: SPREADSHEET_ID,
       });
 
-  console.log(sid);
 
   const sheetName = spsheet.data.sheets.filter(sheet => sheet.properties.sheetId == SHEET_ID)[0].properties.title;
 
@@ -64,7 +63,6 @@ const getDataFromURL = async (req, res) => {
 
   try {
     const data = await getDataFromSheetID(spid, sid, 'ROWS')
-    console.log(data)
     return res.status(200).json({
       success: true,
       data: data,
@@ -90,7 +88,6 @@ const getDataFromURLCol = async (req, res) => {
 
   try {
     const data = await getDataFromSheetID(spid, sid, 'COLUMNS')
-    console.log(data)
     return res.status(200).json({
       success: true,
       data: data,
