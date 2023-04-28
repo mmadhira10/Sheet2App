@@ -16,6 +16,7 @@ export default function columnSet(props) {
     //     </ListItem>
     // )
     let refVal = column.reference;
+    let typeVal = column.type;
     if(refVal == undefined) {
         refVal = ""; 
     }
@@ -46,7 +47,12 @@ export default function columnSet(props) {
                 </Grid>
                 <Grid item xs = {2}>
                     <Typography variant = "body">Type:</Typography>
-                    <TextField defaultValue = {column.type} id = {"type-" + column.name}/>
+                    <Select inputProps = {{id: "type-" + column.type }} defaultValue = {typeVal} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}>
+                        <MenuItem key = "boolean" value = "Boolean">Boolean</MenuItem>
+                        <MenuItem key = "text" value = "Text">Text</MenuItem>
+                        <MenuItem key = "number" value = "Number">Number</MenuItem>
+                        <MenuItem key = "url" value = "URL">URL</MenuItem>
+                    </Select>
                 </Grid>
             </Grid>
         </ListItem>
