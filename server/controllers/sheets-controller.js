@@ -32,23 +32,27 @@ const getDataFromSheetID = async (spid, sid, dim) => {
   const SPREADSHEET_ID = spid;
   const SHEET_ID = sid;
   // TODO: replace above values with real IDs.
-
-  const spsheet = await sheets.spreadsheets.get({
+  
+  const sheetData = await sheets.spreadsheets.values.batchGetByDataFilter({
       spreadsheetId: SPREADSHEET_ID,
-      });
-
-  console.log(sid);
-
-  const sheetName = spsheet.data.sheets.filter(sheet => sheet.properties.sheetId == SHEET_ID)[0].properties.title;
-
-
-  const sheet = await sheets.spreadsheets.values.get({
-      spreadsheetId: SPREADSHEET_ID,
-      range: sheetName,
-      majorDimension: dim
-      });
-  return sheet.data.values;
+      resource: {
+          majorDimension: dim,
+          dataFilters: [
+              {
+                  gridRange: {
+                      sheetId: SHEET_ID,  
+                  },
+              },
+          ],
+      },
+  })
+  return sheetData.data.valueRanges[0].valueRange.values;
 }
+
+
+
+
+
 
 const getDataFromURL = async (req, res) => {
   const url = req.body.url
@@ -64,7 +68,6 @@ const getDataFromURL = async (req, res) => {
 
   try {
     const data = await getDataFromSheetID(spid, sid, 'ROWS')
-    console.log(data)
     return res.status(200).json({
       success: true,
       data: data,
@@ -90,7 +93,6 @@ const getDataFromURLCol = async (req, res) => {
 
   try {
     const data = await getDataFromSheetID(spid, sid, 'COLUMNS')
-    console.log(data)
     return res.status(200).json({
       success: true,
       data: data,
@@ -132,4 +134,5 @@ module.exports = {
   getColumnsFromURL,
   getDataFromURLCol,
   getDataFromSheetID,
+  getBatchDataFromSheetId,
 }

@@ -3,10 +3,10 @@ const Schema = mongoose.Schema
 
 const ColumnNested = {
     name: { type: String, required: true },
-    initial_val: { type: String },
+    initial_val: {},
     label: { type: Boolean, required: true },
     reference: { type: Schema.Types.ObjectId, ref: "Table"},
-    type: { type: String, required: true },
+    type: { type: String, required: true, enum: ["Boolean", "Number", "Text", "URL"]},
 }
 
 const TableSchema = new Schema(
