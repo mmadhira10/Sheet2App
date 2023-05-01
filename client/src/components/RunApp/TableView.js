@@ -15,17 +15,14 @@ import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 
 import { GlobalStoreContext } from "../../store";
 import AuthContext from "../../auth";
-
 import api from "../../app-routes";
-
-const columns = ["First Name", "Last Name", "ID", "HW1", "HW2"];
-const rows = [["Sameer", "Khan", "1", "90", "95"], ["Moh", "How", "2", "100", "99"], ["Sid", "Sham", "3", "95", "96"], 
-["Mihir", "Mad", "4", "100", "100"] ];
+import DetailView from "./DetailView.js";
 
 
 export default function TableView(props) {
     const [ colNames, setColNames ] = useState([]);
     const [ rows, setRows ] = useState([])
+    const [ open, setOpen ] = useState(false); // to open the detail view
     // const { filter, setFilter } = setState([])
     const { view, table } = props;
     const { auth } = useContext(AuthContext);
@@ -96,6 +93,10 @@ export default function TableView(props) {
         return rows;
     }
 
+    function handleOpenModal () {
+        setOpen(true);
+    }
+
     useEffect(() => {
         //get the view data
         //getTables
@@ -124,45 +125,45 @@ export default function TableView(props) {
         delCol = <TableCell></TableCell>
     }
 
-    // console.log(view);
     return(
         <div>
+            <DetailView open={open} setOpen={setOpen}/>
             <Box sx={{paddingBottom: 5}}>
                 <Typography sx = {{borderBottom: "2px solid black", width: "100%"}} variant = "h2" align="center">{view.name}</Typography>
             </Box>
-        <TableContainer sx = {{maxWidth: "100%"}} component={Paper}>
-          <Table sx={{ }} aria-label='simple table'>
-            <TableHead>
-              <TableRow>
-                {colNames.map((column, key) => (
-                    <TableCell key = {column} align = "center" key={column} style={{fontWeight: 'bold'}}>{column}</TableCell>
-                ))}
-                {
-                    delCol
-                }
-                <TableCell></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-                {rows.map((row, key) => (
-                    <TableRow >
-                        {row.map((value, key) => (
-                            <TableCell align = "center">{value}</TableCell>
+            <TableContainer sx = {{maxWidth: "100%"}} component={Paper}>
+                <Table sx={{ }} aria-label='simple table'>
+                    <TableHead>
+                        <TableRow>
+                            {colNames.map((column, key) => (
+                                <TableCell key = {column} align = "center" key={column} style={{fontWeight: 'bold'}}>{column}</TableCell>
+                            ))}
+                            {
+                                delCol
+                            }
+                            <TableCell></TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {rows.map((row, key) => (
+                            <TableRow >
+                                {row.map((value, key) => (
+                                    <TableCell align = "center">{value}</TableCell>
+                                ))}
+                                {
+                                    del
+                                }
+                                <TableCell sx = {{width: "150px"}} align = "center">
+                                    <Button onClick={handleOpenModal} variant = "contained">Detail View</Button>
+                                </TableCell>
+                            </TableRow>
                         ))}
-                        {
-                            del
-                        }
-                        <TableCell sx = {{width: "150px"}} align = "center">
-                            <Button variant = "contained">Detail View</Button>
-                        </TableCell>
-                    </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        {
-            add
-        }
+                    </TableBody>
+                </Table>
+            </TableContainer>
+            {
+                add
+            }
       </div>    
     )
 

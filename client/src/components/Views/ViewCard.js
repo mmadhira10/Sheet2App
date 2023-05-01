@@ -32,7 +32,8 @@ export default function ViewCard(props) {
             <ViewSettings open = {openEdit} key = {count} settings = {settings} opType = "edit" setCurView={setCurView}/>
             <Grid container>
                 <Grid item xs = {10}>
-                    <Typography variant = "body" sx = {{fontSize: "30px", fontWeight: "bold"}}>{curView.name}</Typography>
+                    <Typography variant = "body" sx = {{fontSize: "30px", fontWeight: "bold"}}>{curView.name}   </Typography>
+                    <Typography variant = "body" sx = {{fontSize: "16px", fontStyle: "italic"}}>{curView.view_type}</Typography>
                 </Grid>
                 <Grid item xs = {2} sx = {{display: "flex", justifyContent: "end"}}>
                     <Button variant = "contained" onClick = {editView}>Edit</Button>
