@@ -134,5 +134,4 @@ module.exports = {
   getColumnsFromURL,
   getDataFromURLCol,
   getDataFromSheetID,
-  getBatchDataFromSheetId,
 }
