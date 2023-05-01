@@ -114,8 +114,17 @@ export default function RunApp() {
                 tableIndex = i;
             }
         }
+        
+        let i = 0;
+        while (i < detail.length && detail[i].table != tables[tableIndex]._id)
+        {
+            i++;
+        }
+
+        let match = detail[i];
+
         // console.log(currentView);
-        display = <TableView view={currentView} table={tables[tableIndex]} />
+        display = <TableView view={currentView} table={tables[tableIndex]} detail={match}/>
     }
 
     return(

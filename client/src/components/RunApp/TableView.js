@@ -20,11 +20,14 @@ import DetailView from "./DetailView.js";
 
 
 export default function TableView(props) {
+    const [ columns, setColumns ] = useState([]);
+    const [ rows, setRows ] = useState([]);
     const [ colNames, setColNames ] = useState([]);
-    const [ rows, setRows ] = useState([])
+    const [ tableRows, setTableRows ] = useState([]);
     const [ open, setOpen ] = useState(false); // to open the detail view
+    const [ detailRecord, setDetailRecord ] = useState([]);
     // const { filter, setFilter } = setState([])
-    const { view, table } = props;
+    const { view, table, detail } = props;
     const { auth } = useContext(AuthContext);
 
     //get data by rows
@@ -37,22 +40,30 @@ export default function TableView(props) {
             let indicesCol = []
             let tableCol = response.data.data[0];
             let rowRes = response.data.data.toSpliced(0,1) //get all rows except column names
+
             rowRes = filterOptions(rowRes, tableCol);
+
+            console.log(rowRes);
+            console.log(tableCol);
+            setRows(rowRes);
+            setColumns(tableCol);
+
             view.columns.forEach((name) => {
                 indicesCol.push(response.data.data[0].indexOf(name));
-            })
+            });
 
             let viewRows = [];
             rowRes.forEach((arr) => {
                 let val = indicesCol.map(i => arr[i]);
                 viewRows.push(val);
             })
-            //rowRes.shift();
-            console.log(tableCol);
+            // rowRes.shift();
+            // console.log(tableCol);
+            // console.log(tableRows);
             // console.log(rowRes)
-            //rowRes = filterOptions(rowRes, tableCol);
+            // rowRes = filterOptions(rowRes, tableCol);
 
-            setRows(viewRows);
+            setTableRows(viewRows);
         }
         catch(error)
         {
@@ -60,41 +71,48 @@ export default function TableView(props) {
         }
     }
 
-    function filterOptions(rows, columns) {
+    function filterOptions(r, c) {
         let filter = view.filter;
         let userFilter = view.user_filter;
         if (filter != "")
         {
             let newArr = []
-            let filterIndex = columns.indexOf(filter);
+            let filterIndex = c.indexOf(filter);
             console.log("filter index is: " + filterIndex);
-            rows.forEach(function(row) {
-                if (row[filterIndex].toUpperCase() == "TRUE")
+            r.forEach(function(item) {
+                if (item[filterIndex].toUpperCase() == "TRUE")
                 {
-                    newArr.push(row);
+                    newArr.push(item);
                 }
             })
-            rows = newArr;
+            r = newArr;
         }
 
         if (userFilter != "")
         {
             let newArr = []
-            let filterIndex = columns.indexOf(userFilter);
-            rows.forEach(function(row) {
-                if (row[filterIndex] == auth.email)
+            let filterIndex = c.indexOf(userFilter);
+            r.forEach(function(item) {
+                if (item[filterIndex] == auth.email)
                 {
-                    newArr.push(row);
+                    newArr.push(item);
                 }
             })
-            rows = newArr;
+            r = newArr;
         }
 
-        return rows;
+        return r;
     }
 
-    function handleOpenModal () {
+    function handleOpenModal(key) {
         setOpen(true);
+        
+        let detailRows = []
+        for (let i = 0; i < columns.length; i++ )
+        {
+            detailRows.push([columns[i], rows[key][i]]);
+        }
+        setDetailRecord(detailRows);
     }
 
     useEffect(() => {
@@ -122,12 +140,25 @@ export default function TableView(props) {
         <TableCell sx = {{width: "50px"}} align = "center">
             <Button variant = "contained"><DeleteRoundedIcon/></Button>
         </TableCell>
-        delCol = <TableCell></TableCell>
+        delCol = 
+        <TableCell align = "center" style={{fontWeight: 'bold'}}>Delete</TableCell>
+
     }
 
+    let det;
+
+    if (detail)
+    {
+        det = 
+        <DetailView open={open} setOpen={setOpen} detail={detail} detailRecord={detailRecord} setDetailRecord={setDetailRecord} />
+
+    }
+    // console.log(detailRecord);
     return(
         <div>
-            <DetailView open={open} setOpen={setOpen}/>
+            {
+                det
+            }
             <Box sx={{paddingBottom: 5}}>
                 <Typography sx = {{borderBottom: "2px solid black", width: "100%"}} variant = "h2" align="center">{view.name}</Typography>
             </Box>
@@ -136,17 +167,17 @@ export default function TableView(props) {
                     <TableHead>
                         <TableRow>
                             {colNames.map((column, key) => (
-                                <TableCell key = {column} align = "center" key={column} style={{fontWeight: 'bold'}}>{column}</TableCell>
+                                <TableCell key = {column} align = "center" style={{fontWeight: 'bold'}}>{column}</TableCell>
                             ))}
                             {
                                 delCol
                             }
-                            <TableCell></TableCell>
+                            <TableCell align = "center" style={{fontWeight: 'bold'}}>Detail Views</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows.map((row, key) => (
-                            <TableRow >
+                        {tableRows.map((row, key) => (
+                            <TableRow>
                                 {row.map((value, key) => (
                                     <TableCell align = "center">{value}</TableCell>
                                 ))}
@@ -154,7 +185,7 @@ export default function TableView(props) {
                                     del
                                 }
                                 <TableCell sx = {{width: "150px"}} align = "center">
-                                    <Button onClick={handleOpenModal} variant = "contained">Detail View</Button>
+                                    <Button onClick={() => handleOpenModal(key)} variant = "contained" disabled={!detail}>Detail View</Button>
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -166,8 +197,4 @@ export default function TableView(props) {
             }
       </div>    
     )
-
-
-    
-
 }
