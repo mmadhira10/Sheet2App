@@ -26,6 +26,7 @@ export default function TableView(props) {
     const [ tableRows, setTableRows ] = useState([]);
     const [ open, setOpen ] = useState(false); // to open the detail view
     const [ detailRecord, setDetailRecord ] = useState([]);
+    const [ detailFilter, setDetailFilter ] = useState(false);
     // const { filter, setFilter } = setState([])
     const { view, table, detail } = props;
     const { auth } = useContext(AuthContext);
@@ -104,6 +105,29 @@ export default function TableView(props) {
         return r;
     }
 
+    function filterEditCols(rowIndex) {
+        if (detail.edit_filter == "" )
+        {
+            setDetailFilter(true)
+        }
+        else 
+        {
+            let index = 0;
+
+            while (index < columns.length && detail.edit_filter != columns[index]) {
+                index++;
+            }
+            
+            if (rows[rowIndex][index].toLowerCase() == "false")
+            {
+                setDetailFilter(false);
+            }
+            else {
+                setDetailFilter(true);
+            }
+        } 
+    }
+
     function handleOpenModal(key) {
         setOpen(true);
         
@@ -113,6 +137,8 @@ export default function TableView(props) {
             detailRows.push([columns[i], rows[key][i]]);
         }
         setDetailRecord(detailRows);
+
+        filterEditCols(key);
     }
 
     useEffect(() => {
@@ -150,10 +176,10 @@ export default function TableView(props) {
     if (detail)
     {
         det = 
-        <DetailView open={open} setOpen={setOpen} detail={detail} detailRecord={detailRecord} setDetailRecord={setDetailRecord} />
+        <DetailView open={open} setOpen={setOpen} detail={detail} detailRecord={detailRecord} setDetailRecord={setDetailRecord} filter={detailFilter}/>
 
     }
-    // console.log(detailRecord);
+
     return(
         <div>
             {

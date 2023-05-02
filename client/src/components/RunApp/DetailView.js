@@ -27,8 +27,9 @@ const appSet = {
 
 
 export default function DetailView(props) {
-    const [rows, setRows] = useState([]);
-    const { open, setOpen, detail, detailRecord, setDetailRecord} = props;
+    const [ rows, setRows ] = useState([]);
+    const [ editCols, setEditCols] = useState([])
+    const { open, setOpen, detail, detailRecord, setDetailRecord, filter} = props;
     
     function handleBack() {
         setOpen(false);
@@ -50,29 +51,9 @@ export default function DetailView(props) {
         handleFilter();
     },[detailRecord])
 
-    let edit =detail.allowed_actions.includes("Edit");
-    // if (detail.allowed_actions.includes("Edit"))
-    // {
-    //     edit = 
-    //     <TableCell sx={{textalign:"center"}}><Button variant="contained"><EditIcon/></Button></TableCell>
-    // }
+    let edit = detail.allowed_actions.includes("Edit");
 
-    // function editButton(col) {
-    //     if( detail.allowed_actions.includes("Edit") 
-    //     && detail.columns.includes(col))
-    //     {
-    //         return(
-    //             <TableCell sx={{textalign:"center"}}><Button variant="contained"><EditIcon/></Button></TableCell>
-    //         );
-    //     }
-    //     else if(detail.allowed_actions.includes("Edit"))
-    //     {
-    //         return (
-    //             <TableCell></TableCell>
-    //         );
-    //     }
-    // }
-
+    console.log(filter);
     return(
         <Modal open={open} onClose={handleBack}>
             <Box sx={appSet}>
@@ -85,9 +66,9 @@ export default function DetailView(props) {
                         rows.map((cell, key) => (
                             <TableRow>
                                 {
-                                    edit && detail.editable_columns.includes(cell[0]) ? (
+                                    filter && edit && detail.editable_columns.includes(cell[0]) ? (
                                         <TableCell sx={{textalign:"center"}}><Button variant="contained"><EditIcon/></Button></TableCell>
-                                    ) : edit ? (
+                                    ) : filter && edit ? (
                                         <TableCell></TableCell>
                                     ) : null
                                 }
