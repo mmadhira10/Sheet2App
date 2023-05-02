@@ -53,7 +53,6 @@ export default function DetailView(props) {
 
     let edit = detail.allowed_actions.includes("Edit");
 
-    console.log(filter);
     return(
         <Modal open={open} onClose={handleBack}>
             <Box sx={appSet}>
