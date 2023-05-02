@@ -23,6 +23,7 @@ export default function EditTable(props) {
     const [tableName, setTableName] = useState(table.name);
     //const [URL, setURL] = useState(table.URL);
     const [key, setKey] = useState(table.key);
+    const [labelCol, setLabelCol] = useState("");
 
 
     //const [columnNames, setColumnNames] = useState([]);
@@ -102,6 +103,10 @@ export default function EditTable(props) {
         setOpenCol(true);
     }
 
+    function closeEditCol() {
+        setOpenCol(false);
+    }
+
     async function saveColumnsAndTable() {
         let columns = table.columns;
         let columnsArray = [];
@@ -112,7 +117,7 @@ export default function EditTable(props) {
             let initValText = document.getElementById("initValue-" + name);
             let labelText = document.getElementById("label-" + name);
             let refText = document.getElementById("ref-" + name);
-            let typeText = document.getElementById("type-"+name);
+            let typeText = document.getElementById("type-" + name);
 
             //console.log(labelText == null);
             //console.log(labelText.value);
@@ -121,7 +126,7 @@ export default function EditTable(props) {
                 columnObj = {
                     name: name,
                     initial_val: initValText.value,
-                    label: labelText.value,
+                    label: labelText.checked,
                     type: typeText.value,
                 };
             }
@@ -235,13 +240,14 @@ export default function EditTable(props) {
                             <List>
                                 {
                                     table.columns.map((column, key) => (
-                                        <EditColumn column = {column} key = {column.name} tablesList  = {tablesList}/>
+                                        <EditColumn column = {column} key = {column.name} tablesList  = {tablesList} labelCol = {labelCol} setLabelCol = {setLabelCol}/>
                                     ))
                                 }
                             </List>
                         </Box>
-                        <Box sx = {{display: "grid", width: "100%"}}>
-                            <Button onClick = {saveColumnsAndTable} sx = {{justifySelf: "center", marginTop: "10px"}} variant = "contained">Save Columns</Button>
+                        <Box sx = {{display: "grid", width: "100%", gridTemplateColumns: "repeat(2, 1fr)"}}>
+                            <Button  onClick = {closeEditCol} sx = {{justifySelf: "center", marginTop: "10px"}} variant = "contained" color = "error">Back</Button>
+                            <Button  onClick = {saveColumnsAndTable} sx = {{justifySelf: "center", marginTop: "10px"}} variant = "contained">Save Columns</Button>
                         </Box>
                     </Box>
                 </Modal>

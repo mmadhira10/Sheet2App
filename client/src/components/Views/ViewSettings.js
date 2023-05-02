@@ -395,6 +395,7 @@ export default function ViewSettings(props) {
                             </Box>
                             <Box sx = {rightItem} gridColumn = "span 4">
                                 <Select onChange={handleFilterDropDown} value={filter} fullWidth size="small" variant="outlined" sx={{ margin: "5px" }}>
+                                    <MenuItem key = "blankFilter" value = "">None</MenuItem>
                                     {
                                         columnOpts.map((column, key) => (
                                             <MenuItem key={column.name} value={column.name}>{column.name}</MenuItem>
@@ -407,6 +408,7 @@ export default function ViewSettings(props) {
                             <Box sx = {rightItem} gridColumn = "span 4">
                                 <Select onChange={handleEditFilterDropDown} value={editFilter} fullWidth size="small" variant="outlined" sx={{ margin: "5px" }}
                                     >
+                                    <MenuItem key = "blankEditFilter" value = "">None</MenuItem>
                                     {
                                         columnOpts.map((column, key) => (
                                             <MenuItem key={column.name} value={column.name}>{column.name}</MenuItem>
@@ -419,6 +421,7 @@ export default function ViewSettings(props) {
                             <Box sx = {rightItem} gridColumn = "span 4">
                                 <Select onChange={handleUserFilterDropDown} value={userFilter} fullWidth size="small" variant="outlined" sx={{ margin: "5px" }}
                                     >
+                                    <MenuItem key = "blankUserFilter" value = "">None</MenuItem>
                                     {
                                         columnOpts.map((column, key) => (
                                             <MenuItem key={column.name} value={column.name}>{column.name}</MenuItem>
