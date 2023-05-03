@@ -27,14 +27,56 @@ export default function TableView(props) {
     const [ colNames, setColNames ] = useState([]);
     const [ rows, setRows ] = useState([])
     // const { filter, setFilter } = setState([])
-    const { view, table } = props;
+    const { view, table, allTables} = props;
     const { auth } = useContext(AuthContext);
 
+    let count = 0;
     //get data by rows
     //first row is column headings
     //can shift array to remove column headings array and then array.map each column
     async function getDataUrl() {
         try {
+            const refCols = new Map();
+            console.log("getDataUrl");
+            let refTables = [];
+            for (let i = 0;i<table.columns.length;i++) { 
+                //for each column check if it's a reference colum
+                let curCol = table.columns[i];
+                if (Object.hasOwn(curCol,"reference") && curCol.reference !== "") {
+                    //if it is a reference column, find the table it references and push it to the refTables array
+                    let curRefTable = {};
+                    curRefTable.refTableModel = allTables.find(t => t._id === curCol.reference);
+                    refCols.set(i,curRefTable); //add the ref Column index and the ref Table object to the map
+                    refTables.push(curRefTable);
+                    
+                }
+            }
+            
+            //for reference table, get the data from the url
+            for (let i = 0; i<refTables.length;i++) {
+                let curRefTable = refTables[i];
+                //for each reference table, get the data from the url
+                let refData = await api.post('/getDataFromURL', {url: refTables[i].refTableModel.URL});
+                // get the key column by getting the index of the key column name in the first row of the data (the column name row)
+                let keyColumnIndex = refData.data.data[0].indexOf(refTables[i].refTableModel.key);
+                //get the label column by getting the index of the label column name in the first row of the data (the column name row)
+                let labelColumnIndex = refTables[i].refTableModel.columns.findIndex(c => c.label == true);
+
+                curRefTable.refData = refData.data.data;
+                curRefTable.keyIndex = keyColumnIndex;
+                curRefTable.labelIndex = labelColumnIndex;
+
+                //create a map of every value in key column and the row it's in
+                let refKeyMap = new Map();
+                for (let i = 1; i<curRefTable.refData.length;i++) {
+                    refKeyMap.set(curRefTable.refData[i][keyColumnIndex], i);
+                }
+
+                curRefTable.refKeyToRowMap = refKeyMap;
+            }
+
+            
+
             const response = await api.post('/getDataFromURL', {url: table.URL});
             // console.log(response.data);
             let indicesCol = []
@@ -42,12 +84,29 @@ export default function TableView(props) {
             let rowRes = response.data.data.toSpliced(0,1) //get all rows except column names
             rowRes = filterOptions(rowRes, tableCol);
             view.columns.forEach((name) => {
-                indicesCol.push(response.data.data[0].indexOf(name));
+                //references
+                indicesCol.push(response.data.data[0].indexOf(name)); //get the indices of the columns that will be included
             })
 
+            
+
             let viewRows = [];
-            rowRes.forEach((arr) => {
-                let val = indicesCol.map(i => arr[i]);
+            rowRes.forEach((arr) => { 
+                //for each column index, I need to check if they are a reference column
+                //need to get the label index of the reference table
+                let val = indicesCol.map((i) => {
+                    let valAtIndex = arr[i];
+                    if (refCols.has(i)) {
+                        let curRefTable = refCols.get(i);
+                        let refKeyToRowMap = curRefTable.refKeyToRowMap;
+                        let labelIndex = curRefTable.labelIndex;
+                        let row = refKeyToRowMap.get(valAtIndex);
+                        valAtIndex = curRefTable.refData[row][labelIndex];
+                    }
+                    return valAtIndex;
+                }
+                ); //val is an array of a row of data
+                
                 viewRows.push(val);
             })
             //rowRes.shift();
@@ -97,11 +156,16 @@ export default function TableView(props) {
     }
 
     useEffect(() => {
+        console.log(count);
+        count++;
         //get the view data
         //getTables
         // console.log(table.URL);
         setColNames(view.columns);
         getDataUrl();
+
+
+
     }, [view]);
 
 

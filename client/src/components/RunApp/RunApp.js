@@ -105,7 +105,7 @@ export default function RunApp() {
             }
         }
         // console.log(currentView);
-        display = <TableView view={currentView} table={tables[tableIndex]} />
+        display = <TableView view={currentView} table={tables[tableIndex]} allTables = {tables} />
     }
 
     return(
