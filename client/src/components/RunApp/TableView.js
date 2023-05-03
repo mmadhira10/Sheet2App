@@ -18,14 +18,10 @@ import AuthContext from "../../auth";
 
 import api from "../../app-routes";
 
-const columns = ["First Name", "Last Name", "ID", "HW1", "HW2"];
-const rows = [["Sameer", "Khan", "1", "90", "95"], ["Moh", "How", "2", "100", "99"], ["Sid", "Sham", "3", "95", "96"], 
-["Mihir", "Mad", "4", "100", "100"] ];
-
-
 export default function TableView(props) {
     const [ colNames, setColNames ] = useState([]);
-    const [ rows, setRows ] = useState([])
+    const [ rows, setRows ] = useState([]);
+    const [URLs, setURLs] = useState([]);
     // const { filter, setFilter } = setState([])
     const { view, table } = props;
     const { auth } = useContext(AuthContext);
@@ -96,12 +92,34 @@ export default function TableView(props) {
         return rows;
     }
 
+    function isURL() {
+        let urlCol = [];
+        for(let i = 0; i < table.columns.length; i++) {
+            if(table.columns[i].type == "URL") {
+                urlCol.push(table.columns[i].name);
+                console.log("URL column found");
+                console.log(table.columns[i].name);
+            }
+        }
+        console.log(urlCol.length);
+        let newURL = [];
+        if(urlCol.length > 0) {
+            for(let i = 0; i < view.columns.length; i++ ) {
+                if(urlCol.includes(view.columns[i])) {
+                    newURL.push(i);
+                    //console.log("URL column found");
+                } 
+            }
+        }
+        setURLs(newURL);
+    }
     useEffect(() => {
         //get the view data
         //getTables
         // console.log(table.URL);
         setColNames(view.columns);
         getDataUrl();
+        isURL();
     }, [view]);
 
 
@@ -147,7 +165,10 @@ export default function TableView(props) {
                 {rows.map((row, key) => (
                     <TableRow >
                         {row.map((value, key) => (
-                            <TableCell align = "center">{value}</TableCell>
+
+                            <TableCell align = "center">{URLs.includes(key) ? 
+                                <a href = {value} target = "_blank">{value}</a> :
+                                value }</TableCell>
                         ))}
                         {
                             del

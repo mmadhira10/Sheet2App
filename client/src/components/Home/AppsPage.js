@@ -42,6 +42,7 @@ const appsList = {
   top: '35%',
   width: '80%',
   height: '50%',
+  overflow: "auto"
 }
 
 export default function AppsPage() {
