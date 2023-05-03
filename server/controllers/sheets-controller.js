@@ -242,9 +242,8 @@ const editRecord = async (req, res) => {
   try {
     const { sheets } = await authSheets()
 
-    const SPREADSHEET_ID = spid
-    const SHEET_ID = sid
-    Values 
+    const SPREADSHEET_ID = spid;
+    const SHEET_ID = sid;
     const result = await sheets.spreadsheets.values.batchUpdate({
       SPREADSHEET_ID,
       resource: {
@@ -288,4 +287,5 @@ module.exports = {
   getDataFromSheetID,
   addRecord,
   deleteRecord,
+  editRecord
 }
