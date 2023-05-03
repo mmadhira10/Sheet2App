@@ -127,73 +127,6 @@ const isGlobalDevCreator = async (req, res) => {
   }
 }
 
-const getMyApps = async(req, res) => {
-  const email = req.params.email
-  if (!email) {
-    return res.status(400).json({
-      errorMessage: 'Improperly formatted request',
-    })
-  }
-  try {
-    const apps = await App.find() // gets all apps in db
-    //console.log(apps);
-    let creatorAppsID = [];
-    let devAppsID = [];
-    let endUserAppsID = [];
-    let myApps = [];
-    for (let index = 0; index < apps.length; index++) {
-      let added = false;
-      const app = apps[index]
-      if (app.creator === email) {
-        myApps.push(app);
-        creatorAppsID.push(app._id);
-        added = true;
-      }
-      const url = app.role_membership_sheet;
-      if (!url) {
-        return res.status(400).json({
-          errorMessage: 'Improperly formatted request',
-        })
-      }
-      spid = url.split('/')[5];
-      sid = url.split('/')[6].substring(9);
-      const data = await getDataFromSheetID(spid, sid, 'COLUMNS');
-      //console.log('getDataFromSheetID output: ', data);
-      // if data is just a 2d array
-      let devFound = isDev(data, email);
-      let endUserFound = isEndUser(data, email);
-      if (devFound == true) {
-        if(added == false) {
-          myApps.push(app);
-          added = true;
-        }
-        devAppsID.push(app._id);
-      }
-      if (endUserFound == true) {
-        if(app.published == true) {
-          //end users only see the app if its published
-          if(added == false) {
-            myApps.push(app);
-          }
-          endUserAppsID.push(app._id);
-        }
-      }
-    }
-
-    return res.status(200).json({
-      success: true,
-      apps: myApps,
-      cAppsID: creatorAppsID,
-      dAppsID: devAppsID,
-      euAppsID: endUserAppsID
-    })
-  } catch (error) {
-    return res.status(400).json({
-      errorMessage: error,
-    })
-  }
-}
-
 const getCreatorApps = async (req, res) => {
   const email = req.params.email
   //console.log(email)
@@ -253,7 +186,7 @@ const getRoleApps = async (req, res) => {
       const data = await getDataFromSheetID(spid, sid, 'COLUMNS')
       //console.log('getDataFromSheetID output: ', data)
       // if data is just a 2d array
-      let found = isEndUser(data, email);
+      let found = await isEndUser(data, email);
       if (found == true) {
         //console.log('found email: ', found)
         //user is an end user of this app
@@ -302,7 +235,7 @@ const getDevApps = async (req, res) => {
       const data = await getDataFromSheetID(spid, sid, 'COLUMNS');
       //console.log('getDataFromSheetID output: ', data);
       // if data is just a 2d array
-      let found = isDev(data, email);
+      let found = await isDev(data, email);
       if (found == true) {
         //console.log('found email: ', found)
         filteredApps.push(app);
@@ -337,7 +270,7 @@ const getRoleType = async (roleSheet, email) => {
   return null
 }
 
-const isEndUser = (roleSheet, email) => {
+const isEndUser = async (roleSheet, email) => {
   let endUser = false;
   //start i at 1 to skip the first column (dev column)
   for (let i = 1; i < roleSheet.length; i++) {
@@ -356,7 +289,7 @@ const isEndUser = (roleSheet, email) => {
 
 }
 
-const isDev = (roleSheet, email) => {
+const isDev = async (roleSheet, email) => {
   let dev = false;
   const devColumn = roleSheet[0]; //developers column
   for(let i = 0; i < devColumn.length; i++) {
@@ -632,6 +565,5 @@ module.exports = {
   getCreatorApps,
   getDevApps,
   isGlobalDevCreator,
-  getUserRoles,
-  getMyApps
+  getUserRoles
 }
