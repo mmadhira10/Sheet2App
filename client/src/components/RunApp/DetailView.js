@@ -86,9 +86,7 @@ export default function DetailView(props) {
                                     edit && detail.editable_columns.includes(cell[0]) ? (
                                         <TableCell sx={{align:"center"}}>
                                             <TextField  
-                                                label={cell[0]} 
-                                                defaultValue={cell[1]}
-                                                multiline 
+                                                defaultValue={cell[1]} 
                                                 variant="standard"
                                             />
                                         </TableCell>

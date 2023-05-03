@@ -218,6 +218,69 @@ const deleteRecord = async (req, res) => {
   }
 }
 
+const editRecord = async (req, res) => {
+  const body = req.body
+  if (!body) {
+    return res.status(400).json({
+      errorMessage: 'Improperly formatted request',
+    })
+  }
+
+  const url = body.url;
+  const index = body.index;
+  const record = body.record;
+
+  if (!url || !record || !index) {
+    return res.status(400).json({
+      errorMessage: 'Improperly formatted request',
+    })
+  }
+
+  spid = url.split('/')[5]
+  sid = url.split('/')[6].substring(9)
+
+  try {
+    const { sheets } = await authSheets()
+
+    const SPREADSHEET_ID = spid
+    const SHEET_ID = sid
+    Values 
+    const result = await sheets.spreadsheets.values.batchUpdate({
+      SPREADSHEET_ID,
+      resource: {
+        requests: [
+          {
+            updateCells: {
+              rows: [
+                {
+                  values: [
+                    record
+                  ],
+                },
+              ],
+              range: {
+                sheetId: SHEET_ID, // replace with your sheet ID
+                startRowIndex: index,
+                endRowIndex: index + 1,
+              },
+            },
+          },
+        ],
+      },
+    })
+    return res.status(200).json({
+      success: true,
+      result: result,
+    })
+  } catch (error)
+  {
+    return res.status(400).json({
+      errorMessage: error,
+    })
+  }
+
+}
+
 module.exports = {
   getDataFromURL,
   getColumnsFromURL,
