@@ -82,7 +82,10 @@ export default function TableView(props) {
     try {
       const response = await api.post('/addRecord/', body)
       console.log(response)
-    } catch (error) {}
+      getDataUrl()
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   function updateAddRecordArray(row) {
@@ -100,14 +103,26 @@ export default function TableView(props) {
         }
       }
       if (found === false) {
-        updatedArray.push(null)
+        updatedArray.push('')
       }
     }
     console.log(updatedArray)
     return updatedArray
   }
 
-  async function deleteRecordFromSheet() {}
+  async function deleteRecordFromSheet(index, table) {
+    let body = {
+      url: table.URL,
+      index: index,
+    }
+    try {
+      const response = await api.post('/deleteRecord', body)
+      console.log(response)
+      getDataUrl()
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   function filterOptions(r, c) {
     let filter = view.filter
