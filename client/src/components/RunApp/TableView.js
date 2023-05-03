@@ -82,6 +82,7 @@ export default function TableView(props) {
     try {
       const response = await api.post('/addRecord/', body)
       console.log(response)
+      getDataUrl()
     } catch (error) {
       console.log(error)
     }
@@ -102,7 +103,7 @@ export default function TableView(props) {
         }
       }
       if (found === false) {
-        updatedArray.push(null)
+        updatedArray.push('')
       }
     }
     console.log(updatedArray)
@@ -117,6 +118,7 @@ export default function TableView(props) {
     try {
       const response = await api.post('/deleteRecord', body)
       console.log(response)
+      getDataUrl()
     } catch (error) {
       console.log(error)
     }
