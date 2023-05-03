@@ -149,7 +149,7 @@ const addRecord = async (req, res) => {
 
     const sheetData = await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Sheet1',
+      range: `Sheet${SHEET_ID}`,
       valueInputOption: 'USER_ENTERED',
       resource: {
         majorDimension: dim,
@@ -191,13 +191,13 @@ const deleteRecord = async (req, res) => {
     const SHEET_ID = sid
 
     const result = await sheets.spreadsheets.values.batchUpdate({
-      spreadsheetId,
+      SPREADSHEET_ID,
       resource: {
         requests: [
           {
             deleteDimension: {
               range: {
-                sheetId: SPREADSHEET_ID, // replace with your sheet ID
+                sheetId: SHEET_ID, // replace with your sheet ID
                 dimension: 'ROWS',
                 startIndex: index,
                 endIndex: index + 1,
