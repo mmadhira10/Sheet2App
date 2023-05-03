@@ -87,7 +87,7 @@ export default function DetailView(props) {
                                         <TableCell sx={{align:"center"}}>
                                             <TextField  
                                                 label={cell[0]} 
-                                                placeholder={cell[1]}
+                                                defaultValue={cell[1]}
                                                 multiline 
                                                 variant="standard"
                                             />
