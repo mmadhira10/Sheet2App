@@ -1,35 +1,42 @@
 import React, { useEffect, useState, useContext } from 'react'
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import Paper from '@mui/material/Paper'
+import Button from '@mui/material/Button'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import Modal from '@mui/material/Modal'
+import DetailView from './DetailView';
 
-import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
-import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded'
+import CreateRoundedIcon from '@mui/icons-material/CreateRounded'
 
 import { GlobalStoreContext } from "../../store";
 import AuthContext from "../../auth";
 import api from "../../app-routes";
-import DetailView from "./DetailView.js";
+
+// const columns = ["First Name", "Last Name", "ID", "HW1", "HW2"];
+// const rows = [["Sameer", "Khan", "1", "90", "95"], ["Moh", "How", "2", "100", "99"], ["Sid", "Sham", "3", "95", "96"], 
+// ["Mihir", "Mad", "4", "100", "100"] ];
 
 
 export default function TableView(props) {
-    const [ columns, setColumns ] = useState([]);
-    const [ rows, setRows ] = useState([]);
     const [ colNames, setColNames ] = useState([]);
-    const [ tableRows, setTableRows ] = useState([]);
-    const [ openDetail, setOpenDetail ] = useState(false); // to open the detail view
-    const [ detailRecord, setDetailRecord ] = useState([]);
-    const [ detailFilter, setDetailFilter ] = useState(false);
+    const [ rows, setRows ] = useState([])
+    const [URLs, setURLs] = useState([]);
     // const { filter, setFilter } = setState([])
     const { view, table, detail } = props;
     const { auth } = useContext(AuthContext);
+    const [open, setOpen] = useState(false)
+    const [allColNames, setAllColNames] = useState([]) // stores all column headers
+    const [ tableRows, setTableRows ] = useState([]);
+    const [ openDetail, setOpenDetail ] = useState(false);
+    const [ detailFilter, setDetailFilter ] = useState(false);
+    const [ detailRecord, setDetailRecord ] = useState([]);
 
     //get data by rows
     //first row is column headings
@@ -41,17 +48,12 @@ export default function TableView(props) {
             let indicesCol = []
             let tableCol = response.data.data[0];
             let rowRes = response.data.data.toSpliced(0,1) //get all rows except column names
-
             rowRes = filterOptions(rowRes, tableCol);
-
-            console.log(rowRes);
-            console.log(tableCol);
+            setAllColNames(tableCol)
             setRows(rowRes);
-            setColumns(tableCol);
-
             view.columns.forEach((name) => {
                 indicesCol.push(response.data.data[0].indexOf(name));
-            });
+            })
 
             let viewRows = [];
             rowRes.forEach((arr) => {
@@ -72,7 +74,28 @@ export default function TableView(props) {
         }
     }
 
-    function filterOptions(r, c) {
+    function updateAddRecordArray(row) {
+        let counter = 0
+        let updatedArray = []
+        for (let index = 0; index < allColNames.length; index++) {
+          const tableColName = allColNames[index]
+          let found = false
+          for (let j = 0; j < colNames.length; j++) {
+            const viewColName = colNames[j]
+            if (viewColName === tableColName) {
+              found = true
+              updatedArray.push(row[counter])
+              counter++
+            }
+          }
+          if (found === false) {
+            updatedArray.push(null)
+          }
+        }
+        console.log(updatedArray)
+      }
+
+      function filterOptions(r, c) {
         let filter = view.filter;
         let userFilter = view.user_filter;
         if (filter != "")
@@ -114,7 +137,7 @@ export default function TableView(props) {
         {
             let index = 0;
 
-            while (index < columns.length && detail.edit_filter != columns[index]) {
+            while (index < allColNames.length && detail.edit_filter != allColNames[index]) {
                 index++;
             }
             
@@ -132,13 +155,35 @@ export default function TableView(props) {
         setOpenDetail(true);
         
         let detailRows = []
-        for (let i = 0; i < columns.length; i++ )
+        for (let i = 0; i < allColNames.length; i++ )
         {
-            detailRows.push([columns[i], rows[key][i]]);
+            detailRows.push([allColNames[i], rows[key][i]]);
         }
         setDetailRecord(detailRows);
 
         filterEditCols(key);
+    }
+
+    function isURL() {
+        let urlCol = [];
+        for(let i = 0; i < table.columns.length; i++) {
+            if(table.columns[i].type == "URL") {
+                urlCol.push(table.columns[i].name);
+                console.log("URL column found");
+                console.log(table.columns[i].name);
+            }
+        }
+        console.log(urlCol.length);
+        let newURL = [];
+        if(urlCol.length > 0) {
+            for(let i = 0; i < view.columns.length; i++ ) {
+                if(urlCol.includes(view.columns[i])) {
+                    newURL.push(i);
+                    //console.log("URL column found");
+                } 
+            }
+        }
+        setURLs(newURL);
     }
 
     useEffect(() => {
@@ -147,18 +192,26 @@ export default function TableView(props) {
         // console.log(table.URL);
         setColNames(view.columns);
         getDataUrl();
+        isURL();
     }, [view]);
 
+  let del, delCol, add
 
-    let del, delCol, add;
-    
-    if (view.allowed_actions.includes("Add"))
-    {
-        add =
-        <Box sx={{paddingTop: 5}} align="center">
-            <Button variant = "contained" sx={{ width: '75%'}}>Add Record</Button>
-        </Box>
-    }
+  if (view.allowed_actions.includes('Add')) {
+    add = (
+      <Box sx={{ paddingTop: 5 }} align='center'>
+        <Button
+          variant='contained'
+          sx={{ width: '75%' }}
+          onClick={() => {
+            setOpen(true)
+          }}
+        >
+          Add Record
+        </Button>
+      </Box>
+    )
+  }
 
     if (view.allowed_actions.includes("Delete"))
     {
@@ -205,7 +258,8 @@ export default function TableView(props) {
                         {tableRows.map((row, key) => (
                             <TableRow>
                                 {row.map((value, key) => (
-                                    <TableCell align = "center">{value}</TableCell>
+                                    <TableCell align='center'>{URLs.includes(key) ? 
+                                        <a href = {value} target = "_blank">{value}</a> : value }</TableCell> 
                                 ))}
                                 {
                                     del
