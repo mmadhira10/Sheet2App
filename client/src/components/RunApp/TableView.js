@@ -24,7 +24,7 @@ export default function TableView(props) {
     const [ rows, setRows ] = useState([]);
     const [ colNames, setColNames ] = useState([]);
     const [ tableRows, setTableRows ] = useState([]);
-    const [ open, setOpen ] = useState(false); // to open the detail view
+    const [ openDetail, setOpenDetail ] = useState(false); // to open the detail view
     const [ detailRecord, setDetailRecord ] = useState([]);
     const [ detailFilter, setDetailFilter ] = useState(false);
     // const { filter, setFilter } = setState([])
@@ -128,8 +128,8 @@ export default function TableView(props) {
         } 
     }
 
-    function handleOpenModal(key) {
-        setOpen(true);
+    function handleOpenDetailModal(key) {
+        setOpenDetail(true);
         
         let detailRows = []
         for (let i = 0; i < columns.length; i++ )
@@ -176,7 +176,7 @@ export default function TableView(props) {
     if (detail)
     {
         det = 
-        <DetailView open={open} setOpen={setOpen} detail={detail} detailRecord={detailRecord} setDetailRecord={setDetailRecord} filter={detailFilter}/>
+        <DetailView open={openDetail} setOpen={setOpenDetail} detail={detail} detailRecord={detailRecord} setDetailRecord={setDetailRecord} filter={detailFilter}/>
 
     }
 
@@ -211,7 +211,7 @@ export default function TableView(props) {
                                     del
                                 }
                                 <TableCell sx = {{width: "150px"}} align = "center">
-                                    <Button onClick={() => handleOpenModal(key)} variant = "contained" disabled={!detail}>Detail View</Button>
+                                    <Button onClick={() => handleOpenDetailModal(key)} variant = "contained" disabled={!detail}>Detail View</Button>
                                 </TableCell>
                             </TableRow>
                         ))}
