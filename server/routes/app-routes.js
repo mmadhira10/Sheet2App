@@ -23,6 +23,9 @@ router.post(
 )
 // router.post('/generateTable', AppController.generateTable);
 
+router.post('/addRecord', verifyUser, SheetsController.addRecord)
+router.post('/deleteRecord', verifyUser, SheetsController.deleteRecord)
+
 //Get Routes
 router.get('/getApps', verifyUser, AppController.getApps)
 router.get(
@@ -48,6 +51,5 @@ router.post('/updateView', verifyUser, AppController.updateView)
 router.post('/userRoles', verifyUser, AppController.getUserRoles)
 
 router.post('/getReferencedTable', verifyUser, AppController.getReferencedTable)
-
 
 module.exports = router

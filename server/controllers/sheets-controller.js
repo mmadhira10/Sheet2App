@@ -125,8 +125,14 @@ const getColumnsFromURL = async (req, res) => {
 }
 
 const addRecord = async (req, res) => {
-  const url = req.body.url
-  const data = req.body.data
+  const body = req.body
+  if (!body) {
+    return res.status(400).json({
+      errorMessage: 'Improperly formatted request',
+    })
+  }
+  const url = body.url
+  const data = body.data
   if (!url) {
     return res.status(400).json({
       errorMessage: 'Improperly formatted request',
@@ -162,8 +168,14 @@ const addRecord = async (req, res) => {
 }
 
 const deleteRecord = async (req, res) => {
-  const url = req.body.url
-  const index = req.body.index
+  const body = req.body
+  if (!body) {
+    return res.status(400).json({
+      errorMessage: 'Improperly formatted request',
+    })
+  }
+  const url = body.url
+  const index = body.index
   if (!url) {
     return res.status(400).json({
       errorMessage: 'Improperly formatted request',
