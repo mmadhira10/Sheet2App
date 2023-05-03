@@ -30,6 +30,7 @@ router.get(
   verifyUser,
   AppController.isGlobalDevCreator
 )
+router.get('/getMyApps/:email', verifyUser, AppController.getMyApps)
 router.get('/getRoleApps/:email', verifyUser, AppController.getRoleApps)
 router.get('/getCreatorApps/:email', verifyUser, AppController.getCreatorApps)
 router.get('/getDevApps/:email', verifyUser, AppController.getDevApps)

@@ -42,6 +42,7 @@ const appsList = {
   top: '35%',
   width: '80%',
   height: '50%',
+  overflow: "auto"
 }
 
 export default function AppsPage() {
@@ -60,83 +61,7 @@ export default function AppsPage() {
 
   const { auth } = useContext(AuthContext)
 
-  // async function getCreatorApps() {
-  //   try {
-  //     const response = await api.get('/getCreatorApps/' + auth.email)
-  //     setCreatorApps(response.data.apps);
-  //     setCreatorID(response.data.appsID);
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
 
-  //function to get all apps from database
-  async function getMyApps() {
-    let cApps;
-    let dApps;
-    let euApps;
-
-    try {
-      const response = await api.get('/getRoleApps/' + auth.email)
-      setEndUserApps(response.data.apps);
-      setEndUserID(response.data.appsID);
-      // console.log(response.data.apps);
-      // console.log(response.data.appsID);
-      euApps = response.data.apps;
-    } catch (error) {
-      console.log(error)
-    }
-
-    try {
-      const response = await api.get('/getDevApps/' + auth.email)
-      setDevApps(response.data.apps)
-      setDevID(response.data.appsID);
-      dApps = response.data.apps;
-      // console.log("My Dev Apps");
-      // console.log(response.data);
-    } catch (error) {
-      console.log(error)
-    }
-
-    try {
-      const response = await api.get('/getCreatorApps/' + auth.email)
-      setCreatorApps(response.data.apps);
-      setCreatorID(response.data.appsID);
-      // console.log("My Creator Apps");
-      // console.log(response.data);
-      cApps = response.data.apps;
-    } catch (error) {
-      console.log(error)
-    }
-    let allApps = cApps.concat(dApps, euApps);
-    // console.log("all apps:");
-    // console.log(allApps);
-    let myApps = [];
-    let myAppsID = [];
-
-    for(let i = 0; i < allApps.length; i++) {
-      let currApp = allApps[i];
-      if(!(myAppsID.includes(currApp._id))) {
-        myApps.push(currApp);
-        myAppsID.push(currApp._id);
-      }
-    }
-
-    // console.log("array of unique apps");
-    // console.log(myApps);
-    //console.log(myApps);
-    setApps(myApps);
-  }
-
-  // async function getDevApps() {
-  //   try {
-  //     const response = await api.get('/getDevApps/' + auth.email)
-  //     setDevApps(response.data.apps)
-  //     setDevID(response.data.appsID);
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
 
   async function getGlobalDev() {
     try {
@@ -148,6 +73,17 @@ export default function AppsPage() {
     }
   }
 
+  async function getMyApps() {
+    try {
+      const response = await api.get('/getMyApps/' + auth.email)
+      setApps(response.data.apps);
+      setCreatorID(response.data.cAppsID);
+      setDevID(response.data.dAppsID);
+      setEndUserID(response.data.euAppsID);
+    } catch (error) {
+      console.log(error)
+    }
+  }
   useEffect(() => {
     // console.log('getMyApps')
     getMyApps()
