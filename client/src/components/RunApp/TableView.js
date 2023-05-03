@@ -261,6 +261,7 @@ export default function TableView(props) {
         detailRecord={detailRecord}
         setDetailRecord={setDetailRecord}
         filter={detailFilter}
+        table={table}
       />
     )
   }
