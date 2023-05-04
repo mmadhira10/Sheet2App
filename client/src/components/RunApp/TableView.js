@@ -26,14 +26,17 @@ import api from '../../app-routes'
 export default function TableView(props) {
   const [colNames, setColNames] = useState([]) // column names displayed
   const [tableRows, setTableRows] = useState([]) // rows displayed
-  const [rows, setRows] = useState([]) // all the rows for the table
+  const [rows, setRows] = useState([]) // all the rows 
   const [allColNames, setAllColNames] = useState([]) // stores all column headers
   const [URLs, setURLs] = useState([]) // all the urls displayed
   // const { filter, setFilter } = setState([])
   const { view, table, detail } = props
   const { auth } = useContext(AuthContext)
   const [open, setOpen] = useState(false)
+
   const [openDetail, setOpenDetail] = useState(false) // opens the detail modal
+  const [detailIndex, setDetailIndex] = useState(-1); 
+  const [detailIndexMap, setDetailIndexMap] = useState([])
   const [detailFilter, setDetailFilter] = useState(false) // the edit filter
   const [detailRecord, setDetailRecord] = useState([])
 
@@ -46,9 +49,11 @@ export default function TableView(props) {
       // console.log(response.data);
       let indicesCol = []
       let tableCol = response.data.data[0]
-      let rowRes = response.data.data.toSpliced(0, 1) //get all rows except column names
-      rowRes = filterOptions(rowRes, tableCol)
-      setAllColNames(tableCol)
+      let allRows = response.data.data.toSpliced(0, 1) //get all rows except column names
+      let rowRes = filterOptions(allRows, tableCol);
+      indexToIndexMap(rowRes, allRows, tableCol);
+
+      setAllColNames(tableCol);
       setRows(rowRes)
       view.columns.forEach((name) => {
         indicesCol.push(response.data.data[0].indexOf(name))
@@ -69,6 +74,25 @@ export default function TableView(props) {
     } catch (error) {
       console.log(error)
     }
+  }
+
+  function indexToIndexMap(displayRows, allRows, allColumns)
+  {
+    let keyValues = [];
+    let tableKeyIndex = allColumns.indexOf(table.key);
+
+    for(let i = 0; i < allRows.length; i++ )
+    {
+      keyValues.push(allRows[i][tableKeyIndex]);
+    }
+
+    let indexToIndexPairs = []
+    for(let i = 0; i < displayRows.length; i++ )
+    {
+      let currIndex = keyValues.indexOf(displayRows[i][tableKeyIndex]);
+      indexToIndexPairs.push(currIndex);
+    }
+    setDetailIndexMap(indexToIndexPairs);
   }
 
   async function addRecordToSheet(row, table) {
@@ -125,8 +149,8 @@ export default function TableView(props) {
   }
 
   function filterOptions(r, c) {
-    let filter = view.filter
-    let userFilter = view.user_filter
+    let filter = view.filter;
+    let userFilter = view.user_filter;
     if (filter != '') {
       let newArr = []
       let filterIndex = c.indexOf(filter)
@@ -175,7 +199,8 @@ export default function TableView(props) {
   }
 
   function handleOpenDetailModal(key) {
-    setOpenDetail(true)
+    setOpenDetail(true);
+    setDetailIndex(detailIndexMap[key]);
 
     let detailRows = []
     for (let i = 0; i < allColNames.length; i++) {
@@ -215,7 +240,7 @@ export default function TableView(props) {
     setColNames(view.columns)
     getDataUrl()
     isURL()
-  }, [view])
+  }, [view, detailRecord])
 
   let del, delCol, add
 
@@ -257,6 +282,8 @@ export default function TableView(props) {
       <DetailView
         open={openDetail}
         setOpen={setOpenDetail}
+        detailIndex={detailIndex}
+        setDetailIndex={setDetailIndex}
         detail={detail}
         detailRecord={detailRecord}
         setDetailRecord={setDetailRecord}
@@ -265,6 +292,8 @@ export default function TableView(props) {
       />
     )
   }
+  
+  console.log(detailRecord + " " + open + " " + detailIndex);
 
   return (
     <div>

@@ -1,10 +1,10 @@
 const { authenticate } = require('@google-cloud/local-auth')
 const { google } = require('googleapis')
 
-const sheets = google.sheets({
-  version: 'v4',
-  auth: process.env.GOOGLE_API_KEY,
-})
+// const sheets = google.sheets({
+//   version: 'v4',
+//   auth: process.env.GOOGLE_API_KEY,
+// })
 
 async function authSheets() {
   //Function for authentication object
@@ -230,38 +230,38 @@ const editRecord = async (req, res) => {
   const index = body.index;
   const record = body.record;
 
-  if (!url || !record || !index) {
+  if (!url) {
     return res.status(400).json({
       errorMessage: 'Improperly formatted request',
     })
   }
 
-  spid = url.split('/')[5]
-  sid = url.split('/')[6].substring(9)
-
+  let spid = url.split('/')[5]
+  let sid = url.split('/')[6].substring(9)
   try {
     const { sheets } = await authSheets()
 
     const SPREADSHEET_ID = spid;
     const SHEET_ID = sid;
-    const result = await sheets.spreadsheets.values.batchUpdate({
-      SPREADSHEET_ID,
+    const result = await sheets.spreadsheets.batchUpdate({
+      spreadsheetId: SPREADSHEET_ID,
       resource: {
         requests: [
           {
             updateCells: {
+              start: {
+                sheetId: SHEET_ID,
+                rowIndex: index + 1,
+                columnIndex: 0
+              },
               rows: [
                 {
-                  values: [
-                    record
-                  ],
+                  values: record.map(value => ({
+                    userEnteredValue: { stringValue: value },
+                  })),
                 },
               ],
-              range: {
-                sheetId: SHEET_ID, // replace with your sheet ID
-                startRowIndex: index,
-                endRowIndex: index + 1,
-              },
+              fields: 'userEnteredValue',
             },
           },
         ],
@@ -273,6 +273,7 @@ const editRecord = async (req, res) => {
     })
   } catch (error)
   {
+    console.log(error)
     return res.status(400).json({
       errorMessage: error,
     })
