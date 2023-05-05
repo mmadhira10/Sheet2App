@@ -34,8 +34,8 @@ const appSet = {
 
 export default function DetailView(props) {
     const [ rows, setRows ] = useState([]);
-    const [ editCols, setEditCols] = useState([])
-    const { open, setOpen, detail, detailRecord, setDetailRecord, filter, table} = props;
+    // const [ editCols, setEditCols] = useState([])
+    const { open, setOpen, detail, detailRecord, setDetailRecord, filter, table, detailIndex, setDetailIndex} = props;
     const [ edit, setEdit ] = useState(false);
     const [usedCols, setUsedCols] = useState([]);
     const [allRecVals, setAllRecVals] = useState(detailRecord);
@@ -44,8 +44,9 @@ export default function DetailView(props) {
     
     function handleBack() {
         setOpen(false);
+        setDetailIndex(-1);
         setDetailRecord([]);
-        setEdit(false)
+        setEdit(false);
     }
 
     function handleFilter() {
@@ -64,9 +65,11 @@ export default function DetailView(props) {
     }
 
     function handleSubmit() {
-        setEdit(false);
-        setOpen(false);
         editRecord();
+        setTimeout(() => {
+
+        },)
+        handleBack();
     }
 
     function isValidURL(URL) {
@@ -128,9 +131,10 @@ export default function DetailView(props) {
     async function editRecord() {
         let newRec = []; //array of all column values-> 1 row
         let initCols = [];
+        // console.log(useCols);
         for(let i = 0; i < detailRecord.length; i++) {
             let index = usedCols.indexOf(i);
-            if(index > -1) {
+            if(index > -1 && detail.editable_columns.includes(detailRecord[i][0])) {
                 let item = document.getElementById("item-" + index);
                 let val = item.value;
                 if(val == "" && table.columns[i].initial_val != "") {
@@ -151,6 +155,7 @@ export default function DetailView(props) {
         if(isCorrect == false) {
             //display error message
             console.log(errMsg);
+            return;
         }
         else{
             for(let i = 0; i < initCols.length; i++) {
@@ -163,6 +168,16 @@ export default function DetailView(props) {
                 }
             }
         }
+
+        const response = await api.post("/editRecord/", { 
+            url: table.URL,
+            index: detailIndex,
+            record: newRec
+        });
+
+        setTimeout(() => {
+
+        }, 3000);
     }
 
     useEffect(() => {
@@ -188,9 +203,7 @@ export default function DetailView(props) {
                                     edit && detail.editable_columns.includes(cell[0]) ? (
                                         <TableCell sx={{align:"center"}}>
                                             <TextField  
-                                                label={cell[0]} 
-                                                defaultValue={cell[1]}
-                                                multiline 
+                                                defaultValue={cell[1]} 
                                                 variant="standard"
                                                 id = {"item-" + key}
                                             />

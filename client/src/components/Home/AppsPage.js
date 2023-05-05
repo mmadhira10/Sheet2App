@@ -105,7 +105,6 @@ export default function AppsPage() {
   }
 
   //map through array of apps and create an AppCard for each one
-
   return (
     <div>
       <AppSettings open={open} key={count} apps={apps} setApps={setApps} creatingApp={creatingApp} setCreatingApp={setCreatingApp}/>

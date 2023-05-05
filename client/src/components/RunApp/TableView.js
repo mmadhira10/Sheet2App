@@ -11,6 +11,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Modal from '@mui/material/Modal'
 import DetailView from './DetailView'
+import LinearProgress from '@mui/material/LinearProgress';
 
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded'
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded'
@@ -34,17 +35,22 @@ export default function TableView(props) {
     const { auth } = useContext(AuthContext);
     const [open, setOpen] = useState(false)
   const [openDetail, setOpenDetail] = useState(false) // opens the detail modal
+  const [detailIndex, setDetailIndex] = useState(-1); 
+  const [detailIndexMap, setDetailIndexMap] = useState([])
   const [detailFilter, setDetailFilter] = useState(false) // the edit filter
   const [detailRecord, setDetailRecord] = useState([])
 
   //represents the current detail view (could be the matched detail or the reference detail)
   const [detail, setDetail] = useState(matchedDetail);
+  const [detailTable, setDetailTable] = useState(table);
 
   const [refCols, setRefCols] = useState(new Map()) // stores reference columns
   //const refCols = new Map(); // stores reference columns
     const count = useRef(0);
 
 
+
+  const [isLoading, setIsLoading] = useState(false);
 
     //get data by rows
     //first row is column headings
@@ -118,8 +124,10 @@ export default function TableView(props) {
             let indicesCol = []
             // row of column names
             let tableCol = response.data.data[0];
-            let rowRes = response.data.data.toSpliced(0,1) //get all rows except column names
-            rowRes = filterOptions(rowRes, tableCol);
+            let allRows = response.data.data.toSpliced(0,1) //get all rows except column names
+            let rowRes = filterOptions(allRows, tableCol);
+            indexToIndexMap(rowRes, allRows, tableCol);
+
             setAllColNames(tableCol)
             setFilteredRowsAllColumns(rowRes)
             view.columns.forEach((name) => {
@@ -159,6 +167,26 @@ export default function TableView(props) {
     } catch (error) {
       console.log(error)
     }
+  }
+
+  function indexToIndexMap(displayRows, allRows, allColumns)
+  {
+    let keyValues = [];
+    let tableKeyIndex = allColumns.indexOf(table.key);
+
+    for(let i = 0; i < allRows.length; i++ )
+    {
+      keyValues.push(allRows[i][tableKeyIndex]);
+    }
+
+    let indexToIndexPairs = []
+    for(let i = 0; i < displayRows.length; i++ )
+    {
+        //need to add 1 to the index because the first row is the column names
+      let currIndex = keyValues.indexOf(displayRows[i][tableKeyIndex]) + 1;
+      indexToIndexPairs.push(currIndex);
+    }
+    setDetailIndexMap(indexToIndexPairs);
   }
 
   async function addRecordToSheet(row, table) {
@@ -216,8 +244,8 @@ export default function TableView(props) {
 
   // gets rid of records that don't match the filter (aren't true)
   function filterOptions(r, c) {
-    let filter = view.filter
-    let userFilter = view.user_filter
+    let filter = view.filter;
+    let userFilter = view.user_filter;
     if (filter != '') {
       let newArr = []
       let filterIndex = c.indexOf(filter)
@@ -291,6 +319,9 @@ export default function TableView(props) {
   function handleOpenDetailModal(row) {
     setOpenDetail(true)
     setDetail(matchedDetail);
+    setDetailIndex(detailIndexMap[row]);
+    setDetailTable(table);
+
 
     let detailRows = []
     for (let i = 0; i < allColNames.length; i++) {
@@ -304,9 +335,14 @@ export default function TableView(props) {
   function handleOpenReferenceDetailModal(val, row, refTable) {
     setDetail(refTable.refDetail);
     setOpenDetail(true)
+    
+
 
     let refColumns = refTable.refData[0];
     let refRowIndex = refTable.viewRowToRefRow[row];
+
+    setDetailIndex(refRowIndex);
+    setDetailTable(refTable.refTableModel)
 
     let detailRows = []
     for (let i = 0; i < refTable.refData[0].length; i++) {
@@ -340,14 +376,17 @@ export default function TableView(props) {
   }
 
   useEffect(() => {
-    console.log("count: " + count.current);
-    //get the view data
-    //getTables
-    // console.log(table.URL);
-    setColNames(view.columns)
-    getDataUrl()
-    isURL()
-  }, [view])
+    setColNames(view.columns);
+    if (!openDetail){
+      setIsLoading(true);
+      setTimeout(() => {
+        setIsLoading(false);
+        getDataUrl();
+        isURL();
+
+      }, 1000)
+    }
+  }, [view, openDetail])
 
   let del, delCol, add
 
@@ -389,11 +428,13 @@ export default function TableView(props) {
       <DetailView
         open={openDetail}
         setOpen={setOpenDetail}
+        detailIndex={detailIndex}
+        setDetailIndex={setDetailIndex}
         detail={detail}
         detailRecord={detailRecord}
         setDetailRecord={setDetailRecord}
         filter={detailFilter}
-        table={table}
+        table={detailTable}
       />
     )
   }
@@ -427,6 +468,13 @@ export default function TableView(props) {
 
   return (
     <div>
+      {
+        isLoading ? (
+          <Modal open={isLoading}>
+            <LinearProgress />
+          </Modal>
+        ) : null
+      }
       {det}
       <Box sx={{ paddingBottom: 5 }}>
         <Typography

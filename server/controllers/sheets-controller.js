@@ -1,10 +1,10 @@
 const { authenticate } = require('@google-cloud/local-auth')
 const { google } = require('googleapis')
 
-const sheets = google.sheets({
-  version: 'v4',
-  auth: process.env.GOOGLE_API_KEY,
-})
+// const sheets = google.sheets({
+//   version: 'v4',
+//   auth: process.env.GOOGLE_API_KEY,
+// })
 
 async function authSheets() {
   //Function for authentication object
@@ -218,6 +218,69 @@ const deleteRecord = async (req, res) => {
   }
 }
 
+const editRecord = async (req, res) => {
+  const body = req.body
+  if (!body) {
+    return res.status(400).json({
+      errorMessage: 'Improperly formatted request',
+    })
+  }
+
+  const url = body.url;
+  const index = body.index;
+  const record = body.record;
+
+  if (!url) {
+    return res.status(400).json({
+      errorMessage: 'Improperly formatted request',
+    })
+  }
+
+  let spid = url.split('/')[5]
+  let sid = url.split('/')[6].substring(9)
+  try {
+    const { sheets } = await authSheets()
+
+    const SPREADSHEET_ID = spid;
+    const SHEET_ID = sid;
+    const result = await sheets.spreadsheets.batchUpdate({
+      spreadsheetId: SPREADSHEET_ID,
+      resource: {
+        requests: [
+          {
+            updateCells: {
+              start: {
+                sheetId: SHEET_ID,
+                rowIndex: index,
+                columnIndex: 0
+              },
+              rows: [
+                {
+                  values: record.map(value => ({
+                    userEnteredValue: { stringValue: value },
+                  })),
+                },
+              ],
+              fields: 'userEnteredValue',
+            },
+          },
+        ],
+      },
+    })
+    return res.status(200).json({
+      success: true,
+      result: result,
+    })
+  } catch (error)
+  {
+    console.log(error)
+    return res.status(400).json({
+      errorMessage: error,
+    })
+  }
+
+}
+
 module.exports = {
   getDataFromURL,
   getColumnsFromURL,
@@ -225,4 +288,5 @@ module.exports = {
   getDataFromSheetID,
   addRecord,
   deleteRecord,
+  editRecord
 }

@@ -25,6 +25,7 @@ router.post(
 
 router.post('/addRecord', verifyUser, SheetsController.addRecord)
 router.post('/deleteRecord', verifyUser, SheetsController.deleteRecord)
+router.post('/editRecord', verifyUser, SheetsController.editRecord);
 
 //Get Routes
 router.get('/getApps', verifyUser, AppController.getApps)
