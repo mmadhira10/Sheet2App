@@ -296,6 +296,106 @@ export default function ViewSettings(props) {
           });
     };
 
+    let actions;
+    let viewFilter;
+
+    if (viewType == "Table")
+    {
+        actions = 
+        <>
+            <Box sx = {leftItem} gridColumn = "span 8">
+                    <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Allowed Actions: </Typography>
+                </Box>
+                <Box sx = {rightItem} gridColumn = "span 4">
+                    <Select MenuProps = {MenuProps} multiple onChange = {handleAllowDropDown} value = {allowAct} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}>
+                        <MenuItem value = {"Add"}>Add</MenuItem>
+                        <MenuItem value = {"Delete"}>Delete</MenuItem>
+                    </Select>
+                </Box>
+        </>
+
+        viewFilter =
+        <>
+            <Box sx = {leftItem} gridColumn = "span 8">
+                <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Filter: </Typography>
+            </Box>
+            <Box sx = {rightItem} gridColumn = "span 4">
+                <Select onChange={handleFilterDropDown} value={filter} fullWidth size="small" variant="outlined" sx={{ margin: "5px" }}>
+                {
+                    columnOpts.map((column, key) => (
+                        <MenuItem key={column.name} value={column.name}>{column.name}</MenuItem>
+                    ))
+                }
+                </Select>                             
+            </Box>
+            <Box sx = {leftItem} gridColumn = "span 8">
+                <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >User Filter: </Typography>
+            </Box>
+            <Box sx = {rightItem} gridColumn = "span 4">
+                <Select onChange={handleUserFilterDropDown} value={userFilter} fullWidth size="small" variant="outlined" sx={{ margin: "5px" }}
+                >
+                {
+                    columnOpts.map((column, key) => (
+                        <MenuItem key={column.name} value={column.name}>{column.name}</MenuItem>
+                    ))
+                }
+                </Select>                             
+            </Box>
+        </>
+    }
+    else if (viewType == "Detail")
+    {
+        actions = 
+        <>
+            <Box sx = {leftItem} gridColumn = "span 8">
+                    <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Allowed Actions: </Typography>
+                </Box>
+                <Box sx = {rightItem} gridColumn = "span 4">
+                    <Select MenuProps = {MenuProps} multiple onChange = {handleAllowDropDown} value = {allowAct} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}>
+                        <MenuItem value = {"Edit"}>Edit</MenuItem>
+                    </Select>
+                </Box>
+        </>
+
+        viewFilter = 
+        <>
+            <Box sx = {leftItem} gridColumn = "span 8">
+                <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Edit Filter: </Typography>
+            </Box>
+            <Box sx = {rightItem} gridColumn = "span 4">
+                <Select onChange={handleEditFilterDropDown} value={editFilter} fullWidth size="small" variant="outlined" sx={{ margin: "5px" }}
+                >
+                {
+                    columnOpts.map((column, key) => (
+                        <MenuItem key={column.name} value={column.name}>{column.name}</MenuItem>
+                    ))
+                }
+                </Select>                             
+            </Box>
+        </>
+    }
+
+    let editCols;
+
+    if (allowAct == "Edit")
+    {
+        editCols = 
+        <>
+            <Box sx = {leftItem} gridColumn = "span 8">
+                <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Editable Columns: </Typography>
+            </Box>
+            <Box sx = {rightItem} gridColumn = "span 4">
+                <Select onChange = {handleEditColDropDown} value = {editColumns} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}
+                    multiple>
+                    {
+                        columns.map((column, key) => (
+                            <MenuItem key = {column} value = {column}>{column}</MenuItem>
+                        ))
+                    }
+                </Select> 
+            </Box>
+        </>
+    }
       
     return(
         <Modal open = {open}>
@@ -349,29 +449,12 @@ export default function ViewSettings(props) {
                             <MenuItem value = {"Detail"}>Detail</MenuItem>
                         </Select> 
                     </Box> 
-                    <Box sx = {leftItem} gridColumn = "span 8">
-                        <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Allowed Actions: </Typography>
-                    </Box>
-                    <Box sx = {rightItem} gridColumn = "span 4">
-                        <Select MenuProps = {MenuProps} multiple onChange = {handleAllowDropDown} value = {allowAct} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}>
-                            <MenuItem value = {"Add"}>Add</MenuItem>
-                            <MenuItem value = {"Edit"}>Edit</MenuItem>
-                            <MenuItem value = {"Delete"}>Delete</MenuItem>
-                        </Select>
-                    </Box>
-                    <Box sx = {leftItem} gridColumn = "span 8">
-                        <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Editable Columns: </Typography>
-                    </Box>
-                    <Box sx = {rightItem} gridColumn = "span 4">
-                        <Select onChange = {handleEditColDropDown} value = {editColumns} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}
-                            multiple>
-                            {
-                                columns.map((column, key) => (
-                                    <MenuItem key = {column} value = {column}>{column}</MenuItem>
-                                ))
-                            }
-                        </Select> 
-                    </Box>
+                    {
+                        actions
+                    }
+                    {
+                        editCols
+                    }
                 </Box>
                 <Grid container rowSpacing = {2} columnSpacing = {2}>
                     <Grid item xs = {6} sx = {{display: "flex", justifyContent: "center"}}>
@@ -390,41 +473,9 @@ export default function ViewSettings(props) {
                 <Modal open = {openFilter}>
                     <Box sx = {filterSet}>
                         <Box sx = {{display: "grid", gridTemplateRows: "repeat(3, 1fr)", gridTemplateColumns: "repeat(12, 1fr)", rowGap: 2, p: "10px"}}>
-                            <Box sx = {leftItem} gridColumn = "span 8">
-                                <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Filter: </Typography>
-                            </Box>
-                            <Box sx = {rightItem} gridColumn = "span 4">
-                                <Select onChange={handleFilterDropDown} value={filter} fullWidth size="small" variant="outlined" sx={{ margin: "5px" }}>
-                                    {
-                                        columnOpts.map((column, key) => (
-                                            <MenuItem key={column.name} value={column.name}>{column.name}</MenuItem>
-                                        ))
-                                    }
-                                </Select>                             </Box>
-                            <Box sx = {leftItem} gridColumn = "span 8">
-                                <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Edit Filter: </Typography>
-                            </Box>
-                            <Box sx = {rightItem} gridColumn = "span 4">
-                                <Select onChange={handleEditFilterDropDown} value={editFilter} fullWidth size="small" variant="outlined" sx={{ margin: "5px" }}
-                                    >
-                                    {
-                                        columnOpts.map((column, key) => (
-                                            <MenuItem key={column.name} value={column.name}>{column.name}</MenuItem>
-                                        ))
-                                    }
-                                </Select>                             </Box>
-                            <Box sx = {leftItem} gridColumn = "span 8">
-                                <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >User Filter: </Typography>
-                            </Box>
-                            <Box sx = {rightItem} gridColumn = "span 4">
-                                <Select onChange={handleUserFilterDropDown} value={userFilter} fullWidth size="small" variant="outlined" sx={{ margin: "5px" }}
-                                    >
-                                    {
-                                        columnOpts.map((column, key) => (
-                                            <MenuItem key={column.name} value={column.name}>{column.name}</MenuItem>
-                                        ))
-                                    }
-                                </Select>                             </Box>
+                            {
+                                viewFilter
+                            }
                         </Box>
                         <Grid container rowSpacing = {2} columnSpacing = {2} sx = {{paddingTop: "20px"}}>
                             <Grid item xs = {3}></Grid>

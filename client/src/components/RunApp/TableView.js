@@ -1,54 +1,86 @@
-import React, { useEffect, useState, useContext } from 'react'
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import React, { useEffect, useState, useContext, useRef } from 'react'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import Paper from '@mui/material/Paper'
+import Button from '@mui/material/Button'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import Modal from '@mui/material/Modal'
+import DetailView from './DetailView'
 
-import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
-import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded'
+import CreateRoundedIcon from '@mui/icons-material/CreateRounded'
 
-import { GlobalStoreContext } from "../../store";
-import AuthContext from "../../auth";
+import { GlobalStoreContext } from '../../store'
+import AuthContext from '../../auth'
+import api from '../../app-routes'
 
-import api from "../../app-routes";
-
-const columns = ["First Name", "Last Name", "ID", "HW1", "HW2"];
-const rows = [["Sameer", "Khan", "1", "90", "95"], ["Moh", "How", "2", "100", "99"], ["Sid", "Sham", "3", "95", "96"], 
-["Mihir", "Mad", "4", "100", "100"] ];
-
+// const columns = ["First Name", "Last Name", "ID", "HW1", "HW2"];
+// const rows = [["Sameer", "Khan", "1", "90", "95"], ["Moh", "How", "2", "100", "99"], ["Sid", "Sham", "3", "95", "96"],
+// ["Mihir", "Mad", "4", "100", "100"] ];
 
 export default function TableView(props) {
     const [ colNames, setColNames ] = useState([]);
-    const [ rows, setRows ] = useState([])
+    const [ filteredRowsAllColumns, setFilteredRowsAllColumns ] = useState([])
+    const [URLs, setURLs] = useState([])
     // const { filter, setFilter } = setState([])
-    const { view, table, allTables} = props;
+    const { view, table, allTables, matchedDetail, allDetail } = props;
     const { auth } = useContext(AuthContext);
+    const [open, setOpen] = useState(false)
+  const [allColNames, setAllColNames] = useState([]) // stores all column headers
+  const [tableRows, setTableRows] = useState([])
+  const [openDetail, setOpenDetail] = useState(false)
+  const [detailFilter, setDetailFilter] = useState(false)
+  const [detailRecord, setDetailRecord] = useState([])
 
-    let count = 0;
+  //represents the current detail view (could be the matched detail or the reference detail)
+  const [detail, setDetail] = useState(matchedDetail);
+
+  const [refCols, setRefCols] = useState(new Map()) // stores reference columns
+  //const refCols = new Map(); // stores reference columns
+    const count = useRef(0);
+
+
+
     //get data by rows
     //first row is column headings
     //can shift array to remove column headings array and then array.map each column
     async function getDataUrl() {
         try {
-            const refCols = new Map();
+            let newRefColMap = new Map();
+            //const refCols = new Map();
             console.log("getDataUrl");
+
+            //only add a refTable if there exists a detail view for that reference table
             let refTables = [];
             for (let i = 0;i<table.columns.length;i++) { 
                 //for each column check if it's a reference colum
                 let curCol = table.columns[i];
                 if (Object.hasOwn(curCol,"reference") && curCol.reference !== "") {
                     //if it is a reference column, find the table it references and push it to the refTables array
+
+
                     let curRefTable = {};
+
+                    //find the table that the reference column references
+
                     curRefTable.refTableModel = allTables.find(t => t._id === curCol.reference);
-                    refCols.set(i,curRefTable); //add the ref Column index and the ref Table object to the map
-                    refTables.push(curRefTable);
                     
+
+                    //find the detail view that matches the reference table (same table id as ref table id)
+                    let refDetail = allDetail.find(d => d.table === curRefTable.refTableModel._id);
+
+                    if (refDetail) {
+                        //if there is a detail view that matches the reference table, add it to the ref table object
+                        curRefTable.refDetail = refDetail;
+                        newRefColMap.set(curCol.name,curRefTable); //add the ref Column index and the ref Table object to the map
+
+                        refTables.push(curRefTable);
+                    }
                 }
             }
             
@@ -73,6 +105,10 @@ export default function TableView(props) {
                 }
 
                 curRefTable.refKeyToRowMap = refKeyMap;
+
+                //find a detail view that matches the reference table (same table id as ref table id)
+                curRefTable.refDetail = allDetail.find(d => d.table === curRefTable.refTableModel._id);
+                curRefTable.viewRowToRefRow = [];
             }
 
             
@@ -80,9 +116,12 @@ export default function TableView(props) {
             const response = await api.post('/getDataFromURL', {url: table.URL});
             // console.log(response.data);
             let indicesCol = []
+            // row of column names
             let tableCol = response.data.data[0];
             let rowRes = response.data.data.toSpliced(0,1) //get all rows except column names
             rowRes = filterOptions(rowRes, tableCol);
+            setAllColNames(tableCol)
+            setFilteredRowsAllColumns(rowRes)
             view.columns.forEach((name) => {
                 //references
                 indicesCol.push(response.data.data[0].indexOf(name)); //get the indices of the columns that will be included
@@ -96,12 +135,14 @@ export default function TableView(props) {
                 //need to get the label index of the reference table
                 let val = indicesCol.map((i) => {
                     let valAtIndex = arr[i];
-                    if (refCols.has(i)) {
-                        let curRefTable = refCols.get(i);
+                    let curColName = tableCol[i];
+                    if (newRefColMap.has(curColName)) {
+                        let curRefTable = newRefColMap.get(curColName);
                         let refKeyToRowMap = curRefTable.refKeyToRowMap;
                         let labelIndex = curRefTable.labelIndex;
-                        let row = refKeyToRowMap.get(valAtIndex);
-                        valAtIndex = curRefTable.refData[row][labelIndex];
+                        let refRow = refKeyToRowMap.get(valAtIndex);
+                        valAtIndex = curRefTable.refData[refRow][labelIndex];
+                        curRefTable.viewRowToRefRow.push(refRow);
                     }
                     return valAtIndex;
                 }
@@ -109,128 +150,340 @@ export default function TableView(props) {
                 
                 viewRows.push(val);
             })
+            setRefCols(newRefColMap);
             //rowRes.shift();
             console.log(tableCol);
             // console.log(rowRes)
             //rowRes = filterOptions(rowRes, tableCol);
+            setTableRows(viewRows);
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
-            setRows(viewRows);
+  async function addRecordToSheet(row, table) {
+    let updatedRecordArr = updateAddRecordArray(row)
+    console.log(row, table)
+    let body = {
+      url: table.URL,
+      data: updatedRecordArr,
+    }
+    console.log(body)
+    try {
+      const response = await api.post('/addRecord/', body)
+      console.log(response)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  function updateAddRecordArray(row) {
+    let counter = 0
+    let updatedArray = []
+    for (let index = 0; index < allColNames.length; index++) {
+      const tableColName = allColNames[index]
+      let found = false
+      for (let j = 0; j < colNames.length; j++) {
+        const viewColName = colNames[j]
+        if (viewColName === tableColName) {
+          found = true
+          updatedArray.push(row[counter])
+          counter++
         }
-        catch(error)
-        {
-            console.log(error)
+      }
+      if (found === false) {
+        updatedArray.push(null)
+      }
+    }
+    console.log(updatedArray)
+    return updatedArray
+  }
+
+  async function deleteRecordFromSheet(index, table) {
+    let body = {
+      url: table.URL,
+      index: index,
+    }
+    try {
+      const response = await api.post('/deleteRecord', body)
+      console.log(response)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  // gets rid of records that don't match the filter (aren't true)
+  function filterOptions(r, c) {
+    let filter = view.filter
+    let userFilter = view.user_filter
+    if (filter != '') {
+      let newArr = []
+      let filterIndex = c.indexOf(filter)
+      console.log('filter index is: ' + filterIndex)
+      r.forEach(function (item) {
+        if (item[filterIndex].toUpperCase() == 'TRUE') {
+          newArr.push(item)
         }
+      })
+      r = newArr
     }
 
-    function filterOptions(rows, columns) {
-        let filter = view.filter;
-        let userFilter = view.user_filter;
-        if (filter != "")
-        {
-            let newArr = []
-            let filterIndex = columns.indexOf(filter);
-            console.log("filter index is: " + filterIndex);
-            rows.forEach(function(row) {
-                if (row[filterIndex].toUpperCase() == "TRUE")
-                {
-                    newArr.push(row);
-                }
-            })
-            rows = newArr;
+    if (userFilter != '') {
+      let newArr = []
+      let filterIndex = c.indexOf(userFilter)
+      r.forEach(function (item) {
+        if (item[filterIndex] == auth.email) {
+          newArr.push(item)
         }
-
-        if (userFilter != "")
-        {
-            let newArr = []
-            let filterIndex = columns.indexOf(userFilter);
-            rows.forEach(function(row) {
-                if (row[filterIndex] == auth.email)
-                {
-                    newArr.push(row);
-                }
-            })
-            rows = newArr;
-        }
-
-        return rows;
+      })
+      r = newArr
     }
 
-    useEffect(() => {
-        console.log(count);
-        count++;
-        //get the view data
-        //getTables
-        // console.log(table.URL);
-        setColNames(view.columns);
-        getDataUrl();
+
+    return r
+  }
 
 
+  // checks if the row is editable based on the edit filter value
+  function filterEditCols(rowIndex) {
+    if (detail.edit_filter == '') {
+      setDetailFilter(true)
+    } else {
+      let index = 0
 
-    }, [view]);
+      //find the index of the edit filter column
+      while (
+        index < allColNames.length &&
+        detail.edit_filter != allColNames[index]
+      ) {
+        index++
+      }
 
-
-    let del, delCol, add;
-    
-    if (view.allowed_actions.includes("Add"))
-    {
-        add =
-        <Box sx={{paddingTop: 5}} align="center">
-            <Button variant = "contained" sx={{ width: '75%'}}>Add Record</Button>
-        </Box>
+      if (filteredRowsAllColumns[rowIndex][index].toLowerCase() == 'false') {
+        setDetailFilter(false)
+      } else {
+        setDetailFilter(true)
+      }
     }
+  }
 
-    if (view.allowed_actions.includes("Delete"))
-    {
-        del = 
-        <TableCell sx = {{width: "50px"}} align = "center">
-            <Button variant = "contained"><DeleteRoundedIcon/></Button>
-        </TableCell>
-        delCol = <TableCell></TableCell>
-    }
+  function filterReferenceEditCols(rowIndex,refTable, refDetail) {
+    if (refDetail.edit_filter == '') {
+        setDetailFilter(true)
+      } else {
+        
 
-    // console.log(view);
-    return(
-        <div>
-            <Box sx={{paddingBottom: 5}}>
-                <Typography sx = {{borderBottom: "2px solid black", width: "100%"}} variant = "h2" align="center">{view.name}</Typography>
-            </Box>
-        <TableContainer sx = {{maxWidth: "100%"}} component={Paper}>
-          <Table sx={{ }} aria-label='simple table'>
-            <TableHead>
-              <TableRow>
-                {colNames.map((column, key) => (
-                    <TableCell key = {column} align = "center" key={column} style={{fontWeight: 'bold'}}>{column}</TableCell>
-                ))}
-                {
-                    delCol
-                }
-                <TableCell></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-                {rows.map((row, key) => (
-                    <TableRow >
-                        {row.map((value, key) => (
-                            <TableCell align = "center">{value}</TableCell>
-                        ))}
-                        {
-                            del
-                        }
-                        <TableCell sx = {{width: "150px"}} align = "center">
-                            <Button variant = "contained">Detail View</Button>
-                        </TableCell>
-                    </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        {
-            add
+        //find the index of the edit filter column in the refdata
+        
+        let editFilterIndex = refTable.refData[0].indexOf(refDetail.edit_filter)
+  
+        if (refTable.refData[rowIndex][editFilterIndex].toLowerCase() == 'false') {
+          setDetailFilter(false)
+        } else {
+          setDetailFilter(true)
         }
-      </div>    
+      }
+  }
+  
+
+  function handleOpenDetailModal(row) {
+    setOpenDetail(true)
+    setDetail(matchedDetail);
+
+    let detailRows = []
+    for (let i = 0; i < allColNames.length; i++) {
+      detailRows.push([allColNames[i], filteredRowsAllColumns[row][i]])
+    }
+    setDetailRecord(detailRows)
+
+    filterEditCols(row)
+  }
+
+  function handleOpenReferenceDetailModal(val, row, refTable) {
+    setDetail(refTable.refDetail);
+    setOpenDetail(true)
+
+    let refColumns = refTable.refData[0];
+    let refRowIndex = refTable.viewRowToRefRow[row];
+
+    let detailRows = []
+    for (let i = 0; i < refTable.refData[0].length; i++) {
+      detailRows.push([refColumns[i], refTable.refData[refRowIndex][i]])
+    }
+    setDetailRecord(detailRows)
+
+    filterReferenceEditCols(refRowIndex,refTable, refTable.refDetail)
+  }
+
+  function isURL() {
+    let urlCol = []
+    for (let i = 0; i < table.columns.length; i++) {
+      if (table.columns[i].type == 'URL') {
+        urlCol.push(table.columns[i].name)
+        console.log('URL column found')
+        console.log(table.columns[i].name)
+      }
+    }
+    console.log(urlCol.length)
+    let newURL = []
+    if (urlCol.length > 0) {
+      for (let i = 0; i < view.columns.length; i++) {
+        if (urlCol.includes(view.columns[i])) {
+          newURL.push(i)
+          //console.log("URL column found");
+        }
+      }
+    }
+    setURLs(newURL)
+  }
+
+  useEffect(() => {
+    console.log("count: " + count.current);
+    //get the view data
+    //getTables
+    // console.log(table.URL);
+    setColNames(view.columns)
+    getDataUrl()
+    isURL()
+  }, [view])
+
+  let del, delCol, add
+
+  if (view.allowed_actions.includes('Add')) {
+    add = (
+      <Box sx={{ paddingTop: 5 }} align='center'>
+        <Button
+          variant='contained'
+          sx={{ width: '75%' }}
+          onClick={() => {
+            setOpen(true)
+          }}
+        >
+          Add Record
+        </Button>
+      </Box>
     )
+  }
 
+  if (view.allowed_actions.includes('Delete')) {
+    del = (
+      <TableCell sx={{ width: '50px' }} align='center'>
+        <Button variant='contained'>
+          <DeleteRoundedIcon />
+        </Button>
+      </TableCell>
+    )
+    delCol = (
+      <TableCell align='center' style={{ fontWeight: 'bold' }}>
+        Delete
+      </TableCell>
+    )
+  }
 
-    
+  let det
 
+  if (detail) {
+    det = (
+      <DetailView
+        open={openDetail}
+        setOpen={setOpenDetail}
+        detail={detail}
+        detailRecord={detailRecord}
+        setDetailRecord={setDetailRecord}
+        filter={detailFilter}
+      />
+    )
+  }
+
+  let cellVal;
+
+  function tableCellValue(val,col, row) {
+    let curColName = colNames[col];
+    if (refCols.has(curColName)) {
+        let refTable = refCols.get(curColName);
+        let linkStyle = {
+            backgroundColor : "transparent",
+            border: "none",
+            cursor: "pointer",
+            textDecoration: "underline", 
+            display: "inline",
+            margin: 0,
+            padding: 0,
+          }
+        return <button type = "button" style={linkStyle} onClick={() => handleOpenReferenceDetailModal(val,row,refTable)}>{val}</button>
+    }
+    else if (URLs.includes(col)) {
+        return <a href={val} target='_blank'>
+        {val}
+      </a>
+    }
+    else {
+        return val
+    }
+  }
+
+  return (
+    <div>
+      {det}
+      <Box sx={{ paddingBottom: 5 }}>
+        <Typography
+          sx={{ borderBottom: '2px solid black', width: '100%' }}
+          variant='h2'
+          align='center'
+        >
+          {view.name}
+        </Typography>
+      </Box>
+      <TableContainer sx={{ maxWidth: '100%' }} component={Paper}>
+        <Table sx={{}} aria-label='simple table'>
+          <TableHead>
+            <TableRow>
+              {colNames.map((column, key) => (
+                <TableCell
+                  key={column}
+                  align='center'
+                  style={{ fontWeight: 'bold' }}
+                >
+                  {column}
+                </TableCell>
+              ))}
+              {delCol}
+              <TableCell align='center' style={{ fontWeight: 'bold' }}>
+                Detail Views
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {tableRows.map((row, rowIndex) => (
+              <TableRow key = {rowIndex}>
+                {row.map((value, col) => (
+                  <TableCell align='center' key = {col}>
+                    {/* {URLs.includes(key) ? (
+                      <a href={value} target='_blank'>
+                        {value}
+                      </a>
+                    ) : (
+                      value
+                    )} */}
+                    {tableCellValue(value,col, rowIndex)}
+                  </TableCell>
+                ))}
+                {del}
+                <TableCell sx={{ width: '150px' }} align='center'>
+                  <Button
+                    onClick={() => handleOpenDetailModal(rowIndex)}
+                    variant='contained'
+                    disabled={!matchedDetail}
+                  >
+                    Detail View
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      {add}
+    </div>
+  )
 }

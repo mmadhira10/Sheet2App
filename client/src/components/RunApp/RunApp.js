@@ -25,6 +25,7 @@ const titleStyle = {
 export default function RunApp() {
     const { currentApp, setCurrentApp } = useContext(GlobalStoreContext);
     const [ views, setViews ] = useState([]);
+    const [ detailViews, setDetailViews ] = useState([]);
     const [ tables, setTables ] = useState([]);
     const [ currView, setCurrView ] = useState(null);
     const [ index, setIndex ] = useState(-1);
@@ -50,22 +51,31 @@ export default function RunApp() {
     }
 
     async function getViews() {
-        
         try {
             const response = await api.get("/getViews/" + currentApp._id);
             let v = response.data.views; 
             try{
                 const roles = await getRoles();
                 let role_views = [];
+                let detail_views = [];
                 for( let i = 0; i < v.length; i ++)
                 {
                     let inBothLists = v[i].roles.filter(element => roles.includes(element));
                     if (inBothLists.length != 0)
                     {
-                        role_views.push(v[i]);
+                        if (v[i].view_type == "Table")
+                        {
+                            role_views.push(v[i]);
+                        }
+
+                        if (v[i].view_type == "Detail")
+                        {
+                            detail_views.push(v[i]);
+                        }
                     }
                 }
                 setViews(role_views);
+                setDetailViews(detail_views);
             }
             catch(error)
             {
@@ -93,9 +103,9 @@ export default function RunApp() {
         align="center" 
         variant="h1" 
         sx={{fontWeight: 'bold', fontStyle:'italic'}}
-        >Welcome to {currentApp.name}  {auth.name}!</Typography>
+        >Welcome to {currentApp.name} {auth.name}!</Typography>
 
-    if ( index > -1 ){
+    if ( index > -1 ) {
         let currentView = views[index];
         let tableIndex = 0;
         for (let i = 0; i < tables.length; i ++)
@@ -104,8 +114,18 @@ export default function RunApp() {
                 tableIndex = i;
             }
         }
+        let i = 0;
+        while (i < detailViews.length && detailViews[i].table != tables[tableIndex]._id)
+        {
+            i++;
+        }
+
+
+        //if there isn't a matching detail view, it will be undefined
+        let matchedDetail = detailViews.find(dView => dView.table == tables[tableIndex]._id)
+
         // console.log(currentView);
-        display = <TableView view={currentView} table={tables[tableIndex]} allTables = {tables} />
+        display = <TableView view={currentView} table={tables[tableIndex]} matchedDetail={matchedDetail} allTables = {tables} allDetail = {detailViews} />
     }
 
     return(
@@ -123,6 +143,7 @@ export default function RunApp() {
                                 sx={{marginLeft: "5px", marginRight: "5px"}} 
                                 variant="outlined"
                                 onClick={() => setIndex(index)}
+                                key = {index}
                             >{view.name}</Button>
                         ))
                     }
