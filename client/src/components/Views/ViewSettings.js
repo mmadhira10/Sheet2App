@@ -22,7 +22,7 @@ export default function ViewSettings(props) {
     const [openRoles, setOpenRoles] = useState(false);
     const [viewName, setName] = useState(settings.name);
     const [tableOpts, setTableOpts] = useState([]);
-    const [table, setTable] = useState(settings.name); //this is the table name
+    const [table, setTable] = useState(""); //this is the table name
 
 
     useEffect(() => {
@@ -321,6 +321,7 @@ export default function ViewSettings(props) {
             </Box>
             <Box sx = {rightItem} gridColumn = "span 4">
                 <Select onChange={handleFilterDropDown} value={filter} fullWidth size="small" variant="outlined" sx={{ margin: "5px" }}>
+                    <MenuItem value = {""}>None</MenuItem>
                 {
                     columnOpts.map((column, key) => (
                         <MenuItem key={column.name} value={column.name}>{column.name}</MenuItem>
@@ -334,6 +335,7 @@ export default function ViewSettings(props) {
             <Box sx = {rightItem} gridColumn = "span 4">
                 <Select onChange={handleUserFilterDropDown} value={userFilter} fullWidth size="small" variant="outlined" sx={{ margin: "5px" }}
                 >
+                    <MenuItem value = {""}>None</MenuItem>
                 {
                     columnOpts.map((column, key) => (
                         <MenuItem key={column.name} value={column.name}>{column.name}</MenuItem>
@@ -365,6 +367,7 @@ export default function ViewSettings(props) {
             <Box sx = {rightItem} gridColumn = "span 4">
                 <Select onChange={handleEditFilterDropDown} value={editFilter} fullWidth size="small" variant="outlined" sx={{ margin: "5px" }}
                 >
+                    <MenuItem value = {""}>None</MenuItem>
                 {
                     columnOpts.map((column, key) => (
                         <MenuItem key={column.name} value={column.name}>{column.name}</MenuItem>

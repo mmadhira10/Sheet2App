@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState, useContext, Fragment } from 'react'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -10,6 +10,8 @@ import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Modal from '@mui/material/Modal'
+import Grid from '@mui/material/Grid'
+import TextField from '@mui/material/TextField'
 import DetailView from './DetailView'
 
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded'
@@ -23,12 +25,23 @@ import api from '../../app-routes'
 // const rows = [["Sameer", "Khan", "1", "90", "95"], ["Moh", "How", "2", "100", "99"], ["Sid", "Sham", "3", "95", "96"],
 // ["Mihir", "Mad", "4", "100", "100"] ];
 
+const addSet = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '500px',
+  height: '300px',
+  bgcolor: 'white',
+  border: '2px solid #000'
+}
+
 export default function TableView(props) {
   const [colNames, setColNames] = useState([]) // column names displayed
   const [tableRows, setTableRows] = useState([]) // rows displayed
   const [rows, setRows] = useState([]) // all the rows for the table
   const [allColNames, setAllColNames] = useState([]) // stores all column headers
-  const [URLs, setURLs] = useState([]) // all the urls displayed
+  const [URLs, setURLs] = useState([]) // all the indices of url cols displayed
   // const { filter, setFilter } = setState([])
   const { view, table, detail } = props
   const { auth } = useContext(AuthContext)
@@ -36,6 +49,7 @@ export default function TableView(props) {
   const [openDetail, setOpenDetail] = useState(false) // opens the detail modal
   const [detailFilter, setDetailFilter] = useState(false) // the edit filter
   const [detailRecord, setDetailRecord] = useState([])
+  const [editIndices, setEditIndices] = useState([]);
 
   //get data by rows
   //first row is column headings
@@ -186,15 +200,25 @@ export default function TableView(props) {
     filterEditCols(key)
   }
 
-  function isURL() {
+  function isURLorEditable() {
     let urlCol = []
+    let newEditIndices = []; //the indices of the columns that are editable
     for (let i = 0; i < table.columns.length; i++) {
       if (table.columns[i].type == 'URL') {
         urlCol.push(table.columns[i].name)
         console.log('URL column found')
         console.log(table.columns[i].name)
       }
+
+      //find which columns are editable for the detail view of this table
+      if(detail) {
+        if(detail.editable_columns.includes(table.columns[i].name)) {
+          newEditIndices.push(i);
+        }
+      }
     }
+    console.log(newEditIndices);
+    setEditIndices(newEditIndices);
     console.log(urlCol.length)
     let newURL = []
     if (urlCol.length > 0) {
@@ -208,16 +232,49 @@ export default function TableView(props) {
     setURLs(newURL)
   }
 
+  function closeAddModal() {
+    setOpen(false);
+  }
+
+  async function addRecord() {
+    let newRec = [];
+    for(let i = 0; i < table.columns.length; i++) {
+      if(editIndices.includes(i)) {
+        //user can enter a value for this column
+        let addItem = document.getElementById("add-item-" + i);
+        let val = addItem.value;
+        newRec.push(val);
+      }
+      else {
+        //use initial value or leave blank
+        let init_val = table.columns[i].initial_val;
+        if(init_val != "") {
+          if(init_val == "=ADDED_BY()") {
+            newRec.push(auth.email);
+          }
+          else {
+            newRec.push(init_val);
+          }
+        }
+        else {
+          newRec.push("");
+        }
+      }
+    }
+
+    //do type correctness
+  }
+
   useEffect(() => {
     //get the view data
     //getTables
     // console.log(table.URL);
     setColNames(view.columns)
     getDataUrl()
-    isURL()
+    isURLorEditable()
   }, [view])
 
-  let del, delCol, add
+  let del, delCol, add, addModal;
 
   if (view.allowed_actions.includes('Add')) {
     add = (
@@ -233,6 +290,54 @@ export default function TableView(props) {
         </Button>
       </Box>
     )
+    if(editIndices.length > 0) {
+      addModal = (
+        <Modal open = {open}>
+          <Box sx = {addSet}>
+            <Box overflow="auto" height="200px" borderBottom="1px solid black" paddingBottom="5%">
+              <Grid container rowGap = {2} overflow = "auto" alignItems="center" marginTop="5%">
+                {editIndices.map((colInd) => (
+                  <Fragment key = {table.columns[colInd].name}>
+                    <Grid item xs = {6} align = "center">
+                      {table.columns[colInd].name}
+                    </Grid>
+                    <Grid item xs = {6}>
+                        <TextField id = {"add-item-" + colInd} align = "center"></TextField>
+                    </Grid>
+                  </Fragment>
+                ))}
+              </Grid>
+            </Box>
+              <Grid container marginTop="5%">
+                <Grid item xs={6} align="center">
+                  <Button variant="contained" color="error" onClick={closeAddModal} style={{maxWidth: '300px', maxHeight: '200px', minWidth: '200px', minHeight: '30px'}} >Back</Button>
+                </Grid>
+                <Grid item xs={6} align="center">
+                  <Button variant="contained" style={{maxWidth: '300px', maxHeight: '200px', minWidth: '200px', minHeight: '30px'}} >Add Record</Button>
+                </Grid> 
+              </Grid>
+          </Box>
+        </Modal>
+      )
+    }
+    // addModal = (
+    //   <Modal open = {open}>
+    //     <Box sx = {addSet}>
+    //       <Grid container>
+    //         {editIndices.map((colInd) => (
+    //           <Fragment key = {table.column[colInd].name}>
+    //             <Grid item xs = {6}>
+    //               {table.column[colInd].name}
+    //             </Grid>
+    //             <Grid item xs = {6}>
+    //                 <TextField id = {"add-item-" + colInd}></TextField>
+    //             </Grid>
+    //           </Fragment>
+    //         ))}
+    //       </Grid>
+    //     </Box>
+    //   </Modal>
+    // )
   }
 
   if (view.allowed_actions.includes('Delete')) {
@@ -269,6 +374,7 @@ export default function TableView(props) {
   return (
     <div>
       {det}
+      {addModal}
       <Box sx={{ paddingBottom: 5 }}>
         <Typography
           sx={{ borderBottom: '2px solid black', width: '100%' }}

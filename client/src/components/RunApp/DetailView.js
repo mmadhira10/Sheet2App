@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody'
 import TableRow from '@mui/material/TableRow';
 import EditIcon from '@mui/icons-material/EditRounded';
 import CheckIcon from '@mui/icons-material/CheckRounded';
@@ -130,7 +131,7 @@ export default function DetailView(props) {
         let initCols = [];
         for(let i = 0; i < detailRecord.length; i++) {
             let index = usedCols.indexOf(i);
-            if(index > -1) {
+            if(index > -1 && detail.editable_columns.includes(detailRecord[i][0])) {
                 let item = document.getElementById("item-" + index);
                 let val = item.value;
                 if(val == "" && table.columns[i].initial_val != "") {
@@ -179,6 +180,7 @@ export default function DetailView(props) {
                 </Box>
                 <TableContainer sx = {{maxWidth: "100%", maxHeight: "80.5%", overflowY: 'scroll', overflow: "auto"}} component={Paper}>
                 <Table>
+                    <TableBody>
                     {
                         rows.map((cell, key) => (
                             <TableRow>
@@ -208,6 +210,7 @@ export default function DetailView(props) {
                             </TableRow>
                         ))
                     }
+                    </TableBody>
                 </Table>
                 </TableContainer>
                 {
