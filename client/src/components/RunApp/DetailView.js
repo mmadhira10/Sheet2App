@@ -34,6 +34,7 @@ const appSet = {
 
 export default function DetailView(props) {
     const [ rows, setRows ] = useState([]);
+
     // const [ editCols, setEditCols] = useState([])
     const { open, setOpen, detail, detailRecord, setDetailRecord, filter, table, detailIndex, setDetailIndex} = props;
     const [ edit, setEdit ] = useState(false);
@@ -66,9 +67,6 @@ export default function DetailView(props) {
 
     function handleSubmit() {
         editRecord();
-        setTimeout(() => {
-
-        },)
         handleBack();
     }
 
@@ -175,9 +173,6 @@ export default function DetailView(props) {
             record: newRec
         });
 
-        setTimeout(() => {
-
-        }, 3000);
     }
 
     useEffect(() => {
@@ -197,6 +192,7 @@ export default function DetailView(props) {
                     {
                         rows.map((cell, key) => (
                             <TableRow>
+
                                 {/* {
                                     filter && editCondition && detail.editable_columns.includes(cell[0]) ? (
                                         <TableCell sx={{textalign:"center"}}><Button variant="contained" ><EditIcon/></Button></TableCell>
@@ -206,6 +202,7 @@ export default function DetailView(props) {
                                 } */}
                                 <TableCell variant="head" sx={{fontWeight:"bold", align: "center"}}>{cell[0]}</TableCell>
                                 {
+
                                     edit && detail.editable_columns.includes(cell[0]) ? (
                                         <TableCell sx={{align:"center"}}>
                                             <TextField  

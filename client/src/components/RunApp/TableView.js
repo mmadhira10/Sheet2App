@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography'
 import Modal from '@mui/material/Modal'
 import DetailView from './DetailView'
 import LinearProgress from '@mui/material/LinearProgress';
+import DeleteModal from './DeleteModal';
 
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded'
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded'
@@ -33,13 +34,17 @@ export default function TableView(props) {
   // const { filter, setFilter } = setState([])
   const { view, table, detail } = props
   const { auth } = useContext(AuthContext)
-  const [open, setOpen] = useState(false)
+
+  const [open, setOpen] = useState(false);
 
   const [openDetail, setOpenDetail] = useState(false) // opens the detail modal
   const [detailIndex, setDetailIndex] = useState(-1); 
   const [detailIndexMap, setDetailIndexMap] = useState([])
   const [detailFilter, setDetailFilter] = useState(false) // the edit filter
-  const [detailRecord, setDetailRecord] = useState([])
+  const [detailRecord, setDetailRecord] = useState([]);
+
+  const [openDelete, setOpenDelete] = useState(false); // opens the detail modal
+  const [deleteIndex, setDeleteIndex] = useState(-1);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -77,6 +82,11 @@ export default function TableView(props) {
     } catch (error) {
       console.log(error)
     }
+  }
+
+  function handleDelete(key) {
+    setOpenDelete(true);
+    setDeleteIndex(detailIndexMap[key] + 1);
   }
 
   function indexToIndexMap(displayRows, allRows, allColumns)
@@ -137,20 +147,6 @@ export default function TableView(props) {
     return updatedArray
   }
 
-  async function deleteRecordFromSheet(index, table) {
-    let body = {
-      url: table.URL,
-      index: index,
-    }
-    try {
-      const response = await api.post('/deleteRecord', body)
-      console.log(response)
-      getDataUrl()
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
   function filterOptions(r, c) {
     let filter = view.filter;
     let userFilter = view.user_filter;
@@ -205,13 +201,13 @@ export default function TableView(props) {
     setOpenDetail(true);
     setDetailIndex(detailIndexMap[key]);
 
-    let detailRows = []
+    let detailRows = [];
     for (let i = 0; i < allColNames.length; i++) {
-      detailRows.push([allColNames[i], rows[key][i]])
+      detailRows.push([allColNames[i], rows[key][i]]);
     }
-    setDetailRecord(detailRows)
+    setDetailRecord(detailRows);
 
-    filterEditCols(key)
+    filterEditCols(key);
   }
 
   function isURL() {
@@ -238,7 +234,7 @@ export default function TableView(props) {
 
   useEffect(() => {
     setColNames(view.columns);
-    if (!openDetail){
+    if (!openDetail && !openDelete){
       setIsLoading(true);
       setTimeout(() => {
         setIsLoading(false);
@@ -246,9 +242,9 @@ export default function TableView(props) {
       }, 1000)
     }
     isURL();
-  }, [view, detailRecord])
+  }, [view, openDetail, openDelete]);
 
-  let del, delCol, add
+  let add
 
   if (view.allowed_actions.includes('Add')) {
     add = (
@@ -266,22 +262,22 @@ export default function TableView(props) {
     )
   }
 
-  if (view.allowed_actions.includes('Delete')) {
-    del = (
-      <TableCell sx={{ width: '50px' }} align='center'>
-        <Button variant='contained'>
-          <DeleteRoundedIcon />
-        </Button>
-      </TableCell>
-    )
-    delCol = (
-      <TableCell align='center' style={{ fontWeight: 'bold' }}>
-        Delete
-      </TableCell>
-    )
-  }
+  // if (view.allowed_actions.includes('Delete')) {
+  //   del = (
+  //     <TableCell sx={{ width: '50px' }} align='center'>
+  //       <Button variant='contained' onClick={}>
+  //         <DeleteRoundedIcon />
+  //       </Button>
+  //     </TableCell>
+  //   )
+  //   delCol = (
+  //     <TableCell align='center' style={{ fontWeight: 'bold' }}>
+  //       Delete
+  //     </TableCell>
+  //   )
+  // }
 
-  let det
+  let det;
 
   if (detail) {
     det = (
@@ -301,13 +297,10 @@ export default function TableView(props) {
 
   return (
     <div>
-      {
-        isLoading ? (
-          <Modal open={isLoading}>
-            <LinearProgress />
-          </Modal>
-        ) : null
-      }
+      <DeleteModal open={openDelete} setOpen={setOpenDelete} table={table} deleteIndex={deleteIndex} setDeleteIndex={setDeleteIndex}/>
+      <Modal open={isLoading}>
+        <LinearProgress />
+      </Modal>
       {det}
       <Box sx={{ paddingBottom: 5 }}>
         <Typography
@@ -331,7 +324,13 @@ export default function TableView(props) {
                   {column}
                 </TableCell>
               ))}
-              {delCol}
+              {
+                view.allowed_actions.includes('Delete') ? (
+                  <TableCell align='center' style={{ fontWeight: 'bold' }}>
+                    Delete
+                  </TableCell>
+                ) : null
+              }
               <TableCell align='center' style={{ fontWeight: 'bold' }}>
                 Detail Views
               </TableCell>
@@ -351,7 +350,15 @@ export default function TableView(props) {
                     )}
                   </TableCell>
                 ))}
-                {del}
+                {
+                  view.allowed_actions.includes('Delete') ? (
+                    <TableCell sx={{ width: '50px' }} align='center'>
+                      <Button variant='contained' onClick={() => handleDelete(key)}>
+                        <DeleteRoundedIcon />
+                      </Button>
+                    </TableCell>
+                  ) : null
+                }
                 <TableCell sx={{ width: '150px' }} align='center'>
                   <Button
                     onClick={() => handleOpenDetailModal(key)}
