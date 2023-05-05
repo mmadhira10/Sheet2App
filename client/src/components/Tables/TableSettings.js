@@ -119,13 +119,17 @@ export default function TableSettings(props) {
             //console.log(labelText == null);
             // console.log(labelText.value);
 
+            //replace &quot; with js escaped double quote
+            let initVal = initValText.value.replace(/&quot;/g, '\\"');
 
             let columnObj = {
                 name: name,
-                initial_val: initValText.value,
+                initial_val: initVal,
                 label: labelText.value,
                 type: typeText.value
             };
+
+
 
             if (refText.value !== "") {
                 columnObj.reference = refText.value;    

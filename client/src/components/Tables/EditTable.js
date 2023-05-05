@@ -122,10 +122,15 @@ export default function EditTable(props) {
             //console.log(labelText == null);
             //console.log(labelText.value);
             let columnObj;
+
+            //replace &quot; with js escaped double quote
+            let initVal = initValText.value.replace(/&quot;/g, '\\"');
+            console.log("initVal: " + initVal);
+
             if(refText.value == "") {
                 columnObj = {
                     name: name,
-                    initial_val: initValText.value,
+                    initial_val: initVal,
                     label: labelText.checked,
                     type: typeText.value,
                 };
@@ -133,8 +138,8 @@ export default function EditTable(props) {
             else {
                 columnObj = {
                     name: name,
-                    initial_val: initValText.value,
-                    label: labelText.value,
+                    initial_val: initVal,
+                    label: labelText.checked,
                     reference: refText.value,
                     type: typeText.value,
                 }; 
