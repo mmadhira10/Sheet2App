@@ -373,14 +373,12 @@ export default function TableView(props) {
     setColNames(view.columns);
     if (!openDetail && !openDelete){
       setIsLoading(true);
+      getDataUrl();
       setTimeout(() => {
         setIsLoading(false);
-        getDataUrl();
         isURL();
-
-      }, 1000)
+      }, 2000)
     }
-    isURL();
   }, [view, openDetail, openDelete]);
 
   let add

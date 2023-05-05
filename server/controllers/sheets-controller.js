@@ -264,9 +264,15 @@ const editRecord = async (req, res) => {
                     if (value == '') {
                       return { userEnteredValue: { stringValue: value } };
                     } else if (types[key] == "Boolean") {
-                      return { userEnteredValue: { boolValue: Boolean(value) } };
+                      return { userEnteredValue: { boolValue: Boolean(value)}};
                     } else if (types[key] == "Number") {
-                      return { userEnteredValue: { numberValue: Number(value) } };
+                      if (value.startsWith('='))
+                      {
+                        return { userEnteredValue: { formulaValue: value }};
+                      }
+                      else{
+                        return { userEnteredValue: { numberValue: Number(value) } };
+                      }
                     } else {
                       return { userEnteredValue: { stringValue: value } };
                     }                  
