@@ -132,33 +132,55 @@ const addRecord = async (req, res) => {
     })
   }
   const url = body.url
-  const data = body.data
+  const newRec = body.data;
   if (!url) {
     return res.status(400).json({
       errorMessage: 'Improperly formatted request',
     })
   }
-  spid = url.split('/')[5]
-  sid = url.split('/')[6].substring(9)
+  let SPREADSHEET_ID = url.split('/')[5]
+  let SHEET_ID = url.split('/')[6].substring(9)
+
+  
 
   try {
     const { sheets } = await authSheets()
 
-    const SPREADSHEET_ID = spid
-    const SHEET_ID = sid
 
-    const sheetData = await sheets.spreadsheets.values.append({
+    const spsheet = await sheets.spreadsheets.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: `Sheet${SHEET_ID}`,
+      });
+
+    const sheetName = spsheet.data.sheets.filter(sheet => sheet.properties.sheetId == SHEET_ID)[0].properties.title;
+
+    const updateResponse = await sheets.spreadsheets.values.append({
+      spreadsheetId: SPREADSHEET_ID,
+      range: sheetName,
       valueInputOption: 'USER_ENTERED',
       resource: {
-        majorDimension: dim,
-        values: [data],
+        values: [newRec],
       },
     })
+
+    // const updateResponse = await sheets.spreadsheets.values.batchUpdateByDataFilter({
+    //   spreadsheetId: SPREADSHEET_ID,
+    //   resource: {
+    //     data: [
+    //       {
+    //         dataFilter: {
+    //           gridRange: {
+    //             sheetId: SHEET_ID,
+    //           },
+    //         },
+    //         values: [newRec],
+    //       }
+    //     ],
+    //   }
+    // })
+
     return res.status(200).json({
       success: true,
-      sheetData: sheetData,
+      updateResponse: updateResponse,
     })
   } catch (error) {
     return res.status(400).json({

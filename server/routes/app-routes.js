@@ -23,7 +23,7 @@ router.post(
 )
 // router.post('/generateTable', AppController.generateTable);
 
-router.post('/addRecord', verifyUser, SheetsController.addRecord)
+router.post('/addRecord', SheetsController.addRecord)
 router.post('/deleteRecord', verifyUser, SheetsController.deleteRecord)
 router.post('/editRecord', verifyUser, SheetsController.editRecord);
 

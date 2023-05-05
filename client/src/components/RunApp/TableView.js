@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, useRef } from 'react'
+import React, { useEffect, useState, useContext, useRef, Fragment } from 'react'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -12,6 +12,8 @@ import Typography from '@mui/material/Typography'
 import Modal from '@mui/material/Modal'
 import DetailView from './DetailView'
 import LinearProgress from '@mui/material/LinearProgress';
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
 
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded'
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded'
@@ -19,6 +21,17 @@ import CreateRoundedIcon from '@mui/icons-material/CreateRounded'
 import { GlobalStoreContext } from '../../store'
 import AuthContext from '../../auth'
 import api from '../../app-routes'
+
+const addSet = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '500px',
+    height: '300px',
+    bgcolor: 'white',
+    border: '2px solid #000'
+  }
 
 // const columns = ["First Name", "Last Name", "ID", "HW1", "HW2"];
 // const rows = [["Sameer", "Khan", "1", "90", "95"], ["Moh", "How", "2", "100", "99"], ["Sid", "Sham", "3", "95", "96"],
@@ -33,7 +46,7 @@ export default function TableView(props) {
     // const { filter, setFilter } = setState([])
     const { view, table, allTables, matchedDetail, allDetail } = props;
     const { auth } = useContext(AuthContext);
-    const [open, setOpen] = useState(false)
+    const [openAdd, setOpenAdd] = useState(false)
   const [openDetail, setOpenDetail] = useState(false) // opens the detail modal
   const [detailIndex, setDetailIndex] = useState(-1); 
   const [detailIndexMap, setDetailIndexMap] = useState([])
@@ -51,6 +64,9 @@ export default function TableView(props) {
 
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const [editIndices, setEditIndices] = useState([]);
+
 
     //get data by rows
     //first row is column headings
@@ -189,44 +205,6 @@ export default function TableView(props) {
     setDetailIndexMap(indexToIndexPairs);
   }
 
-  async function addRecordToSheet(row, table) {
-    let updatedRecordArr = updateAddRecordArray(row)
-    console.log(row, table)
-    let body = {
-      url: table.URL,
-      data: updatedRecordArr,
-    }
-    console.log(body)
-    try {
-      const response = await api.post('/addRecord/', body)
-      console.log(response)
-      getDataUrl()
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  function updateAddRecordArray(row) {
-    let counter = 0
-    let updatedArray = []
-    for (let index = 0; index < allColNames.length; index++) {
-      const tableColName = allColNames[index]
-      let found = false
-      for (let j = 0; j < colNames.length; j++) {
-        const viewColName = colNames[j]
-        if (viewColName === tableColName) {
-          found = true
-          updatedArray.push(row[counter])
-          counter++
-        }
-      }
-      if (found === false) {
-        updatedArray.push('')
-      }
-    }
-    console.log(updatedArray)
-    return updatedArray
-  }
 
   async function deleteRecordFromSheet(index, table) {
     let body = {
@@ -353,27 +331,31 @@ export default function TableView(props) {
     filterReferenceEditCols(refRowIndex,refTable, refTable.refDetail)
   }
 
-  function isURL() {
+  function isURLorEditable() {
     let urlCol = []
+    let newEditIndices = []; //the indices of the columns that are editable
     for (let i = 0; i < table.columns.length; i++) {
       if (table.columns[i].type == 'URL') {
         urlCol.push(table.columns[i].name)
         console.log('URL column found')
         console.log(table.columns[i].name)
       }
-    }
-    console.log(urlCol.length)
-    let newURL = []
-    if (urlCol.length > 0) {
-      for (let i = 0; i < view.columns.length; i++) {
-        if (urlCol.includes(view.columns[i])) {
-          newURL.push(i)
-          //console.log("URL column found");
+
+      //find which columns are editable for the detail view of this table
+      if(matchedDetail) {
+        if(matchedDetail.editable_columns.includes(table.columns[i].name)) {
+          newEditIndices.push(i);
         }
       }
     }
+    console.log(newEditIndices);
+    setEditIndices(newEditIndices);
+    console.log(urlCol.length)
+    let newURL = []
+    if (urlCol.length > 0) {
     setURLs(newURL)
   }
+}
 
   useEffect(() => {
     setColNames(view.columns);
@@ -382,13 +364,13 @@ export default function TableView(props) {
       setTimeout(() => {
         setIsLoading(false);
         getDataUrl();
-        isURL();
+        isURLorEditable();
 
       }, 1000)
     }
-  }, [view, openDetail])
+  }, [view, openDetail, openAdd])
 
-  let del, delCol, add
+  let del, delCol, add, addModal
 
   if (view.allowed_actions.includes('Add')) {
     add = (
@@ -397,13 +379,44 @@ export default function TableView(props) {
           variant='contained'
           sx={{ width: '75%' }}
           onClick={() => {
-            setOpen(true)
+            setOpenAdd(true)
           }}
         >
           Add Record
         </Button>
       </Box>
     )
+    
+    if(openAdd && editIndices.length > 0) {
+        addModal = (
+          <Modal open = {openAdd}>
+            <Box sx = {addSet}>
+              <Box overflow="auto" height="200px" borderBottom="1px solid black" paddingBottom="5%">
+                <Grid container rowGap = {2} overflow = "auto" alignItems="center" marginTop="5%">
+                  {editIndices.map((colInd) => (
+                    <Fragment key = {table.columns[colInd].name}>
+                      <Grid item xs = {6} align = "center">
+                        {table.columns[colInd].name}
+                      </Grid>
+                      <Grid item xs = {6}>
+                          <TextField id = {"add-item-" + colInd} align = "center"></TextField>
+                      </Grid>
+                    </Fragment>
+                  ))}
+                </Grid>
+              </Box>
+                <Grid container marginTop="5%">
+                  <Grid item xs={6} align="center">
+                    <Button variant="contained" color="error" onClick={closeAddModal} style={{maxWidth: '300px', maxHeight: '200px', minWidth: '200px', minHeight: '30px'}} >Back</Button>
+                  </Grid>
+                  <Grid item xs={6} align="center">
+                    <Button variant="contained" onClick={addRecord} style={{maxWidth: '300px', maxHeight: '200px', minWidth: '200px', minHeight: '30px'}} >Add Record</Button>
+                  </Grid> 
+                </Grid>
+            </Box>
+          </Modal>
+        )
+      }
   }
 
   if (view.allowed_actions.includes('Delete')) {
@@ -466,6 +479,121 @@ export default function TableView(props) {
     }
   }
 
+  function closeAddModal() {
+    setOpenAdd(false);
+  }
+
+  function isValidURL(URL) {
+    let URLregex = new RegExp('^(https?:\\/\\/)?'+ // validate protocol
+  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // validate domain name
+  '((\\d{1,3}\\.){3}\\d{1,3}))'+ // validate OR ip (v4) address
+  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // validate port and path
+  '(\\?[;&a-z\\d%_.~+=-]*)?'+ // validate query string
+  '(\\#[-a-z\\d_]*)?$','i'); // validate fragment locator  
+
+    return URLregex.test(URL);
+  }
+
+  function isBoolean(boolean) {
+    let isBool = false;
+    if(boolean.toUpperCase() == "FALSE" || boolean.toUpperCase() == "TRUE") {
+      isBool = true;
+    }
+    return isBool;
+  }
+
+  function typeCorrectAdd(newRec) {
+    //only check the entered values because we auto assigned the rest
+    for(let i = 0; i < editIndices.length; i++) {
+      let colIndex = editIndices[i];
+      let val = newRec[colIndex];
+      if(val == "") {
+        if(table.columns[colIndex].name == table.key && table.columns[colIndex].initial_val == "") {
+          //setErrMsg("Key column cannot be empty")
+        }
+        else{
+          continue;
+        }
+      }
+      if(table.columns[colIndex].type == "URL") {
+        if(isValidURL(val) == false) {
+          //setErrMsg("Invalid URL");
+          return false;
+        }
+      }
+      else if(table.columns[colIndex].type == "Boolean") {
+        if(isBoolean(val) == false) {
+          console.log(i);
+          console.log(table.columns[i].name);
+          //setErrMsg("Invalid Boolean");
+          return false;
+        }
+      }
+      else if(table.columns[colIndex].type == "Number") {
+        if(isNaN(val) == true) {
+          console.log("is a number");
+          //setErrMsg("Invalid Number");
+          return false;
+        }
+      }
+
+    }
+    return true;
+  }
+
+    async function addRecord() {
+        let newRec = [];
+        for (let i = 0; i < table.columns.length; i++) {
+            if (editIndices.includes(i)) {
+                //user can enter a value for this column
+                let addItem = document.getElementById("add-item-" + i);
+                let val = addItem.value;
+                if (val == "" && table.columns[i].initial_val != "") {
+                    if (table.columns[i].initial_val == "ADDED_BY()") {
+                        newRec.push(auth.email);
+
+                    }
+                    else {
+                        newRec.push(table.columns[i].initial_val);
+                    }
+                }
+                else {
+                    newRec.push(val);
+                }
+            }
+            else {
+                //use initial value or leave blank
+                let init_val = table.columns[i].initial_val;
+                if (init_val != "") {
+                    if (init_val == "=ADDED_BY()") {
+                        newRec.push(auth.email);
+                    }
+                    else {
+                        newRec.push(init_val);
+                    }
+                }
+                else {
+                    newRec.push("");
+                }
+            }
+
+        }
+
+        //check type correctness
+        let isCorrect = typeCorrectAdd(newRec);
+        if (isCorrect == false) {
+            console.log("type error for add record");
+        }
+        else {
+            try {
+                const response = await api.post('/addRecord', { url: table.URL, data: newRec })
+                setOpenAdd(false);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
+
   return (
     <div>
       {
@@ -476,6 +604,7 @@ export default function TableView(props) {
         ) : null
       }
       {det}
+      {addModal}
       <Box sx={{ paddingBottom: 5 }}>
         <Typography
           sx={{ borderBottom: '2px solid black', width: '100%' }}
