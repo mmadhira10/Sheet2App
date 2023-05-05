@@ -34,7 +34,7 @@ export default function EditTable(props) {
         left: '50%',
         transform: "translate(-50%, -50%)",
         width: "50%",
-        height: "50%",
+        height: "40%",
         bgcolor: 'background.paper',
         border: '2px solid #000',
       };
@@ -83,6 +83,10 @@ export default function EditTable(props) {
         else if(change == "keyText") {
             setKey(event.target.value);
         }
+    }
+
+    function handleKeyChange(event) {
+        setKey(event.target.value);
     }
 
     // async function getColumns() {
@@ -208,7 +212,7 @@ export default function EditTable(props) {
                         <Button color = "error" onClick = {handleBack} variant = "contained" sx = {{position: "absolute", top: "1%", right: "1%"}}>Back</Button>
                     </Grid>
                 </Grid>
-                <Box sx = {{display: "grid", gridTemplateRows: "repeat(3, 1fr)", gridTemplateColumns: "repeat(12, 1fr)", rowGap: 2, p: "20px"}}>
+                <Box sx = {{display: "grid", gridTemplateRows: "repeat(2, 1fr)", gridTemplateColumns: "repeat(12, 1fr)", rowGap: 2, p: "20px"}}>
                     <Box sx = {leftItem} gridColumn = "span 8">
                         <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Name: </Typography>
                     </Box>
@@ -221,12 +225,6 @@ export default function EditTable(props) {
                     <Box sx = {rightItem} gridColumn = "span 4">
                     <TextField id = "urlText" value = {table.URL} label = "Read Only" variant = "outlined" sx = {{margin: "5px", marginTop: "10px"}}  size = "small" InputProps={{readOnly: true,}}></TextField>
                     </Box>
-                    <Box sx = {leftItem} gridColumn = "span 8">
-                        <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Key: </Typography>
-                    </Box>
-                    <Box sx = {rightItem} gridColumn = "span 4">
-                        <TextField value = {key} id = "keyText" onChange = {handleChange} variant = "outlined" sx = {{margin: "5px"}} size = "small"></TextField>
-                    </Box> 
                 </Box>
                 <Grid container rowSpacing = {2} columnSpacing = {2} columns = {10}>
                     <Grid item xs = {2}/>
@@ -242,13 +240,25 @@ export default function EditTable(props) {
                 <Modal open = {openCol}>
                     <Box sx = {columnSet}>
                         <Box sx = {{display: "block", width: "100%", height: "80%", overflow: "auto", margin: "auto", borderBottom: "2px solid black"}}>
-                            <List>
-                                {
-                                    table.columns.map((column, key) => (
-                                        <EditColumn column = {column} key = {column.name} tablesList  = {tablesList} labelCol = {labelCol} setLabelCol = {setLabelCol}/>
-                                    ))
-                                }
-                            </List>
+                            <Box sx = {{display: "grid", gridTemplateRows: "repeat(1, 1fr)", gridTemplateColumns: "repeat(12, 1fr)", rowGap: 2, p: "20px"}}>
+                                <Box sx = {leftItem} gridColumn = "span 8">
+                                    <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Key: </Typography>
+                                </Box>
+                                <Box sx = {rightItem} gridColumn = "span 4">
+                                    <Select value = {key} onChange={handleKeyChange} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}} >
+                                        {table.columns.map((column, key) => (
+                                            <MenuItem key = {column.name} value = {column.name} >{column.name}</MenuItem>
+                                        )) }
+                                    </Select>
+                                </Box>
+                            </Box> 
+                                <List>
+                                    {
+                                        table.columns.map((column, key) => (
+                                            <EditColumn column = {column} key = {column.name} tablesList  = {tablesList} labelCol = {labelCol} setLabelCol = {setLabelCol}/>
+                                        ))
+                                    }
+                                </List>
                         </Box>
                         <Box sx = {{display: "grid", width: "100%", gridTemplateColumns: "repeat(2, 1fr)"}}>
                             <Button  onClick = {closeEditCol} sx = {{justifySelf: "center", marginTop: "10px"}} variant = "contained" color = "error">Back</Button>

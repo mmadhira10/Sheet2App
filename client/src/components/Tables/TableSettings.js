@@ -25,6 +25,7 @@ export default function TableSettings(props) {
     const [tableName, setTableName] = useState("");
     const [URL, setURL] = useState("");
     const [key, setKey] = useState("");
+    const [labelCol, setLabelCol] = useState("");
 
     const { currentApp, setCurrentApp } = useContext(GlobalStoreContext);
 
@@ -37,7 +38,7 @@ export default function TableSettings(props) {
         left: '50%',
         transform: "translate(-50%, -50%)",
         width: "50%",
-        height: "50%",
+        height: "35%",
         bgcolor: 'background.paper',
         border: '2px solid #000',
       };
@@ -86,9 +87,10 @@ export default function TableSettings(props) {
         else if(change == "urlText") {
             setURL(event.target.value);
         }
-        else if(change == "keyText") {
-            setKey(event.target.value);
-        }
+    }
+
+    function handleKeyChange(event) {
+        setKey(event.target.value);
     }
 
     async function getColumns() {
@@ -125,7 +127,7 @@ export default function TableSettings(props) {
             let columnObj = {
                 name: name,
                 initial_val: initVal,
-                label: labelText.value,
+                label: labelText.checked,
                 type: typeText.value
             };
 
@@ -174,7 +176,7 @@ export default function TableSettings(props) {
                         <Button color = "error" onClick = {handleBack} variant = "contained" sx = {{position: "absolute", top: "1%", right: "1%"}}>Back</Button>
                     </Grid>
                 </Grid>
-                <Box sx = {{display: "grid", gridTemplateRows: "repeat(3, 1fr)", gridTemplateColumns: "repeat(12, 1fr)", rowGap: 2, p: "20px"}}>
+                <Box sx = {{display: "grid", gridTemplateRows: "repeat(2, 1fr)", gridTemplateColumns: "repeat(12, 1fr)", rowGap: 2, p: "20px"}}>
                     <Box sx = {leftItem} gridColumn = "span 8">
                         <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Name: </Typography>
                     </Box>
@@ -187,12 +189,6 @@ export default function TableSettings(props) {
                     <Box sx = {rightItem} gridColumn = "span 4">
                         <TextField id = "urlText" value = {URL} onChange = {handleChange} variant = "outlined" sx = {{margin: "5px"}}  size = "small"></TextField>
                     </Box>
-                    <Box sx = {leftItem} gridColumn = "span 8">
-                        <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Key: </Typography>
-                    </Box>
-                    <Box sx = {rightItem} gridColumn = "span 4">
-                        <TextField value = {key} id = "keyText" onChange = {handleChange} variant = "outlined" sx = {{margin: "5px"}} size = "small"></TextField>
-                    </Box> 
                 </Box>
                 <Grid container rowSpacing = {2} columnSpacing = {2}>
                     <Grid item xs = {3}/>
@@ -204,10 +200,22 @@ export default function TableSettings(props) {
                 <Modal open = {openCol}>
                     <Box sx = {columnSet}>
                         <Box sx = {{display: "block", width: "100%", height: "80%", overflow: "auto", margin: "auto", borderBottom: "2px solid black"}}>
+                        <Box sx = {{display: "grid", gridTemplateRows: "repeat(1, 1fr)", gridTemplateColumns: "repeat(12, 1fr)", rowGap: 2, p: "20px"}}>
+                            <Box sx = {leftItem} gridColumn = "span 8">
+                                <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Key: </Typography>
+                            </Box>
+                            <Box sx = {rightItem} gridColumn = "span 4">
+                                <Select value = {key} onChange={handleKeyChange} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}} >
+                                    {columnNames.map((column, key) => (
+                                        <MenuItem key = {column} value = {column} >{column}</MenuItem>
+                                    )) }
+                                </Select>
+                            </Box>
+                        </Box>
                             <List>
                                 {
                                     columnNames.map((column, key) => (
-                                        <ColumnSet column = {column} key = {column} tablesList = {tablesList}/>
+                                        <ColumnSet column = {column} key = {column} tablesList = {tablesList} labelCol={labelCol} setLabelCol={setLabelCol}/>
                                     ))
                                 }
                             </List>
