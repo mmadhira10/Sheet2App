@@ -66,6 +66,9 @@ export default function DetailView(props) {
 
     function handleSubmit() {
         editRecord();
+        setTimeout(() => {
+
+        },)
         handleBack();
     }
 
@@ -171,6 +174,10 @@ export default function DetailView(props) {
             index: detailIndex,
             record: newRec
         });
+
+        setTimeout(() => {
+
+        }, 3000);
     }
 
     useEffect(() => {

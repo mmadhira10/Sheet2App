@@ -11,6 +11,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Modal from '@mui/material/Modal'
 import DetailView from './DetailView'
+import LinearProgress from '@mui/material/LinearProgress';
 
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded'
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded'
@@ -26,7 +27,7 @@ import api from '../../app-routes'
 export default function TableView(props) {
   const [colNames, setColNames] = useState([]) // column names displayed
   const [tableRows, setTableRows] = useState([]) // rows displayed
-  const [rows, setRows] = useState([]) // all the rows 
+  const [rows, setRows] = useState([]) // filtered rows with all the columns
   const [allColNames, setAllColNames] = useState([]) // stores all column headers
   const [URLs, setURLs] = useState([]) // all the urls displayed
   // const { filter, setFilter } = setState([])
@@ -39,6 +40,8 @@ export default function TableView(props) {
   const [detailIndexMap, setDetailIndexMap] = useState([])
   const [detailFilter, setDetailFilter] = useState(false) // the edit filter
   const [detailRecord, setDetailRecord] = useState([])
+
+  const [isLoading, setIsLoading] = useState(false);
 
   //get data by rows
   //first row is column headings
@@ -234,12 +237,15 @@ export default function TableView(props) {
   }
 
   useEffect(() => {
-    //get the view data
-    //getTables
-    // console.log(table.URL);
-    setColNames(view.columns)
-    getDataUrl()
-    isURL()
+    setColNames(view.columns);
+    if (!openDetail){
+      setIsLoading(true);
+      setTimeout(() => {
+        setIsLoading(false);
+        getDataUrl();
+      }, 1000)
+    }
+    isURL();
   }, [view, detailRecord])
 
   let del, delCol, add
@@ -292,11 +298,16 @@ export default function TableView(props) {
       />
     )
   }
-  
-  console.log(detailRecord + " " + open + " " + detailIndex);
 
   return (
     <div>
+      {
+        isLoading ? (
+          <Modal open={isLoading}>
+            <LinearProgress />
+          </Modal>
+        ) : null
+      }
       {det}
       <Box sx={{ paddingBottom: 5 }}>
         <Typography
