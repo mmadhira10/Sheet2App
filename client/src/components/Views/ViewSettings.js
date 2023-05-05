@@ -187,6 +187,10 @@ export default function ViewSettings(props) {
 
         setColumns([]);
         setEditColumns([]);
+        setFilter("");
+        setUserFilter("");
+        setEditFilter("");
+
     }
 
     function handleColDropDown(event) {
@@ -205,6 +209,10 @@ export default function ViewSettings(props) {
         //console.log(event.target.id);
         // console.log(event.target.value);
         setViewType(event.target.value);
+        setAllowAct([]);
+        setFilter("");
+        setUserFilter("");
+        setEditFilter("");
     }
 
     function handleRolesDropDown(event) {
