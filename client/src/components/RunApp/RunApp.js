@@ -25,7 +25,7 @@ const titleStyle = {
 export default function RunApp() {
     const { currentApp, setCurrentApp } = useContext(GlobalStoreContext);
     const [ views, setViews ] = useState([]);
-    const [ detail, setDetail ] = useState([]);
+    const [ detailViews, setDetailViews ] = useState([]);
     const [ tables, setTables ] = useState([]);
     const [ currView, setCurrView ] = useState(null);
     const [ index, setIndex ] = useState(-1);
@@ -75,7 +75,7 @@ export default function RunApp() {
                     }
                 }
                 setViews(role_views);
-                setDetail(detail_views);
+                setDetailViews(detail_views);
             }
             catch(error)
             {
@@ -114,17 +114,18 @@ export default function RunApp() {
                 tableIndex = i;
             }
         }
-        
         let i = 0;
-        while (i < detail.length && detail[i].table != tables[tableIndex]._id)
+        while (i < detailViews.length && detailViews[i].table != tables[tableIndex]._id)
         {
             i++;
         }
 
-        let match = detail[i];
+
+        //if there isn't a matching detail view, it will be undefined
+        let matchedDetail = detailViews.find(dView => dView.table == tables[tableIndex]._id)
 
         // console.log(currentView);
-        display = <TableView view={currentView} table={tables[tableIndex]} detail={match}/>
+        display = <TableView view={currentView} table={tables[tableIndex]} matchedDetail={matchedDetail} allTables = {tables} allDetail = {detailViews} />
     }
 
     return(
@@ -142,6 +143,7 @@ export default function RunApp() {
                                 sx={{marginLeft: "5px", marginRight: "5px"}} 
                                 variant="outlined"
                                 onClick={() => setIndex(index)}
+                                key = {index}
                             >{view.name}</Button>
                         ))
                     }

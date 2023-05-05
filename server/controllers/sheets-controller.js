@@ -254,7 +254,7 @@ const editRecord = async (req, res) => {
             updateCells: {
               start: {
                 sheetId: SHEET_ID,
-                rowIndex: index + 1,
+                rowIndex: index,
                 columnIndex: 0
               },
               rows: [

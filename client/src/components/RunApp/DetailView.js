@@ -4,6 +4,7 @@ import TableRow from '@mui/material/TableRow';
 import EditIcon from '@mui/icons-material/EditRounded';
 import CheckIcon from '@mui/icons-material/CheckRounded';
 import TableCell from '@mui/material/TableCell';
+import TableBody from '@mui/material/TableBody'
 import {
     Box,
     Modal,
@@ -67,6 +68,9 @@ export default function DetailView(props) {
 
     function handleSubmit() {
         editRecord();
+        setTimeout(() => {
+
+        },)
         handleBack();
     }
 
@@ -189,17 +193,11 @@ export default function DetailView(props) {
                 </Box>
                 <TableContainer sx = {{maxWidth: "100%", maxHeight: "80.5%", overflowY: 'scroll', overflow: "auto"}} component={Paper}>
                 <Table>
+                    <TableBody>
                     {
                         rows.map((cell, key) => (
-                            <TableRow>
-
-                                {/* {
-                                    filter && editCondition && detail.editable_columns.includes(cell[0]) ? (
-                                        <TableCell sx={{textalign:"center"}}><Button variant="contained" ><EditIcon/></Button></TableCell>
-                                    ) : filter && editCondition ? (
-                                        <TableCell></TableCell>
-                                    ) : null
-                                } */}
+                            <TableRow key = {key}>
+                                
                                 <TableCell variant="head" sx={{fontWeight:"bold", align: "center"}}>{cell[0]}</TableCell>
                                 {
 
@@ -218,6 +216,7 @@ export default function DetailView(props) {
                             </TableRow>
                         ))
                     }
+                    </TableBody>
                 </Table>
                 </TableContainer>
                 {
