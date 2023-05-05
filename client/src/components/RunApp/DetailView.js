@@ -171,10 +171,17 @@ export default function DetailView(props) {
             }
         }
 
+        let columnTypes = [];
+        for (let i = 0; i < table.columns.length; i++)
+        {
+            columnTypes.push(table.columns[i].type);
+        }
+
         const response = await api.post("/editRecord/", { 
             url: table.URL,
             index: detailIndex,
-            record: newRec
+            record: newRec,
+            types: columnTypes
         });
 
     }

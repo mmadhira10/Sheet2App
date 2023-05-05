@@ -232,6 +232,7 @@ const editRecord = async (req, res) => {
   const url = body.url;
   const index = body.index;
   const record = body.record;
+  const types = body.types;
 
   if (!url) {
     return res.status(400).json({
@@ -259,9 +260,17 @@ const editRecord = async (req, res) => {
               },
               rows: [
                 {
-                  values: record.map(value => ({
-                    userEnteredValue: { stringValue: value },
-                  })),
+                  values: record.map((value, key) => {
+                    if (value == '') {
+                      return { userEnteredValue: { stringValue: value } };
+                    } else if (types[key] == "Boolean") {
+                      return { userEnteredValue: { boolValue: Boolean(value) } };
+                    } else if (types[key] == "Number") {
+                      return { userEnteredValue: { numberValue: Number(value) } };
+                    } else {
+                      return { userEnteredValue: { stringValue: value } };
+                    }                  
+                  }),
                 },
               ],
               fields: 'userEnteredValue',
