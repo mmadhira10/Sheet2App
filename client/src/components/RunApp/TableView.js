@@ -67,6 +67,10 @@ export default function TableView(props) {
 
   const [editIndices, setEditIndices] = useState([]);
 
+  //used for key integrity checks
+  const [keyColumn, setKeyColumn] = useState([]); 
+  const [keyColIndex, setKeyColIndex] = useState();
+
 
     //get data by rows
     //first row is column headings
@@ -190,10 +194,13 @@ export default function TableView(props) {
     let keyValues = [];
     let tableKeyIndex = allColumns.indexOf(table.key);
 
+    setKeyColIndex(tableKeyIndex);
     for(let i = 0; i < allRows.length; i++ )
     {
       keyValues.push(allRows[i][tableKeyIndex]);
     }
+
+    setKeyColumn(keyValues);
 
     let indexToIndexPairs = []
     for(let i = 0; i < displayRows.length; i++ )
@@ -541,58 +548,64 @@ export default function TableView(props) {
     return true;
   }
 
-    async function addRecord() {
-        let newRec = [];
-        for (let i = 0; i < table.columns.length; i++) {
-            if (editIndices.includes(i)) {
-                //user can enter a value for this column
-                let addItem = document.getElementById("add-item-" + i);
-                let val = addItem.value;
-                if (val == "" && table.columns[i].initial_val != "") {
-                    if (table.columns[i].initial_val == "ADDED_BY()") {
-                        newRec.push(auth.email);
+  function isKeyUnique(newRec) {
+    if(keyColumn.includes(newRec[]))
+  }
+  async function addRecord() {
+      let newRec = [];
+      for (let i = 0; i < table.columns.length; i++) {
+          if (editIndices.includes(i)) {
+              //user can enter a value for this column
+              let addItem = document.getElementById("add-item-" + i);
+              let val = addItem.value;
+              if (val == "" && table.columns[i].initial_val != "") {
+                  if (table.columns[i].initial_val == "ADDED_BY()") {
+                      newRec.push(auth.email);
 
-                    }
-                    else {
-                        newRec.push(table.columns[i].initial_val);
-                    }
-                }
-                else {
-                    newRec.push(val);
-                }
-            }
-            else {
-                //use initial value or leave blank
-                let init_val = table.columns[i].initial_val;
-                if (init_val != "") {
-                    if (init_val == "=ADDED_BY()") {
-                        newRec.push(auth.email);
-                    }
-                    else {
-                        newRec.push(init_val);
-                    }
-                }
-                else {
-                    newRec.push("");
-                }
-            }
+                  }
+                  else {
+                      newRec.push(table.columns[i].initial_val);
+                  }
+              }
+              else {
+                  newRec.push(val);
+              }
+          }
+          else {
+              //use initial value or leave blank
+              let init_val = table.columns[i].initial_val;
+              if (init_val != "") {
+                  if (init_val == "=ADDED_BY()") {
+                      newRec.push(auth.email);
+                  }
+                  else {
+                      newRec.push(init_val);
+                  }
+              }
+              else {
+                  newRec.push("");
+              }
+          }
 
-        }
+      }
 
-        //check type correctness
-        let isCorrect = typeCorrectAdd(newRec);
-        if (isCorrect == false) {
-            console.log("type error for add record");
-        }
-        else {
-            try {
-                const response = await api.post('/addRecord', { url: table.URL, data: newRec })
-                setOpenAdd(false);
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    }
+      //check type correctness
+      let isCorrect = typeCorrectAdd(newRec);
+      if (isCorrect == false) {
+          console.log("type error for add record");
+      }
+      else if (keyColumn.includes(newRec[keyColIndex])){
+          console.log("key is not unique for add record");
+      }
+      else {
+          try {
+              const response = await api.post('/addRecord', { url: table.URL, data: newRec })
+              setOpenAdd(false);
+          } catch (error) {
+              console.log(error);
+          }
+      }
+  }
 
   return (
     <div>
