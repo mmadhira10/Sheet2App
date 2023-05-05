@@ -236,6 +236,64 @@ export default function TableView(props) {
     setOpen(false);
   }
 
+  function isValidURL(URL) {
+    let URLregex = new RegExp('^(https?:\\/\\/)?'+ // validate protocol
+  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // validate domain name
+  '((\\d{1,3}\\.){3}\\d{1,3}))'+ // validate OR ip (v4) address
+  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // validate port and path
+  '(\\?[;&a-z\\d%_.~+=-]*)?'+ // validate query string
+  '(\\#[-a-z\\d_]*)?$','i'); // validate fragment locator  
+
+    return URLregex.test(URL);
+  }
+
+  function isBoolean(boolean) {
+    let isBool = false;
+    if(boolean.toUpperCase() == "FALSE" || boolean.toUpperCase() == "TRUE") {
+      isBool = true;
+    }
+    return isBool;
+  }
+
+  function typeCorrectAdd(newRec) {
+    //only check the entered values because we auto assigned the rest
+    for(let i = 0; i < editIndices.length; i++) {
+      let colIndex = editIndices[i];
+      let val = newRec[colIndex];
+      if(val == "") {
+        if(table.columns[colIndex].name == table.key && table.columns[colIndex].initial_val == "") {
+          //setErrMsg("Key column cannot be empty")
+        }
+        else{
+          continue;
+        }
+      }
+      if(table.columns[colIndex].type == "URL") {
+        if(isValidURL(val) == false) {
+          //setErrMsg("Invalid URL");
+          return false;
+        }
+      }
+      else if(table.columns[colIndex].type == "Boolean") {
+        if(isBoolean(val) == false) {
+          console.log(i);
+          console.log(table.columns[i].name);
+          //setErrMsg("Invalid Boolean");
+          return false;
+        }
+      }
+      else if(table.columns[colIndex].type == "Number") {
+        if(isNaN(val) == true) {
+          console.log("is a number");
+          //setErrMsg("Invalid Number");
+          return false;
+        }
+      }
+        
+    }
+    return true;
+  }
+
   async function addRecord() {
     let newRec = [];
     for(let i = 0; i < table.columns.length; i++) {
@@ -243,7 +301,18 @@ export default function TableView(props) {
         //user can enter a value for this column
         let addItem = document.getElementById("add-item-" + i);
         let val = addItem.value;
-        newRec.push(val);
+        if(val == "" && table.columns[i].initial_val != "") {
+          if(table.columns[i].initial_val == "ADDED_BY()") {
+            newRec.push(auth.email);
+
+          }
+          else {
+            newRec.push(table.columns[i].initial_val);
+          }
+        }
+        else {
+          newRec.push(val); 
+        }
       }
       else {
         //use initial value or leave blank
@@ -262,7 +331,18 @@ export default function TableView(props) {
       }
     }
 
-    //do type correctness
+    //check type correctness
+    let isCorrect = typeCorrectAdd(newRec);
+    if(isCorrect == false) {
+      console.log("type error for add record");
+    }
+    else {
+      try {
+        const response = await api.post('/addRecord', { url: table.URL, data: newRec })
+      } catch (error) {
+        console.log(error);
+      }
+    }
   }
 
   useEffect(() => {
