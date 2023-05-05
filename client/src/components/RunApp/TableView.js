@@ -24,17 +24,17 @@ import api from '../../app-routes'
 // ["Mihir", "Mad", "4", "100", "100"] ];
 
 export default function TableView(props) {
-    const [ colNames, setColNames ] = useState([]);
-    const [ filteredRowsAllColumns, setFilteredRowsAllColumns ] = useState([])
-    const [URLs, setURLs] = useState([])
+    const [ colNames, setColNames ] = useState([]) // column names displayed
+  const [tableRows, setTableRows] = useState([]) // rows displayed;
+    const [ filteredRowsAllColumns, setFilteredRowsAllColumns ] = useState([]) // all the rows for the table
+  const [allColNames, setAllColNames] = useState([]) // stores all column headers
+    const [URLs, setURLs] = useState([]) // all the urls displayed
     // const { filter, setFilter } = setState([])
     const { view, table, allTables, matchedDetail, allDetail } = props;
     const { auth } = useContext(AuthContext);
     const [open, setOpen] = useState(false)
-  const [allColNames, setAllColNames] = useState([]) // stores all column headers
-  const [tableRows, setTableRows] = useState([])
-  const [openDetail, setOpenDetail] = useState(false)
-  const [detailFilter, setDetailFilter] = useState(false)
+  const [openDetail, setOpenDetail] = useState(false) // opens the detail modal
+  const [detailFilter, setDetailFilter] = useState(false) // the edit filter
   const [detailRecord, setDetailRecord] = useState([])
 
   //represents the current detail view (could be the matched detail or the reference detail)
@@ -172,6 +172,7 @@ export default function TableView(props) {
     try {
       const response = await api.post('/addRecord/', body)
       console.log(response)
+      getDataUrl()
     } catch (error) {
       console.log(error)
     }
@@ -192,7 +193,7 @@ export default function TableView(props) {
         }
       }
       if (found === false) {
-        updatedArray.push(null)
+        updatedArray.push('')
       }
     }
     console.log(updatedArray)
@@ -207,6 +208,7 @@ export default function TableView(props) {
     try {
       const response = await api.post('/deleteRecord', body)
       console.log(response)
+      getDataUrl()
     } catch (error) {
       console.log(error)
     }
@@ -391,6 +393,7 @@ export default function TableView(props) {
         detailRecord={detailRecord}
         setDetailRecord={setDetailRecord}
         filter={detailFilter}
+        table={table}
       />
     )
   }
