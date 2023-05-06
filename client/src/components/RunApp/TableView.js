@@ -483,6 +483,8 @@ export default function TableView(props) {
         filter={detailFilter}
         table={detailTable}
         updateCache={updateCache}
+        keyColIndex={keyColIndex}
+        keyColumn={keyColumn}
       />
     )
   }
@@ -490,8 +492,8 @@ export default function TableView(props) {
   let cellVal;
 
   function tableCellValue(val,col, row) {
-    console.log(URLs);
-    console.log(col);
+    // console.log(URLs);
+    // console.log(col);
     let curColName = colNames[col];
     if (refCols.has(curColName)) {
         let refTable = refCols.get(curColName);
@@ -548,12 +550,17 @@ export default function TableView(props) {
       if(val == "") {
         if(table.columns[colIndex].name == table.key && table.columns[colIndex].initial_val == "") {
           //setErrMsg("Key column cannot be empty")
+          console.log("key cannot be empty");
         }
         else{
+          console.log("is empty val");
           continue;
         }
       }
-      if(table.columns[colIndex].type == "URL") {
+      else if(val.startsWith("=")) {
+        continue;
+      }
+      else if(table.columns[colIndex].type == "URL") {
         if(isValidURL(val) == false) {
           //setErrMsg("Invalid URL");
           return false;
@@ -569,7 +576,7 @@ export default function TableView(props) {
       }
       else if(table.columns[colIndex].type == "Number") {
         if(isNaN(val) == true) {
-          console.log("is a number");
+          console.log("is not a number");
           //setErrMsg("Invalid Number");
           return false;
         }

@@ -166,10 +166,10 @@ export default function DetailView(props) {
             console.log(errMsg);
             return;
         }
-        // else if(keyColumn.includes(newRec[keyColIndex])){
-        //     //display error message
-        //     console.log("")
-        // }
+        else if(keyColumn.includes(newRec[keyColIndex])){
+            //display error message
+            console.log("not unique key for edit record")
+        }
         else{
             for(let i = 0; i < initCols.length; i++) {
                 let index = initCols[i];
@@ -180,23 +180,25 @@ export default function DetailView(props) {
                     newRec[index] = table.columns[index].initial_val;
                 }
             }
-        }
+        
         
 
-        let columnTypes = [];
-        for (let i = 0; i < table.columns.length; i++)
-        {
-            columnTypes.push(table.columns[i].type);
+            let columnTypes = [];
+            for (let i = 0; i < table.columns.length; i++)
+            {
+                columnTypes.push(table.columns[i].type);
+            }
+
+            const response = await api.post("/editRecord/", { 
+                url: table.URL,
+                index: detailIndex,
+                record: newRec,
+                types: columnTypes
+            });
+
+            await updateCache(table.URL);
+
         }
-
-        const response = await api.post("/editRecord/", { 
-            url: table.URL,
-            index: detailIndex,
-            record: newRec,
-            types: columnTypes
-        });
-
-        await updateCache(table.URL);
 
     }
 
