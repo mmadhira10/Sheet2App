@@ -47,7 +47,7 @@ export default function AppCard(props) {
 
     return(
         <ListItem 
-            sx = {{margin: "10px", display: "flex", border: "1px solid black", boxShadow: 3}}
+            sx = {{margin: "10px", display: "flex", border: "1px solid black", boxShadow: 3, width: "90%"}}
             key = {appInfo._id}
             // onClick = {handleClick}
         >
