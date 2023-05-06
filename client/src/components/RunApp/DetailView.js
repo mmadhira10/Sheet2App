@@ -65,7 +65,7 @@ export default function DetailView(props) {
                 used.push(i);
                 if(table.columns[i].type == "URL") {
                     detailURLs.push(detailRecord[i][0]);
-                    console.log(detailRecord[i][0] + " is a URL column")
+                    // console.log(detailRecord[i][0] + " is a URL column")
                 }
 
             }
@@ -120,8 +120,8 @@ export default function DetailView(props) {
             }
             else if(table.columns[i].type == "Boolean") {
                 if(isBoolean(newRec[i]) == false) {
-                    console.log(i);
-                    console.log(table.columns[i].name);
+                    // console.log(i);
+                    // console.log(table.columns[i].name);
                     setErrMsg("Invalid Boolean");
                     setOpenError(true);
                     return false;
@@ -129,7 +129,7 @@ export default function DetailView(props) {
             }
             else if(table.columns[i].type == "Number") {
                 if(isNaN(newRec[i]) == true) {
-                    console.log("is a number");
+                    // console.log("is a number");
                     setErrMsg("Invalid Number");
                     setOpenError(true);
                     return false;
@@ -165,11 +165,11 @@ export default function DetailView(props) {
                 newRec.push(val);
             }
         }
-        console.log(newRec);
+        // console.log(newRec);
         let isCorrect = typeCorrect(newRec);
         if(isCorrect == false) {
             //display error message
-            console.log(errMsg);
+            // console.log(errMsg);
             return;
         }
         else if(keyColumn.includes(newRec[keyColIndex])){

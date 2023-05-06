@@ -74,7 +74,7 @@ export default function EditApp() {
 
         }
         catch (error) {
-            console.log(error);
+            // console.log(error);
         }
     }
 
@@ -97,7 +97,7 @@ export default function EditApp() {
 
         }
         catch (error) {
-            console.log(error);
+            // console.log(error);
         }
         
     }

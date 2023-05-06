@@ -72,12 +72,12 @@ export default function RunApp() {
 
                 for(let x = 0; x < table_cols.length; x++)
                 {
-                    console.log(table_cols[x]);
-                    console.log(current_cols[x].name);
+                    // console.log(table_cols[x]);
+                    // console.log(current_cols[x].name);
                     if(table_cols[x] != current_cols[x].name)
                     {
-                        console.log(table_cols[x]);
-                        console.log(current_cols[x].name);
+                        // console.log(table_cols[x]);
+                        // console.log(current_cols[x].name);
                         setErrMsg(true);
                         return;
                         
@@ -86,7 +86,7 @@ export default function RunApp() {
             }
             catch(error)
             {
-                console.log(error);
+                // console.log(error);
                 setErrMsg(true);
                 return;
             }
@@ -96,12 +96,12 @@ export default function RunApp() {
     async function getRoles() {
         try {
             const response = await api.post("/userRoles/", {url: currentApp.role_membership_sheet});
-            console.log(response.data.roles);
+            // console.log(response.data.roles);
             return response.data.roles
         }
         catch(error)
         {
-            console.log(error);
+            // console.log(error);
         }
     }
 
@@ -134,23 +134,23 @@ export default function RunApp() {
             }
             catch(error)
             {
-                console.log(error)
+                // console.log(error)
             }
         }
         catch (error) {
-            console.log(error);
+            // console.log(error);
         }
     }
 
     async function getTables() {
         try {
             const response = await api.get("/getTables/" + currentApp._id);
-            console.log(response);
+            // console.log(response);
             setTables(response.data.tables);
         } 
         catch(error)
         {
-            console.log(error);
+            // console.log(error);
         }
     }
 
@@ -191,7 +191,7 @@ export default function RunApp() {
         display = <TableView view={currentView} table={tables[tableIndex]} matchedDetail={matchedDetail} allTables = {tables} allDetail = {detailViews} />
     }
 
-    console.log(errMsg);
+    // console.log(errMsg);
     return(
         <div>
             <Modal open={errMsg} >

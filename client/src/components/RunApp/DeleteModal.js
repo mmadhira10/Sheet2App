@@ -36,7 +36,7 @@ export default function DeleteModal(props) {
           await updateCache(table.URL);
           handleBack();
         } catch (error) {
-          console.log(error)
+        //   console.log(error)
         }
       }
 

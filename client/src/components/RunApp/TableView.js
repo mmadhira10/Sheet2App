@@ -89,7 +89,7 @@ export default function TableView(props) {
         try {
             let newRefColMap = new Map();
             //const refCols = new Map();
-            console.log("getDataUrl");
+            // console.log("getDataUrl");
 
             //only add a refTable if there exists a detail view for that reference table
             let refTables = [];
@@ -194,12 +194,12 @@ export default function TableView(props) {
             })
             setRefCols(newRefColMap);
             //rowRes.shift();
-            console.log(tableCol);
+            // console.log(tableCol);
             // console.log(rowRes)
             //rowRes = filterOptions(rowRes, tableCol);
             setTableRows(viewRows);
     } catch (error) {
-      console.log(error)
+      // console.log(error)
     }
   }
 
@@ -239,10 +239,10 @@ export default function TableView(props) {
     }
     try {
       const response = await api.post('/deleteRecord', body)
-      console.log(response)
+      // console.log(response)
       getDataUrl()
     } catch (error) {
-      console.log(error)
+      // console.log(error)
     }
   }
 
@@ -253,7 +253,7 @@ export default function TableView(props) {
     if (filter != '') {
       let newArr = []
       let filterIndex = c.indexOf(filter)
-      console.log('filter index is: ' + filterIndex)
+      // console.log('filter index is: ' + filterIndex)
       r.forEach(function (item) {
         if(!(item[filterIndex] == null)) {
           if (item[filterIndex].toUpperCase() == 'TRUE') {
@@ -366,7 +366,7 @@ export default function TableView(props) {
     for (let i = 0; i < table.columns.length; i++) {
       if (table.columns[i].type == 'URL') {
         urlCol.push(table.columns[i].name)
-        console.log('URL column found: ' + table.columns[i].name)
+        // console.log('URL column found: ' + table.columns[i].name)
       }
 
       //find which columns are editable for the detail view of this table
@@ -376,11 +376,11 @@ export default function TableView(props) {
         }
       }
     }
-    console.log(newEditIndices);
+    // console.log(newEditIndices);
     setEditIndices(newEditIndices);
     //console.log(urlCol.length)
     //let newURL = []
-    console.log(urlCol);
+    // console.log(urlCol);
     let newURL = [];
     if (urlCol.length > 0) {
       for (let i = 0; i < view.columns.length; i++) {
@@ -554,10 +554,10 @@ export default function TableView(props) {
       if(val == "") {
         if(table.columns[colIndex].name == table.key && table.columns[colIndex].initial_val == "") {
           //setErrMsg("Key column cannot be empty")
-          console.log("key cannot be empty");
+          // console.log("key cannot be empty");
         }
         else{
-          console.log("is empty val");
+          // console.log("is empty val");
           continue;
         }
       }
@@ -572,15 +572,15 @@ export default function TableView(props) {
       }
       else if(table.columns[colIndex].type == "Boolean") {
         if(isBoolean(val) == false) {
-          console.log(i);
-          console.log(table.columns[i].name);
+          // console.log(i);
+          // console.log(table.columns[i].name);
           //setErrMsg("Invalid Boolean");
           return false;
         }
       }
       else if(table.columns[colIndex].type == "Number") {
         if(isNaN(val) == true) {
-          console.log("is not a number");
+          // console.log("is not a number");
           //setErrMsg("Invalid Number");
           return false;
         }
@@ -631,12 +631,12 @@ export default function TableView(props) {
       //check type correctness
       let isCorrect = typeCorrectAdd(newRec);
       if (isCorrect == false) {
-          console.log("type error for add record");
+          // console.log("type error for add record");
           setErr("type error for add record");
           setOpenError(true);
       }
       else if (keyColumn.includes(newRec[keyColIndex])){
-          console.log("key is not unique for add record");
+          // console.log("key is not unique for add record");
           setErr("key is not unique for add record");
           setOpenError(true);
       }
@@ -647,7 +647,7 @@ export default function TableView(props) {
               setOpenAdd(false);
                 
           } catch (error) {
-              console.log(error);
+              // console.log(error);
           }
       }
   }
