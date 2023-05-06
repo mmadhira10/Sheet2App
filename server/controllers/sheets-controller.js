@@ -290,13 +290,7 @@ const editRecord = async (req, res) => {
                     } else if (types[key] == "Boolean") {
                       return { userEnteredValue: { boolValue: Boolean(value)}};
                     } else if (types[key] == "Number") {
-                      if (value.startsWith('='))
-                      {
-                        return { userEnteredValue: { formulaValue: value }};
-                      }
-                      else{
-                        return { userEnteredValue: { numberValue: Number(value) } };
-                      }
+                      return { userEnteredValue: { numberValue: Number(value) } };
                     } else {
                       return { userEnteredValue: { stringValue: value } };
                     }                  

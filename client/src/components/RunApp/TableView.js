@@ -367,7 +367,7 @@ export default function TableView(props) {
 
   useEffect(() => {
     setColNames(view.columns);
-    if (!openDetail && !openDelete){
+    if (!openDetail && !openDelete && !openAdd){
       setIsLoading(true);
       getDataUrl();
       setTimeout(() => {

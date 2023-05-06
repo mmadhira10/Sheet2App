@@ -11,6 +11,7 @@ import {
 import api from "../../app-routes";
 import LogoutButton from "./../LogoutButton";
 import TableView from "./TableView";
+import DeleteModal from "./DeleteModal";
 
 import AuthContext from "../../auth";
 

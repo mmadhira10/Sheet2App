@@ -46,12 +46,12 @@ export default function DeleteModal(props) {
                     <Typography variant="h4" fontWeight="bold" align="center" >Would you like to delete this record?</Typography>
                 </Box>
                 <Grid container sx={{paddingTop: "10%"}}>
-                    <Grid xs={6} align="center">
+                    <Grid item xs={6} align="center">
                         <Button variant='contained' style={{maxWidth: '200px', maxHeight: '200px', minWidth: '100px', minHeight: '30px'}} onClick={handleBack}>
                             No
                         </Button>
                     </Grid>
-                    <Grid xs={6} align="center">
+                    <Grid item xs={6} align="center">
                         <Button variant='contained' style={{maxWidth: '200px', maxHeight: '200px', minWidth: '100px', minHeight: '30px'}} color='error' onClick={deleteRecord}>
                             Yes
                         </Button>
