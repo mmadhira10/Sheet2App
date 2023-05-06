@@ -8,6 +8,7 @@ import TableCard from "./TableCard.js";
 import TableSettings from "./TableSettings";
 import { GlobalStoreContext } from "../../store";
 import NavBar from "../NavBar"
+import { useNavigate } from "react-router-dom";
 
 import api from "../../app-routes";
 
@@ -46,7 +47,7 @@ export default function TablesPage() {
     const [count, setCount] = useState(1);
     const { currentApp, setCurrentApp } = useContext(GlobalStoreContext);
     const [tables, setTables] = useState([]);
-
+    const navigate = useNavigate();
 
     //function to get all tables for current app
     async function getTables() {
@@ -72,6 +73,10 @@ export default function TablesPage() {
     }
 
     useEffect(() => {
+        if(currentApp == null)
+        {
+            navigate("/");
+        }
         getTables();
     }, [currentApp]);
 
