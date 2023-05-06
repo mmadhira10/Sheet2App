@@ -15,6 +15,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import DeleteModal from './DeleteModal';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
+import Alert from '@mui/material/Alert';
 
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded'
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded'
@@ -76,6 +77,9 @@ export default function TableView(props) {
   //used for key integrity checks
   const [keyColumn, setKeyColumn] = useState([]); 
   const [keyColIndex, setKeyColIndex] = useState();
+
+  const [err, setErr] = useState("");
+  const [openError, setOpenError] = useState(false);
 
 
     //get data by rows
@@ -490,8 +494,8 @@ export default function TableView(props) {
   let cellVal;
 
   function tableCellValue(val,col, row) {
-    console.log(URLs);
-    console.log(col);
+    // console.log(URLs);
+    // console.log(col);
     let curColName = colNames[col];
     if (refCols.has(curColName)) {
         let refTable = refCols.get(curColName);
@@ -621,9 +625,13 @@ export default function TableView(props) {
       let isCorrect = typeCorrectAdd(newRec);
       if (isCorrect == false) {
           console.log("type error for add record");
+          setErr("type error for add record");
+          setOpenError(true);
       }
       else if (keyColumn.includes(newRec[keyColIndex])){
           console.log("key is not unique for add record");
+          setErr("key is not unique for add record");
+          setOpenError(true);
       }
       else {
           try {
@@ -637,8 +645,16 @@ export default function TableView(props) {
       }
   }
 
+  function handleErrorModal() {
+    setOpenError(false);
+    setErr("");
+  }
+
   return (
     <div>
+      <Modal open={openError} onClose={handleErrorModal}>
+        <Alert severity="error">{err}</Alert>
+      </Modal>
       <DeleteModal open={openDelete} setOpen={setOpenDelete} table={table} deleteIndex={deleteIndex} setDeleteIndex={setDeleteIndex}
       updateCache = {updateCache} />
       <Modal open={isLoading}>

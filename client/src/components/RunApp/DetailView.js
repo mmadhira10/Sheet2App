@@ -15,6 +15,7 @@ import {
     TextField,
     Grid
 } from '@mui/material';
+import Alert from '@mui/material/Alert';
 
 import AuthContext from '../../auth'
 import api from '../../app-routes'
@@ -42,6 +43,7 @@ export default function DetailView(props) {
     const [usedCols, setUsedCols] = useState([]);
     const [allRecVals, setAllRecVals] = useState(detailRecord);
     const [errMsg, setErrMsg] = useState("");
+    const [openError, setOpenError] = useState(false);
     const [URLs, setURLs] = useState([]);
     const { auth } = useContext(AuthContext);
     
@@ -103,6 +105,7 @@ export default function DetailView(props) {
             if(newRec[i] == "") {
                 if(table.columns[i].name == table.key && table.columns[i].initial_val == "") {
                     setErrMsg("Key column cannot be empty")
+                    setOpenError(true);
                 }
                 else{
                     continue;
@@ -111,6 +114,7 @@ export default function DetailView(props) {
             if(table.columns[i].type == "URL") {
                 if(isValidURL(newRec[i]) == false) {
                     setErrMsg("Invalid URL");
+                    setOpenError(true);
                     return false;
                 }
             }
@@ -119,6 +123,7 @@ export default function DetailView(props) {
                     console.log(i);
                     console.log(table.columns[i].name);
                     setErrMsg("Invalid Boolean");
+                    setOpenError(true);
                     return false;
                 }
             }
@@ -126,6 +131,7 @@ export default function DetailView(props) {
                 if(isNaN(newRec[i]) == true) {
                     console.log("is a number");
                     setErrMsg("Invalid Number");
+                    setOpenError(true);
                     return false;
                 }
             }
@@ -168,7 +174,7 @@ export default function DetailView(props) {
         }
         // else if(keyColumn.includes(newRec[keyColIndex])){
         //     //display error message
-        //     console.log("")
+        //     setErrMsg
         // }
         else{
             for(let i = 0; i < initCols.length; i++) {
@@ -206,7 +212,17 @@ export default function DetailView(props) {
 
     let editCondition = detail.allowed_actions.includes("Edit");
 
+    function handleErrorModal()
+    {
+        setOpenError(false);
+        setErrMsg("");
+    }
+
     return(
+        <>
+        <Modal open={openError} onClose={handleErrorModal}>
+            <Alert severity="error">{errMsg}</Alert>
+        </Modal>
         <Modal open={open} onClose={handleBack}>
             <Box sx={appSet}>
                 <Box >
@@ -259,5 +275,6 @@ export default function DetailView(props) {
                 
             </Box>
         </Modal>
+        </>
     )
 }
