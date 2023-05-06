@@ -251,8 +251,10 @@ export default function TableView(props) {
       let filterIndex = c.indexOf(filter)
       console.log('filter index is: ' + filterIndex)
       r.forEach(function (item) {
-        if (item[filterIndex].toUpperCase() == 'TRUE') {
-          newArr.push(item)
+        if(!(item[filterIndex] == null)) {
+          if (item[filterIndex].toUpperCase() == 'TRUE') {
+            newArr.push(item)
+          }
         }
       })
       r = newArr
@@ -335,7 +337,9 @@ export default function TableView(props) {
     setDetail(refTable.refDetail);
     setOpenDetail(true)
     
-
+    setKeyColIndex(refTable.keyIndex);
+    //get the column from a row-wise 2d array
+    setKeyColumn(refTable.refData.map(function(value) { return value[refTable.keyIndex]}));
 
     let refColumns = refTable.refData[0];
     let refRowIndex = refTable.viewRowToRefRow[row];
@@ -358,8 +362,7 @@ export default function TableView(props) {
     for (let i = 0; i < table.columns.length; i++) {
       if (table.columns[i].type == 'URL') {
         urlCol.push(table.columns[i].name)
-        console.log('URL column found')
-        console.log(table.columns[i].name)
+        console.log('URL column found: ' + table.columns[i].name)
       }
 
       //find which columns are editable for the detail view of this table
@@ -371,8 +374,10 @@ export default function TableView(props) {
     }
     console.log(newEditIndices);
     setEditIndices(newEditIndices);
-    console.log(urlCol.length)
-    let newURL = []
+    //console.log(urlCol.length)
+    //let newURL = []
+    console.log(urlCol);
+    let newURL = [];
     if (urlCol.length > 0) {
       for (let i = 0; i < view.columns.length; i++) {
         if (urlCol.includes(view.columns[i])) {
@@ -381,7 +386,6 @@ export default function TableView(props) {
         }
       }
     }
-    
     setURLs(newURL)
 }
 
@@ -390,11 +394,10 @@ export default function TableView(props) {
     if (!openDetail && !openDelete && !openAdd){
       setIsLoading(true);
       getDataUrl();
+      isURLorEditable();
       setTimeout(() => {
         setIsLoading(false);
         //updateCache(table.URL);
-        // getDataUrl();
-        isURLorEditable();
 
       }, 500)
     }

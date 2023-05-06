@@ -37,11 +37,12 @@ export default function DetailView(props) {
     const [ rows, setRows ] = useState([]);
 
     // const [ editCols, setEditCols] = useState([])
-    const { open, setOpen, detail, detailRecord, setDetailRecord, filter, table, detailIndex, setDetailIndex, updateCache} = props;
+    const { open, setOpen, detail, detailRecord, setDetailRecord, filter, table, detailIndex, setDetailIndex, updateCache, keyColIndex, keyColumn} = props;
     const [ edit, setEdit ] = useState(false);
     const [usedCols, setUsedCols] = useState([]);
     const [allRecVals, setAllRecVals] = useState(detailRecord);
     const [errMsg, setErrMsg] = useState("");
+    const [URLs, setURLs] = useState([]);
     const { auth } = useContext(AuthContext);
     
     function handleBack() {
@@ -54,16 +55,22 @@ export default function DetailView(props) {
     function handleFilter() {
         let val = [];
         let used = []; //array of column indices that are displayed in the detail view
+        let detailURLs = [];
         for(let i = 0; i < detailRecord.length; i++) {
             if (detail.columns.includes(detailRecord[i][0]))
             {
                 val.push(detailRecord[i]);
                 used.push(i);
+                if(table.columns[i].type == "URL") {
+                    detailURLs.push(detailRecord[i][0]);
+                    console.log(detailRecord[i][0] + " is a URL column")
+                }
 
             }
         }
         setRows(val);
         setUsedCols(used);
+        setURLs(detailURLs);
     }
 
     async function handleSubmit() {
@@ -130,7 +137,7 @@ export default function DetailView(props) {
 
     async function editRecord() {
         let newRec = []; //array of all column values-> 1 row
-        let initCols = [];
+        let initCols = []; //column indices of empty vals that will be initialzied
         // console.log(useCols);
         for(let i = 0; i < detailRecord.length; i++) {
             let index = usedCols.indexOf(i);
@@ -145,10 +152,11 @@ export default function DetailView(props) {
             }
             else {
                 let val = detailRecord[i][1];
+                if(val == null) {val = ""}; //set blank columns retrieved from sheets to empty string
                 if(val == "" && table.columns[i].initial_val != "") {
                     initCols.push(i);
                 }
-                newRec.push(detailRecord[i][1]);
+                newRec.push(val);
             }
         }
         console.log(newRec);
@@ -158,6 +166,10 @@ export default function DetailView(props) {
             console.log(errMsg);
             return;
         }
+        // else if(keyColumn.includes(newRec[keyColIndex])){
+        //     //display error message
+        //     console.log("")
+        // }
         else{
             for(let i = 0; i < initCols.length; i++) {
                 let index = initCols[i];
@@ -185,6 +197,7 @@ export default function DetailView(props) {
         });
 
         await updateCache(table.URL);
+
     }
 
     useEffect(() => {
@@ -218,7 +231,11 @@ export default function DetailView(props) {
                                             />
                                         </TableCell>
                                     ) : (
-                                        <TableCell sx={{align:"center"}}>{cell[1]}</TableCell>
+                                        <TableCell sx={{align:"center"}}>
+                                            {URLs.includes(cell[0]) ? (
+                                                <a href={cell[1]} target='_blank'>{cell[1]}</a>       
+                                            ) : (cell[1])}
+                                        </TableCell>
                                     )
                                 }
                             </TableRow>
