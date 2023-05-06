@@ -67,6 +67,8 @@ export default function TableView(props) {
 
   const [editIndices, setEditIndices] = useState([]);
 
+  const { currentApp, setCurrentApp, getTableDataFromCache, updateCache, clearCache } = useContext(GlobalStoreContext);
+
 
     //get data by rows
     //first row is column headings
@@ -110,13 +112,14 @@ export default function TableView(props) {
             for (let i = 0; i<refTables.length;i++) {
                 let curRefTable = refTables[i];
                 //for each reference table, get the data from the url
-                let refData = await api.post('/getDataFromURL', {url: refTables[i].refTableModel.URL});
+                //let refData = await api.post('/getDataFromURL', {url: refTables[i].refTableModel.URL});
+                let refData = await getTableDataFromCache(refTables[i].refTableModel.URL);
                 // get the key column by getting the index of the key column name in the first row of the data (the column name row)
-                let keyColumnIndex = refData.data.data[0].indexOf(refTables[i].refTableModel.key);
+                let keyColumnIndex = refData[0].indexOf(refTables[i].refTableModel.key);
                 //get the label column by getting the index of the label column name in the first row of the data (the column name row)
                 let labelColumnIndex = refTables[i].refTableModel.columns.findIndex(c => c.label == true);
 
-                curRefTable.refData = refData.data.data;
+                curRefTable.refData = refData;
                 curRefTable.keyIndex = keyColumnIndex;
                 curRefTable.labelIndex = labelColumnIndex;
 
@@ -134,13 +137,14 @@ export default function TableView(props) {
             }
 
             
-
-            const response = await api.post('/getDataFromURL', {url: table.URL});
+            //implement cache here
+            const allUnfilteredTableData = await getTableDataFromCache(table.URL);
+            //const response = await api.post('/getDataFromURL', {url: table.URL});
             // console.log(response.data);
             let indicesCol = []
             // row of column names
-            let tableCol = response.data.data[0];
-            let allRows = response.data.data.toSpliced(0,1) //get all rows except column names
+            let tableCol = allUnfilteredTableData[0];
+            let allRows = allUnfilteredTableData.toSpliced(0,1) //get all rows except column names
             let rowRes = filterOptions(allRows, tableCol);
             indexToIndexMap(rowRes, allRows, tableCol);
 
@@ -148,7 +152,7 @@ export default function TableView(props) {
             setFilteredRowsAllColumns(rowRes)
             view.columns.forEach((name) => {
                 //references
-                indicesCol.push(response.data.data[0].indexOf(name)); //get the indices of the columns that will be included
+                indicesCol.push(allUnfilteredTableData[0].indexOf(name)); //get the indices of the columns that will be included
             })
 
             
@@ -363,10 +367,11 @@ export default function TableView(props) {
       setIsLoading(true);
       setTimeout(() => {
         setIsLoading(false);
+        updateCache(table.URL);
         getDataUrl();
         isURLorEditable();
 
-      }, 1000)
+      }, 500)
     }
   }, [view, openDetail, openAdd])
 
@@ -448,6 +453,7 @@ export default function TableView(props) {
         setDetailRecord={setDetailRecord}
         filter={detailFilter}
         table={detailTable}
+        updateCache={updateCache}
       />
     )
   }
@@ -587,7 +593,9 @@ export default function TableView(props) {
         else {
             try {
                 const response = await api.post('/addRecord', { url: table.URL, data: newRec })
+                await updateCache(table.URL);
                 setOpenAdd(false);
+                
             } catch (error) {
                 console.log(error);
             }

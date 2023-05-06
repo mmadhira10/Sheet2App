@@ -35,7 +35,7 @@ const appSet = {
 export default function DetailView(props) {
     const [ rows, setRows ] = useState([]);
     // const [ editCols, setEditCols] = useState([])
-    const { open, setOpen, detail, detailRecord, setDetailRecord, filter, table, detailIndex, setDetailIndex} = props;
+    const { open, setOpen, detail, detailRecord, setDetailRecord, filter, table, detailIndex, setDetailIndex, updateCache} = props;
     const [ edit, setEdit ] = useState(false);
     const [usedCols, setUsedCols] = useState([]);
     const [allRecVals, setAllRecVals] = useState(detailRecord);
@@ -69,6 +69,7 @@ export default function DetailView(props) {
         setTimeout(() => {
 
         },)
+        updateCache(table.URL);
         handleBack();
     }
 
@@ -141,6 +142,7 @@ export default function DetailView(props) {
                     initCols.push(i);
                 }
                 newRec.push(val);
+                
             }
             else {
                 let val = detailRecord[i][1];
@@ -168,12 +170,15 @@ export default function DetailView(props) {
                 }
             }
         }
+        
 
         const response = await api.post("/editRecord/", { 
             url: table.URL,
             index: detailIndex,
             record: newRec
         });
+
+        await updateCache(table.URL);
 
         setTimeout(() => {
 

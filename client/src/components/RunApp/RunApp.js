@@ -1,6 +1,6 @@
 import React, { useEffect, useContext, useState} from 'react';
 import { GlobalStoreContext } from "../../store";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { 
     Box, 
     AppBar, 
@@ -23,13 +23,16 @@ const titleStyle = {
 };
 
 export default function RunApp() {
-    const { currentApp, setCurrentApp } = useContext(GlobalStoreContext);
+    const { currentApp, setCurrentApp, clearCache } = useContext(GlobalStoreContext);
     const [ views, setViews ] = useState([]);
     const [ detailViews, setDetailViews ] = useState([]);
     const [ tables, setTables ] = useState([]);
     const [ currView, setCurrView ] = useState(null);
     const [ index, setIndex ] = useState(-1);
     const { auth } = useContext(AuthContext)
+
+    const navigate = useNavigate();
+
 
     useEffect(() => {
         getViews();
@@ -96,6 +99,12 @@ export default function RunApp() {
         {
             console.log(error);
         }
+    }
+
+    function handleExitApp() {
+        setCurrentApp(null);
+        clearCache();
+        navigate("/");
     }
 
     let display = 
