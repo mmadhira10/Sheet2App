@@ -374,8 +374,15 @@ export default function TableView(props) {
     console.log(urlCol.length)
     let newURL = []
     if (urlCol.length > 0) {
+      for (let i = 0; i < view.columns.length; i++) {
+        if (urlCol.includes(view.columns[i])) {
+          newURL.push(i)
+          //console.log("URL column found");
+        }
+      }
+    }
+    
     setURLs(newURL)
-  }
 }
 
   useEffect(() => {
@@ -386,7 +393,7 @@ export default function TableView(props) {
       setTimeout(() => {
         setIsLoading(false);
         //updateCache(table.URL);
-        getDataUrl();
+        // getDataUrl();
         isURLorEditable();
 
       }, 500)
@@ -480,6 +487,8 @@ export default function TableView(props) {
   let cellVal;
 
   function tableCellValue(val,col, row) {
+    console.log(URLs);
+    console.log(col);
     let curColName = colNames[col];
     if (refCols.has(curColName)) {
         let refTable = refCols.get(curColName);
@@ -495,9 +504,10 @@ export default function TableView(props) {
         return <button type = "button" style={linkStyle} onClick={() => handleOpenReferenceDetailModal(val,row,refTable)}>{val}</button>
     }
     else if (URLs.includes(col)) {
-        return <a href={val} target='_blank'>
+
+        return (<a href={val} target='_blank'>
         {val}
-      </a>
+      </a>)
     }
     else {
         return val

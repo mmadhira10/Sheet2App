@@ -287,6 +287,8 @@ const editRecord = async (req, res) => {
                   values: record.map((value, key) => {
                     if (value == '') {
                       return { userEnteredValue: { stringValue: value } };
+                    } if (value.startsWith('=')) {
+                      return { userEnteredValue: { formulaValue: value } };
                     } else if (types[key] == "Boolean") {
                       return { userEnteredValue: { boolValue: Boolean(value)}};
                     } else if (types[key] == "Number") {

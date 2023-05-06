@@ -28,9 +28,9 @@ export default function NavBar() {
 
     }
 
-    // function exitApp() {
-    //     setCurrentApp(null);
-    // }
+    function exitApp() {
+        setCurrentApp(null);
+    }
 
     return (
         <AppBar sx = {{position:"static", height: "10%", bgcolor: "#F5F5F5", borderBottom: "2px solid black"}}>
@@ -38,7 +38,7 @@ export default function NavBar() {
             <Link to="/tables"><Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined">Tables</Button></Link>
             <Link to="/views"><Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined">Views</Button> </Link>
             <Link to="/editApp"><Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined">App Settings</Button></Link> 
-            <Link to="/"><Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined" >Exit App</Button> </Link>
+            <Link to="/"><Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined" onClick={exitApp}>Exit App</Button> </Link>
             <Box sx={{flexGrow: 3}}></Box>
             <LogoutButton/>
             </Toolbar>
