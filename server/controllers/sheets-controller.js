@@ -192,12 +192,13 @@ const addRecord = async (req, res) => {
 const deleteRecord = async (req, res) => {
   const body = req.body
   if (!body) {
+    console.log("first error");
     return res.status(400).json({
       errorMessage: 'Improperly formatted request',
     })
   }
-  const url = body.url
-  const index = body.index
+  const url = body.url;
+  const index = body.index;
   if (!url) {
     console.log("second error");
     return res.status(400).json({
@@ -289,7 +290,6 @@ const editRecord = async (req, res) => {
                     } else if (types[key] == "Boolean") {
                       return { userEnteredValue: { boolValue: Boolean(value)}};
                     } else if (types[key] == "Number") {
-          
                       if (value.startsWith('='))
                       {
                         return { userEnteredValue: { formulaValue: value }};
