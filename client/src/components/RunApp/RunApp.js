@@ -7,13 +7,17 @@ import {
     Typography,
     Toolbar,
     Button,
+    Modal
 } from '@mui/material';
 import api from "../../app-routes";
 import LogoutButton from "./../LogoutButton";
 import TableView from "./TableView";
 import DeleteModal from "./DeleteModal";
+import LinearProgress from '@mui/material/LinearProgress';
+import Alert from '@mui/material/Alert';
 
 import AuthContext from "../../auth";
+
 
 
 const titleStyle = {
@@ -30,17 +34,64 @@ export default function RunApp() {
     const [ tables, setTables ] = useState([]);
     const [ currView, setCurrView ] = useState(null);
     const [ index, setIndex ] = useState(-1);
-    const { auth } = useContext(AuthContext)
+    const { auth } = useContext(AuthContext);
+    const [ errMsg, setErrMsg ] = useState(false);
 
     const navigate = useNavigate();
 
 
     useEffect(() => {
+        clearCache();
         getViews();
         getTables();
         getRoles();
-        // console.log(auth);
+        
     }, []);
+
+    useEffect(() => {
+        schemaConsistency();
+    }, [tables])
+
+    /**
+     * 
+     * 
+     */
+    async function schemaConsistency() {     
+        for (let i = 0; i < tables.length; i++)
+        {
+            try {
+                const response = await api.post('/getColumnsFromURL', {url: tables[i].URL});
+                let current_cols = tables[i].columns;
+                let table_cols = response.data.columns;
+
+                if (table_cols.length != current_cols.length)
+                {
+                    setErrMsg(true);
+                    return;
+                }
+
+                for(let x = 0; x < table_cols.length; x++)
+                {
+                    console.log(table_cols[x]);
+                    console.log(current_cols[x].name);
+                    if(table_cols[x] != current_cols[x].name)
+                    {
+                        console.log(table_cols[x]);
+                        console.log(current_cols[x].name);
+                        setErrMsg(true);
+                        return;
+                        
+                    }
+                }
+            }
+            catch(error)
+            {
+                console.log(error);
+                setErrMsg(true);
+                return;
+            }
+        }
+    }
 
     async function getRoles() {
         try {
@@ -94,6 +145,7 @@ export default function RunApp() {
     async function getTables() {
         try {
             const response = await api.get("/getTables/" + currentApp._id);
+            console.log(response);
             setTables(response.data.tables);
         } 
         catch(error)
@@ -106,6 +158,7 @@ export default function RunApp() {
         setCurrentApp(null);
         clearCache();
         navigate("/");
+        setErrMsg(false);
     }
 
     let display = 
@@ -113,7 +166,7 @@ export default function RunApp() {
         align="center" 
         variant="h1" 
         sx={{fontWeight: 'bold', fontStyle:'italic'}}
-        >Welcome to {currentApp.name} {auth.name}!</Typography>
+        >Welcome to {currentApp != null ? (currentApp.name) : (navigate("/"))} {auth.name}!</Typography>
 
     if ( index > -1 ) {
         let currentView = views[index];
@@ -138,8 +191,24 @@ export default function RunApp() {
         display = <TableView view={currentView} table={tables[tableIndex]} matchedDetail={matchedDetail} allTables = {tables} allDetail = {detailViews} />
     }
 
+    console.log(errMsg);
     return(
         <div>
+            <Modal open={errMsg} >
+                <Alert severity="error" sx={{fontWeight:"bold"}} 
+                action={
+                    <Button
+                        aria-label="close"
+                        color="inherit"
+                        size="small"
+                        onClick={() => {
+                        handleExitApp();
+                    }}
+                    sx={{fontWeight:"bold"}}>
+                        Exit App
+                    </Button>
+                }>Schema's don't match</Alert>
+            </Modal>
             <AppBar sx = {{position:"static", height: "10%", bgcolor: "#F5F5F5", borderBottom: "2px solid black"}}>
                 <Toolbar sx = {{justifyContent: "end"}}>
                     <Button 

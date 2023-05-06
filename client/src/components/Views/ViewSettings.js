@@ -10,6 +10,11 @@ import TextField from '@mui/material/TextField';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { GlobalStoreContext } from "../../store";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 import api from "../../app-routes";
 
@@ -23,6 +28,9 @@ export default function ViewSettings(props) {
     const [viewName, setName] = useState(settings.name);
     const [tableOpts, setTableOpts] = useState([]);
     const [table, setTable] = useState(""); //this is the table name
+
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+
 
 
     useEffect(() => {
@@ -62,6 +70,8 @@ export default function ViewSettings(props) {
     }
     // console.log("Current App:")
     // console.log(currentApp);
+
+    
     
 
     
@@ -241,6 +251,10 @@ export default function ViewSettings(props) {
         setEditFilter(event.target.value);
     }
 
+    function handleDeleteView() {
+
+    }
+
 
     function saveView() {
         if(opType == "create") {
@@ -407,122 +421,158 @@ export default function ViewSettings(props) {
             </Box>
         </>
     }
-      
-    return(
-        <Modal open = {open}>
-            <Box sx = {viewSet}>
-                <Grid container sx = {{paddingBottom: "10px"}} >
-                    <Grid item xs = {8}>
-                        <Typography variant = "h4" sx = {{paddingLeft: "5px"}} >View Settings </Typography> 
-                    </Grid>
-                    <Grid item xs = {4}>
-                        <Button color = "error" onClick = {handleBack} variant = "contained" sx = {{position: "absolute", top: "1%", right: "1%"}}>Back</Button>
-                    </Grid>
-                </Grid>
-                <Box sx = {{display: "grid", gridTemplateRows: "repeat(6, 1fr)", gridTemplateColumns: "repeat(12, 1fr)", rowGap: 2, p: "20px"}}>
-                    <Box sx = {leftItem} gridColumn = "span 8">
-                        <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Name: </Typography>
-                    </Box>
-                    <Box sx = {rightItem} gridColumn = "span 4">
-                        <TextField id = "nameText" value = {viewName} onChange = {handleChange} variant = "outlined" sx = {{margin: "5px"}}  size = "small"></TextField>
-                    </Box> 
-                    <Box sx = {leftItem} gridColumn = "span 8">
-                        <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Table: </Typography>
-                    </Box>
-                    <Box sx = {rightItem} gridColumn = "span 4">
-                        <Select onChange = {handleTableDropDown} value = {table} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}>
-                            {
-                                tableOpts.map((table, key) => (
-                                    <MenuItem key = {table.name} value = {table.name}>{table.name}</MenuItem>
-                                ))
-                            }
-                        </Select> 
-                    </Box>
-                    <Box sx = {leftItem} gridColumn = "span 8">
-                        <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Columns: </Typography>
-                    </Box>
-                    <Box sx = {rightItem} gridColumn = "span 4">
-                        <Select onChange = {handleColDropDown} value = {columns} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}
-                            multiple>
-                            {
-                                columnOpts.map((column, key) => (
-                                    <MenuItem key = {column.name} value = {column.name}>{column.name}</MenuItem>
-                                ))
-                            }
-                        </Select> 
-                    </Box> 
-                    <Box sx = {leftItem} gridColumn = "span 8">
-                        <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >View Type: </Typography>
-                    </Box>
-                    <Box sx = {rightItem} gridColumn = "span 4">
-                        <Select onChange = {handleTypeDropDown} value = {viewType} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}>
-                            <MenuItem value = {"Table"}>Table</MenuItem>
-                            <MenuItem value = {"Detail"}>Detail</MenuItem>
-                        </Select> 
-                    </Box> 
-                    {
-                        actions
-                    }
-                    {
-                        editCols
-                    }
-                </Box>
-                <Grid container rowSpacing = {2} columnSpacing = {2}>
-                    <Grid item xs = {6} sx = {{display: "flex", justifyContent: "center"}}>
-                        <Button onClick = {handleRoles} fullWidth sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "contained" >Set Roles</Button>
-                    </Grid>
-                    <Grid item xs = {6} sx = {{display: "flex", justifyContent: "center"}}>
-                        <Button onClick = {handleFilter} fullWidth sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "contained" >Filter Options</Button>
-                    </Grid>
-                    <Grid item xs = {6} sx = {{display: "flex", justifyContent: "center"}}>
-                        <Button fullWidth sx = {{marginLeft: "5px", marginRight: "5px"}} color = "error" variant = "contained" >Delete View</Button>
-                    </Grid>
-                    <Grid item xs = {6} sx = {{display: "flex", justifyContent: "center"}}>
-                        <Button onClick = {saveView} fullWidth sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "contained" >Save</Button>
-                    </Grid>
-                </Grid>
-                <Modal open = {openFilter}>
-                    <Box sx = {filterSet}>
-                        <Box sx = {{display: "grid", gridTemplateRows: "repeat(3, 1fr)", gridTemplateColumns: "repeat(12, 1fr)", rowGap: 2, p: "10px"}}>
-                            {
-                                viewFilter
-                            }
-                        </Box>
-                        <Grid container rowSpacing = {2} columnSpacing = {2} sx = {{paddingTop: "20px"}}>
-                            <Grid item xs = {3}></Grid>
-                            <Grid item xs = {6} sx = {{display: "flex", justifyContent: "center"}}>
-                                <Button onClick = {handleCloseFilter} fullWidth sx = {{marginLeft: "5px", marginRight: "5px"}}variant = "contained" >Done</Button>
-                            </Grid>
-                            <Grid item xs = {3}></Grid>
+
+    const handleDialogOpen = () => {
+        setOpenDeleteDialog(true);
+    };
+
+    const handleDialogClose = () => {
+        setOpenDeleteDialog(false);
+    };
+
+    const handleDelete = async () => {
+        // Add your delete logic here
+        try {
+            await api.delete(`/deleteView/${settings._id}`);
+            handleDialogClose();
+            handleBack();
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    return (
+        <div>
+             <Dialog open={openDeleteDialog} onClose={handleDialogClose}>
+                <DialogTitle>Confirm Delete</DialogTitle>
+                <DialogContent>
+                    Are you sure you want to delete this view?
+                </DialogContent>
+                <DialogActions>
+                    <Button variant="contained" onClick={handleDialogClose}>
+                        Cancel
+                    </Button>
+                    <Button variant="contained" color="secondary" onClick={handleDelete}>
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <Modal open={open}>
+               
+                <Box sx={viewSet}>
+                    <Grid container sx={{ paddingBottom: "10px" }} >
+                        <Grid item xs={8}>
+                            <Typography variant="h4" sx={{ paddingLeft: "5px" }} >View Settings </Typography>
                         </Grid>
-                    </Box>
-                </Modal>
-                <Modal open = {openRoles}>
-                    <Box sx = {rolesSet}>
-                        <Box sx = {{display: "grid", gridTemplateRows: "repeat(1, 1fr)", gridTemplateColumns: "repeat(12, 1fr)", rowGap: 2, p: "10px"}}>
-                            <Box sx = {leftItem} gridColumn = "span 8">
-                                <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}} >Roles: </Typography>
-                            </Box>
-                            <Box sx = {rightItem} gridColumn = "span 4">
-                                <Select MenuProps = {MenuProps} multiple onChange = {handleRolesDropDown} value = {roles} fullWidth size = "small" variant = "outlined" sx = {{margin: "5px"}}>
+                        <Grid item xs={4}>
+                            <Button color="error" onClick={handleBack} variant="contained" sx={{ position: "absolute", top: "1%", right: "1%" }}>Back</Button>
+                        </Grid>
+                    </Grid>
+                    <Box sx={{ display: "grid", gridTemplateRows: "repeat(6, 1fr)", gridTemplateColumns: "repeat(12, 1fr)", rowGap: 2, p: "20px" }}>
+                        <Box sx={leftItem} gridColumn="span 8">
+                            <Typography variant="body" fontWeight="bold" sx={{ fontSize: "24px", paddingLeft: "5px" }} >Name: </Typography>
+                        </Box>
+                        <Box sx={rightItem} gridColumn="span 4">
+                            <TextField id="nameText" value={viewName} onChange={handleChange} variant="outlined" sx={{ margin: "5px" }} size="small"></TextField>
+                        </Box>
+                        <Box sx={leftItem} gridColumn="span 8">
+                            <Typography variant="body" fontWeight="bold" sx={{ fontSize: "24px", paddingLeft: "5px" }} >Table: </Typography>
+                        </Box>
+                        <Box sx={rightItem} gridColumn="span 4">
+                            <Select onChange={handleTableDropDown} value={table} fullWidth size="small" variant="outlined" sx={{ margin: "5px" }}>
                                 {
-                                    roleOpts.map((role, key) => (
-                                        <MenuItem key = {role} value = {role}>{role}</MenuItem>
+                                    tableOpts.map((table, key) => (
+                                        <MenuItem key={table.name} value={table.name}>{table.name}</MenuItem>
                                     ))
                                 }
-                                </Select> 
-                            </Box>
+                            </Select>
                         </Box>
-                        <Grid container rowSpacing = {2} columnSpacing = {2} sx = {{paddingTop: "20px"}}>
-                            <Grid item xs = {3}></Grid>
-                            <Grid item xs = {6} sx = {{display: "flex", justifyContent: "center"}}>
-                                <Button onClick = {handleCloseRoles} fullWidth sx = {{marginLeft: "5px", marginRight: "5px"}}variant = "contained" >Done</Button>
-                            </Grid>
-                            <Grid item xs = {3}></Grid>
-                        </Grid>
+                        <Box sx={leftItem} gridColumn="span 8">
+                            <Typography variant="body" fontWeight="bold" sx={{ fontSize: "24px", paddingLeft: "5px" }} >Columns: </Typography>
+                        </Box>
+                        <Box sx={rightItem} gridColumn="span 4">
+                            <Select onChange={handleColDropDown} value={columns} fullWidth size="small" variant="outlined" sx={{ margin: "5px" }}
+                                multiple>
+                                {
+                                    columnOpts.map((column, key) => (
+                                        <MenuItem key={column.name} value={column.name}>{column.name}</MenuItem>
+                                    ))
+                                }
+                            </Select>
+                        </Box>
+                        <Box sx={leftItem} gridColumn="span 8">
+                            <Typography variant="body" fontWeight="bold" sx={{ fontSize: "24px", paddingLeft: "5px" }} >View Type: </Typography>
+                        </Box>
+                        <Box sx={rightItem} gridColumn="span 4">
+                            <Select onChange={handleTypeDropDown} value={viewType} fullWidth size="small" variant="outlined" sx={{ margin: "5px" }}>
+                                <MenuItem value={"Table"}>Table</MenuItem>
+                                <MenuItem value={"Detail"}>Detail</MenuItem>
+                            </Select>
+                        </Box>
+                        {
+                            actions
+                        }
+                        {
+                            editCols
+                        }
                     </Box>
-                </Modal>
-            </Box>
-        </Modal>
-  )
+                    <Grid container rowSpacing={2} columnSpacing={2}>
+                        <Grid item xs={6} sx={{ display: "flex", justifyContent: "center" }}>
+                            <Button onClick={handleRoles} fullWidth sx={{ marginLeft: "5px", marginRight: "5px" }} variant="contained" >Set Roles</Button>
+                        </Grid>
+                        <Grid item xs={6} sx={{ display: "flex", justifyContent: "center" }}>
+                            <Button onClick={handleFilter} fullWidth sx={{ marginLeft: "5px", marginRight: "5px" }} variant="contained" >Filter Options</Button>
+                        </Grid>
+                        <Grid item xs={6} sx={{ display: "flex", justifyContent: "center" }}>
+                            <Button onClick={handleDialogOpen} fullWidth sx={{ marginLeft: "5px", marginRight: "5px" }} color="error" variant="contained" >Delete View</Button>
+                        </Grid>
+                        <Grid item xs={6} sx={{ display: "flex", justifyContent: "center" }}>
+                            <Button onClick={saveView} fullWidth sx={{ marginLeft: "5px", marginRight: "5px" }} variant="contained" >Save</Button>
+                        </Grid>
+                    </Grid>
+                    <Modal open={openFilter}>
+                        <Box sx={filterSet}>
+                            <Box sx={{ display: "grid", gridTemplateRows: "repeat(3, 1fr)", gridTemplateColumns: "repeat(12, 1fr)", rowGap: 2, p: "10px" }}>
+                                {
+                                    viewFilter
+                                }
+                            </Box>
+                            <Grid container rowSpacing={2} columnSpacing={2} sx={{ paddingTop: "20px" }}>
+                                <Grid item xs={3}></Grid>
+                                <Grid item xs={6} sx={{ display: "flex", justifyContent: "center" }}>
+                                    <Button onClick={handleCloseFilter} fullWidth sx={{ marginLeft: "5px", marginRight: "5px" }} variant="contained" >Done</Button>
+                                </Grid>
+                                <Grid item xs={3}></Grid>
+                            </Grid>
+                        </Box>
+                    </Modal>
+                    <Modal open={openRoles}>
+                        <Box sx={rolesSet}>
+                            <Box sx={{ display: "grid", gridTemplateRows: "repeat(1, 1fr)", gridTemplateColumns: "repeat(12, 1fr)", rowGap: 2, p: "10px" }}>
+                                <Box sx={leftItem} gridColumn="span 8">
+                                    <Typography variant="body" fontWeight="bold" sx={{ fontSize: "24px", paddingLeft: "5px" }} >Roles: </Typography>
+                                </Box>
+                                <Box sx={rightItem} gridColumn="span 4">
+                                    <Select MenuProps={MenuProps} multiple onChange={handleRolesDropDown} value={roles} fullWidth size="small" variant="outlined" sx={{ margin: "5px" }}>
+                                        {
+                                            roleOpts.map((role, key) => (
+                                                <MenuItem key={role} value={role}>{role}</MenuItem>
+                                            ))
+                                        }
+                                    </Select>
+                                </Box>
+                            </Box>
+                            <Grid container rowSpacing={2} columnSpacing={2} sx={{ paddingTop: "20px" }}>
+                                <Grid item xs={3}></Grid>
+                                <Grid item xs={6} sx={{ display: "flex", justifyContent: "center" }}>
+                                    <Button onClick={handleCloseRoles} fullWidth sx={{ marginLeft: "5px", marginRight: "5px" }} variant="contained" >Done</Button>
+                                </Grid>
+                                <Grid item xs={3}></Grid>
+                            </Grid>
+                        </Box>
+                    </Modal>
+                </Box>
+            </Modal>
+        </div>
+    )
 }

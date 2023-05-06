@@ -177,6 +177,8 @@ export default function TableView(props) {
                         let refKeyToRowMap = curRefTable.refKeyToRowMap;
                         let labelIndex = curRefTable.labelIndex;
                         let refRow = refKeyToRowMap.get(valAtIndex);
+                        //if refrow undefined means there's no mapping from that key value to the reference table
+                        
                         valAtIndex = curRefTable.refData[refRow][labelIndex];
                         curRefTable.viewRowToRefRow.push(refRow);
                     }
@@ -335,7 +337,9 @@ export default function TableView(props) {
     setDetail(refTable.refDetail);
     setOpenDetail(true)
     
-
+    setKeyColIndex(refTable.keyIndex);
+    //get the column from a row-wise 2d array
+    setKeyColumn(refTable.refData.map(function(value) { return value[refTable.keyIndex]}));
 
     let refColumns = refTable.refData[0];
     let refRowIndex = refTable.viewRowToRefRow[row];
@@ -386,6 +390,8 @@ export default function TableView(props) {
       isURLorEditable();
       setTimeout(() => {
         setIsLoading(false);
+        //updateCache(table.URL);
+
       }, 500)
     }
   }, [view, openDetail, openAdd, openDelete]);

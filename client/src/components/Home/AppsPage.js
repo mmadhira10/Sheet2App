@@ -15,6 +15,12 @@ import LogoutButton from '../LogoutButton'
 import LinearProgress from '@mui/material/LinearProgress';
 import Modal from '@mui/material/Modal';
 
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+
 import api from '../../app-routes'
 import AuthContext from '../../auth'
 
@@ -62,9 +68,12 @@ export default function AppsPage() {
 
   const [creatingApp, setCreatingApp] = useState(false);
 
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [appToBeDeleted, setAppToBeDeleted] = useState(null);
+
   const { auth } = useContext(AuthContext)
-
-
+  
+  
 
   async function getGlobalDev() {
     try {
@@ -111,12 +120,55 @@ export default function AppsPage() {
     }
   }
 
+  const handleModalOpen = (appId) => {
+    setOpenDeleteModal(true);
+    setAppToBeDeleted(appId);
+  };
+
+  const handleModalClose = () => {
+    setOpenDeleteModal(false);
+  };
+
+  const handleDelete = async () => {
+    try {
+      const response = await api.delete('/deleteApp/' + appToBeDeleted);
+      // console.log(response);
+      setApps(apps.filter((app) => app._id !== appToBeDeleted));
+      setCreatorID(creatorID.filter((id) => id !== appToBeDeleted));
+      setDevID(devID.filter((id) => id !== appToBeDeleted));
+      setEndUserID(endUserID.filter((id) => id !== appToBeDeleted));
+      setOpenDeleteModal(false);
+      setAppToBeDeleted(null);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+
+
+
   //map through array of apps and create an AppCard for each one
   return (
     <div>
       <Modal open={isLoading}>
         <LinearProgress />
       </Modal>
+
+      <Dialog open={openDeleteModal} onClose={handleModalClose}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this item?
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" onClick={handleModalClose}>
+            Cancel
+          </Button>
+          <Button variant="contained" color="secondary" onClick={handleDelete}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+      
       <AppSettings open={open} key={count} apps={apps} setApps={setApps} creatingApp={creatingApp} setCreatingApp={setCreatingApp}/>
       <Box sx={titleStyle}>
         <AppBar
@@ -146,7 +198,9 @@ export default function AppsPage() {
               isCreator = {creatorID.includes(app._id)}
               isDev = {devID.includes(app._id)}
               isEndUser = {endUserID.includes(app._id)}
-              isGlobalDev = {isGlobalDev}/>
+              isGlobalDev = {isGlobalDev}
+              handleModalOpen = {handleModalOpen}
+              />
           ))}
         </List>
       </Box>

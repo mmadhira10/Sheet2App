@@ -68,7 +68,6 @@ export default function DetailView(props) {
 
     async function handleSubmit() {
         await editRecord();
-
         //updateCache(table.URL);
         handleBack();
     }

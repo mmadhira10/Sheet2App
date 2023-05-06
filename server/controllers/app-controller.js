@@ -86,6 +86,31 @@ const getApps = async (req, res) => {
   }
 }
 
+const deleteApp = async (req, res) => {
+  const appId = req.params.appId
+  if (!appId) {
+    return res.status(400).json({
+      errorMessage: 'Improperly formatted request',
+    })
+  }
+  try {
+    const app = await App.findById(appId);
+    const delViews = await View.deleteMany({ _id: { $in: app.views } });
+    const delTables = await Table.deleteMany({ _id: { $in: app.tables } });
+    const appDeletedCount = await App.deleteOne({ _id: appId });
+    return res.status(200).json({
+      success: true,
+      delViews: delViews,
+      delTables: delTables,
+      appDeletedCount: appDeletedCount,
+    })
+  } catch (error) {
+    return res.status(400).json({
+      errorMessage: error,
+    })
+  }
+}
+
 const isGlobalDevCreator = async (req, res) => {
   let isCreator = false;
   //const email = req.user.email;
@@ -552,6 +577,27 @@ const updateView = async (req, res) => {
   }
 }
 
+const deleteView = async (req, res) => {
+  const viewId = req.params.viewId
+  if (!viewId) {
+    return res.status(400).json({
+      errorMessage: 'Improperly formatted request',
+    })
+  }
+  try {
+    const deletedView = await View.findOneAndDelete({ _id: viewId })
+    return res.status(200).json({
+      success: true,
+      view: deletedView,
+    })
+  } catch (error) {
+    return res.status(400).json({
+      errorMessage: error,
+    })
+  }
+}
+
+
 const getReferencedTable = async (req, res) => {
   const body = req.body
   if (!body) {
@@ -619,12 +665,14 @@ module.exports = {
   createApp,
   updateApp,
   getApps,
+  deleteApp,
   createTable,
   updateTable,
   getTables,
   createView,
   updateView,
   getViews,
+  deleteView,
   getReferencedTable,
   getTablesByAppId,
   getViewsByAppId,

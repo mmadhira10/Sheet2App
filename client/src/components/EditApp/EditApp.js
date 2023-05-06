@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { GlobalStoreContext } from "../../store";
 import NavBar from "../NavBar.js";
-
+import {useNavigate} from "react-router-dom";
 import api from "../../app-routes";
 
 
@@ -28,12 +28,25 @@ const rightItem = {
 }
 
 export default function EditApp() {
+    const navigate = useNavigate();
     const { currentApp, setCurrentApp } = useContext(GlobalStoreContext);
-    const [name, setName] = useState(currentApp.name);
-    const [roleMem, setRoleMem] = useState(currentApp.role_membership_sheet);
-    const [publish, setPublish] = useState(currentApp.published);
+    const [name, setName] = useState("");
+    const [roleMem, setRoleMem] = useState("");
+    const [publish, setPublish] = useState(false);
 
+    useEffect(() => {
+        if (currentApp == null)
+        {
+            navigate("/");
+        }
+        else{
+            setName(currentApp.name);
+            setRoleMem(currentApp.role_membership_sheet);
+            setPublish(currentApp.published);
+        }
+    }, [])
     
+
     function handleChange(event) {
         let change = event.target.id;
         if(change == "appNameSet") {
@@ -100,7 +113,7 @@ export default function EditApp() {
                         <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}}>Creator: </Typography>
                     </Box>
                     <Box sx = {rightItem} gridColumn = "span 4">
-                        <Typography variant = "body" sx = {{fontSize: "24px", paddingRight: "5px"}} >{currentApp.creator} </Typography>
+                        <Typography variant = "body" sx = {{fontSize: "24px", paddingRight: "5px"}} >{currentApp != null ? (currentApp.creator) : (navigate("/"))} </Typography>
                     </Box>
                     <Box sx = {leftItem} gridColumn = "span 8">
                         <Typography variant = "body" fontWeight = "bold" sx = {{fontSize: "24px", paddingLeft: "5px"}}>Name: </Typography>
