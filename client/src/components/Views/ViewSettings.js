@@ -65,7 +65,7 @@ export default function ViewSettings(props) {
             setRoleOpts(roleArr);
         }
         catch (error) {
-            console.log(error);
+            // console.log(error);
         }
     }
     // console.log("Current App:")
@@ -154,7 +154,7 @@ export default function ViewSettings(props) {
             setTableOpts(response.data.tables);
         }
         catch (error) {
-            console.log(error);
+            // console.log(error);
         }
      }
 
@@ -314,7 +314,7 @@ export default function ViewSettings(props) {
             // console.log(response);
           })
           .catch(function (error) {
-            console.log(error);
+            // console.log(error);
           });
     };
 
@@ -437,7 +437,7 @@ export default function ViewSettings(props) {
             handleDialogClose();
             handleBack();
         } catch (error) {
-            console.log(error);
+            // console.log(error);
         }
     };
 
