@@ -223,7 +223,7 @@ export default function RunApp() {
                         ))
                     }
                     <Box sx={{flexGrow: 3}}></Box>
-                    <Link to="/"><Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined" >Exit App</Button></Link>
+                    <Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined" onClick={handleExitApp}>Exit App</Button>
                     <LogoutButton/>
                 </Toolbar>
             </AppBar>
