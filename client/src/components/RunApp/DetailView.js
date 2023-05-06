@@ -37,7 +37,7 @@ export default function DetailView(props) {
     const [ rows, setRows ] = useState([]);
 
     // const [ editCols, setEditCols] = useState([])
-    const { open, setOpen, detail, detailRecord, setDetailRecord, filter, table, detailIndex, setDetailIndex, updateCache} = props;
+    const { open, setOpen, detail, detailRecord, setDetailRecord, filter, table, detailIndex, setDetailIndex, updateCache, keyColIndex, keyColumn} = props;
     const [ edit, setEdit ] = useState(false);
     const [usedCols, setUsedCols] = useState([]);
     const [allRecVals, setAllRecVals] = useState(detailRecord);
@@ -66,12 +66,10 @@ export default function DetailView(props) {
         setUsedCols(used);
     }
 
-    function handleSubmit() {
-        editRecord();
-        setTimeout(() => {
+    async function handleSubmit() {
+        await editRecord();
 
-        },)
-        updateCache(table.URL);
+        //updateCache(table.URL);
         handleBack();
     }
 
@@ -133,7 +131,7 @@ export default function DetailView(props) {
 
     async function editRecord() {
         let newRec = []; //array of all column values-> 1 row
-        let initCols = [];
+        let initCols = []; //column indices of empty vals that will be initialzied
         // console.log(useCols);
         for(let i = 0; i < detailRecord.length; i++) {
             let index = usedCols.indexOf(i);
@@ -148,10 +146,11 @@ export default function DetailView(props) {
             }
             else {
                 let val = detailRecord[i][1];
+                if(val == null) {val = ""}; //set blank columns retrieved from sheets to empty string
                 if(val == "" && table.columns[i].initial_val != "") {
                     initCols.push(i);
                 }
-                newRec.push(detailRecord[i][1]);
+                newRec.push(val);
             }
         }
         console.log(newRec);
@@ -161,6 +160,10 @@ export default function DetailView(props) {
             console.log(errMsg);
             return;
         }
+        // else if(keyColumn.includes(newRec[keyColIndex])){
+        //     //display error message
+        //     console.log("")
+        // }
         else{
             for(let i = 0; i < initCols.length; i++) {
                 let index = initCols[i];
@@ -189,9 +192,6 @@ export default function DetailView(props) {
 
         await updateCache(table.URL);
 
-        setTimeout(() => {
-
-        }, 3000);
     }
 
     useEffect(() => {

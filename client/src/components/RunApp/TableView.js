@@ -249,8 +249,10 @@ export default function TableView(props) {
       let filterIndex = c.indexOf(filter)
       console.log('filter index is: ' + filterIndex)
       r.forEach(function (item) {
-        if (item[filterIndex].toUpperCase() == 'TRUE') {
-          newArr.push(item)
+        if(!(item[filterIndex] == null)) {
+          if (item[filterIndex].toUpperCase() == 'TRUE') {
+            newArr.push(item)
+          }
         }
       })
       r = newArr
@@ -369,7 +371,7 @@ export default function TableView(props) {
     }
     console.log(newEditIndices);
     setEditIndices(newEditIndices);
-    console.log(urlCol.length)
+    //console.log(urlCol.length)
     let newURL = []
     if (urlCol.length > 0) {
     setURLs(newURL)
@@ -381,12 +383,9 @@ export default function TableView(props) {
     if (!openDetail && !openDelete && !openAdd){
       setIsLoading(true);
       getDataUrl();
+      isURLorEditable();
       setTimeout(() => {
         setIsLoading(false);
-        updateCache(table.URL);
-        getDataUrl();
-        isURLorEditable();
-
       }, 500)
     }
   }, [view, openDetail, openAdd, openDelete]);
