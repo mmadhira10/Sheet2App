@@ -362,8 +362,7 @@ export default function TableView(props) {
     for (let i = 0; i < table.columns.length; i++) {
       if (table.columns[i].type == 'URL') {
         urlCol.push(table.columns[i].name)
-        console.log('URL column found')
-        console.log(table.columns[i].name)
+        console.log('URL column found: ' + table.columns[i].name)
       }
 
       //find which columns are editable for the detail view of this table
@@ -376,10 +375,18 @@ export default function TableView(props) {
     console.log(newEditIndices);
     setEditIndices(newEditIndices);
     //console.log(urlCol.length)
-    let newURL = []
+    //let newURL = []
+    console.log(urlCol);
+    let newURL = [];
     if (urlCol.length > 0) {
+      for (let i = 0; i < view.columns.length; i++) {
+        if (urlCol.includes(view.columns[i])) {
+          newURL.push(i)
+          //console.log("URL column found");
+        }
+      }
+    }
     setURLs(newURL)
-  }
 }
 
   useEffect(() => {

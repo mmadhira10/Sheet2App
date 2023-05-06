@@ -42,6 +42,7 @@ export default function DetailView(props) {
     const [usedCols, setUsedCols] = useState([]);
     const [allRecVals, setAllRecVals] = useState(detailRecord);
     const [errMsg, setErrMsg] = useState("");
+    const [URLs, setURLs] = useState([]);
     const { auth } = useContext(AuthContext);
     
     function handleBack() {
@@ -54,16 +55,22 @@ export default function DetailView(props) {
     function handleFilter() {
         let val = [];
         let used = []; //array of column indices that are displayed in the detail view
+        let detailURLs = [];
         for(let i = 0; i < detailRecord.length; i++) {
             if (detail.columns.includes(detailRecord[i][0]))
             {
                 val.push(detailRecord[i]);
                 used.push(i);
+                if(table.columns[i].type == "URL") {
+                    detailURLs.push(detailRecord[i][0]);
+                    console.log(detailRecord[i][0] + " is a URL column")
+                }
 
             }
         }
         setRows(val);
         setUsedCols(used);
+        setURLs(detailURLs);
     }
 
     async function handleSubmit() {
@@ -224,7 +231,11 @@ export default function DetailView(props) {
                                             />
                                         </TableCell>
                                     ) : (
-                                        <TableCell sx={{align:"center"}}>{cell[1]}</TableCell>
+                                        <TableCell sx={{align:"center"}}>
+                                            {URLs.includes(cell[0]) ? (
+                                                <a href={cell[1]} target='_blank'>{cell[1]}</a>       
+                                            ) : (cell[1])}
+                                        </TableCell>
                                     )
                                 }
                             </TableRow>
