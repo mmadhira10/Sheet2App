@@ -564,9 +564,6 @@ export default function TableView(props) {
     return true;
   }
 
-  function isKeyUnique(newRec) {
-    if(keyColumn.includes(newRec[]))
-  }
   async function addRecord() {
       let newRec = [];
       for (let i = 0; i < table.columns.length; i++) {
