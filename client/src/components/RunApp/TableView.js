@@ -335,7 +335,9 @@ export default function TableView(props) {
     setDetail(refTable.refDetail);
     setOpenDetail(true)
     
-
+    setKeyColIndex(refTable.keyIndex);
+    //get the column from a row-wise 2d array
+    setKeyColumn(refTable.refData.map(function(value) { return value[refTable.keyIndex]}));
 
     let refColumns = refTable.refData[0];
     let refRowIndex = refTable.viewRowToRefRow[row];
