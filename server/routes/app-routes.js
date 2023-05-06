@@ -9,6 +9,11 @@ router.post('/createApp', verifyUser, AppController.createApp)
 router.post('/createTable/:appId', verifyUser, AppController.createTable)
 router.post('/createView/:appId', verifyUser, AppController.createView)
 
+//Delete Routes
+router.delete('/deleteApp/:appId', verifyUser, AppController.deleteApp)
+// router.delete('/deleteTable/:tableId', verifyUser, AppController.deleteTable)
+router.delete('/deleteView/:viewId', verifyUser, AppController.deleteView)
+
 //Sheets API requests
 router.post('/getDataFromURL', verifyUser, SheetsController.getDataFromURL)
 router.post(
