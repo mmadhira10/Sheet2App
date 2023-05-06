@@ -12,6 +12,8 @@ import AppSettings from './AppSettings.js'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import LogoutButton from '../LogoutButton'
+import LinearProgress from '@mui/material/LinearProgress';
+import Modal from '@mui/material/Modal';
 
 import api from '../../app-routes'
 import AuthContext from '../../auth'
@@ -56,6 +58,7 @@ export default function AppsPage() {
   const [devID, setDevID] = useState([]);
   const [endUserID, setEndUserID] = useState([]);
   const [isGlobalDev, setIsGlobalDev] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [creatingApp, setCreatingApp] = useState(false);
 
@@ -87,6 +90,10 @@ export default function AppsPage() {
   useEffect(() => {
     // console.log('getMyApps')
     getMyApps()
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000)
   }, [creatingApp]) // everytime we create a new app, repeat
 
   useEffect(() => {
@@ -107,6 +114,9 @@ export default function AppsPage() {
   //map through array of apps and create an AppCard for each one
   return (
     <div>
+      <Modal open={isLoading}>
+        <LinearProgress />
+      </Modal>
       <AppSettings open={open} key={count} apps={apps} setApps={setApps} creatingApp={creatingApp} setCreatingApp={setCreatingApp}/>
       <Box sx={titleStyle}>
         <AppBar

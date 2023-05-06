@@ -1,6 +1,6 @@
 import React, { useEffect, useContext, useState} from 'react';
 import { GlobalStoreContext } from "../../store";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { 
     Box, 
     AppBar, 
@@ -11,6 +11,7 @@ import {
 import api from "../../app-routes";
 import LogoutButton from "./../LogoutButton";
 import TableView from "./TableView";
+import DeleteModal from "./DeleteModal";
 
 import AuthContext from "../../auth";
 
@@ -23,13 +24,16 @@ const titleStyle = {
 };
 
 export default function RunApp() {
-    const { currentApp, setCurrentApp } = useContext(GlobalStoreContext);
+    const { currentApp, setCurrentApp, clearCache } = useContext(GlobalStoreContext);
     const [ views, setViews ] = useState([]);
     const [ detailViews, setDetailViews ] = useState([]);
     const [ tables, setTables ] = useState([]);
     const [ currView, setCurrView ] = useState(null);
     const [ index, setIndex ] = useState(-1);
     const { auth } = useContext(AuthContext)
+
+    const navigate = useNavigate();
+
 
     useEffect(() => {
         getViews();
@@ -98,6 +102,12 @@ export default function RunApp() {
         }
     }
 
+    function handleExitApp() {
+        setCurrentApp(null);
+        clearCache();
+        navigate("/");
+    }
+
     let display = 
         <Typography 
         align="center" 
@@ -148,7 +158,7 @@ export default function RunApp() {
                         ))
                     }
                     <Box sx={{flexGrow: 3}}></Box>
-                    <Link to="/"><Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined" >Exit App</Button></Link>
+                    <Button sx = {{marginLeft: "5px", marginRight: "5px"}} variant = "outlined" onClick={handleExitApp}>Exit App</Button>
                     <LogoutButton/>
                 </Toolbar>
             </AppBar>

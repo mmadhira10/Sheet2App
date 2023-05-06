@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography'
 import Modal from '@mui/material/Modal'
 import DetailView from './DetailView'
 import LinearProgress from '@mui/material/LinearProgress';
+import DeleteModal from './DeleteModal';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 
@@ -51,7 +52,10 @@ export default function TableView(props) {
   const [detailIndex, setDetailIndex] = useState(-1); 
   const [detailIndexMap, setDetailIndexMap] = useState([])
   const [detailFilter, setDetailFilter] = useState(false) // the edit filter
-  const [detailRecord, setDetailRecord] = useState([])
+  const [detailRecord, setDetailRecord] = useState([]);
+
+  const [openDelete, setOpenDelete] = useState(false); // opens the detail modal
+  const [deleteIndex, setDeleteIndex] = useState(-1);
 
   //represents the current detail view (could be the matched detail or the reference detail)
   const [detail, setDetail] = useState(matchedDetail);
@@ -66,6 +70,8 @@ export default function TableView(props) {
   const [isLoading, setIsLoading] = useState(false);
 
   const [editIndices, setEditIndices] = useState([]);
+
+  const { currentApp, setCurrentApp, getTableDataFromCache, updateCache, clearCache } = useContext(GlobalStoreContext);
 
   //used for key integrity checks
   const [keyColumn, setKeyColumn] = useState([]); 
@@ -114,13 +120,14 @@ export default function TableView(props) {
             for (let i = 0; i<refTables.length;i++) {
                 let curRefTable = refTables[i];
                 //for each reference table, get the data from the url
-                let refData = await api.post('/getDataFromURL', {url: refTables[i].refTableModel.URL});
+                //let refData = await api.post('/getDataFromURL', {url: refTables[i].refTableModel.URL});
+                let refData = await getTableDataFromCache(refTables[i].refTableModel.URL);
                 // get the key column by getting the index of the key column name in the first row of the data (the column name row)
-                let keyColumnIndex = refData.data.data[0].indexOf(refTables[i].refTableModel.key);
+                let keyColumnIndex = refData[0].indexOf(refTables[i].refTableModel.key);
                 //get the label column by getting the index of the label column name in the first row of the data (the column name row)
                 let labelColumnIndex = refTables[i].refTableModel.columns.findIndex(c => c.label == true);
 
-                curRefTable.refData = refData.data.data;
+                curRefTable.refData = refData;
                 curRefTable.keyIndex = keyColumnIndex;
                 curRefTable.labelIndex = labelColumnIndex;
 
@@ -138,13 +145,14 @@ export default function TableView(props) {
             }
 
             
-
-            const response = await api.post('/getDataFromURL', {url: table.URL});
+            //implement cache here
+            const allUnfilteredTableData = await getTableDataFromCache(table.URL);
+            //const response = await api.post('/getDataFromURL', {url: table.URL});
             // console.log(response.data);
             let indicesCol = []
             // row of column names
-            let tableCol = response.data.data[0];
-            let allRows = response.data.data.toSpliced(0,1) //get all rows except column names
+            let tableCol = allUnfilteredTableData[0];
+            let allRows = allUnfilteredTableData.toSpliced(0,1) //get all rows except column names
             let rowRes = filterOptions(allRows, tableCol);
             indexToIndexMap(rowRes, allRows, tableCol);
 
@@ -152,7 +160,7 @@ export default function TableView(props) {
             setFilteredRowsAllColumns(rowRes)
             view.columns.forEach((name) => {
                 //references
-                indicesCol.push(response.data.data[0].indexOf(name)); //get the indices of the columns that will be included
+                indicesCol.push(allUnfilteredTableData[0].indexOf(name)); //get the indices of the columns that will be included
             })
 
             
@@ -187,6 +195,11 @@ export default function TableView(props) {
     } catch (error) {
       console.log(error)
     }
+  }
+
+  function handleDelete(key) {
+    setOpenDelete(true);
+    setDeleteIndex(detailIndexMap[key]);
   }
 
   function indexToIndexMap(displayRows, allRows, allColumns)
@@ -300,7 +313,6 @@ export default function TableView(props) {
       }
   }
   
-
   function handleOpenDetailModal(row) {
     setOpenDetail(true)
     setDetail(matchedDetail);
@@ -333,7 +345,7 @@ export default function TableView(props) {
     for (let i = 0; i < refTable.refData[0].length; i++) {
       detailRows.push([refColumns[i], refTable.refData[refRowIndex][i]])
     }
-    setDetailRecord(detailRows)
+    setDetailRecord(detailRows);
 
     filterReferenceEditCols(refRowIndex,refTable, refTable.refDetail)
   }
@@ -366,16 +378,18 @@ export default function TableView(props) {
 
   useEffect(() => {
     setColNames(view.columns);
-    if (!openDetail){
+    if (!openDetail && !openDelete && !openAdd){
       setIsLoading(true);
+      getDataUrl();
       setTimeout(() => {
         setIsLoading(false);
+        updateCache(table.URL);
         getDataUrl();
         isURLorEditable();
 
-      }, 1000)
+      }, 500)
     }
-  }, [view, openDetail, openAdd])
+  }, [view, openDetail, openAdd, openDelete]);
 
   let del, delCol, add, addModal
 
@@ -426,22 +440,23 @@ export default function TableView(props) {
       }
   }
 
-  if (view.allowed_actions.includes('Delete')) {
-    del = (
-      <TableCell sx={{ width: '50px' }} align='center'>
-        <Button variant='contained'>
-          <DeleteRoundedIcon />
-        </Button>
-      </TableCell>
-    )
-    delCol = (
-      <TableCell align='center' style={{ fontWeight: 'bold' }}>
-        Delete
-      </TableCell>
-    )
-  }
 
-  let det
+  // if (view.allowed_actions.includes('Delete')) {
+  //   del = (
+  //     <TableCell sx={{ width: '50px' }} align='center'>
+  //       <Button variant='contained' onClick={}>
+  //         <DeleteRoundedIcon />
+  //       </Button>
+  //     </TableCell>
+  //   )
+  //   delCol = (
+  //     <TableCell align='center' style={{ fontWeight: 'bold' }}>
+  //       Delete
+  //     </TableCell>
+  //   )
+  // }
+
+  let det;
 
   if (detail) {
     det = (
@@ -455,6 +470,7 @@ export default function TableView(props) {
         setDetailRecord={setDetailRecord}
         filter={detailFilter}
         table={detailTable}
+        updateCache={updateCache}
       />
     )
   }
@@ -600,7 +616,9 @@ export default function TableView(props) {
       else {
           try {
               const response = await api.post('/addRecord', { url: table.URL, data: newRec })
+              await updateCache(table.URL);
               setOpenAdd(false);
+                
           } catch (error) {
               console.log(error);
           }
@@ -609,13 +627,11 @@ export default function TableView(props) {
 
   return (
     <div>
-      {
-        isLoading ? (
-          <Modal open={isLoading}>
-            <LinearProgress />
-          </Modal>
-        ) : null
-      }
+      <DeleteModal open={openDelete} setOpen={setOpenDelete} table={table} deleteIndex={deleteIndex} setDeleteIndex={setDeleteIndex}
+      updateCache = {updateCache} />
+      <Modal open={isLoading}>
+        <LinearProgress />
+      </Modal>
       {det}
       {addModal}
       <Box sx={{ paddingBottom: 5 }}>
@@ -640,7 +656,13 @@ export default function TableView(props) {
                   {column}
                 </TableCell>
               ))}
-              {delCol}
+              {
+                view.allowed_actions.includes('Delete') ? (
+                  <TableCell align='center' style={{ fontWeight: 'bold' }}>
+                    Delete
+                  </TableCell>
+                ) : null
+              }
               <TableCell align='center' style={{ fontWeight: 'bold' }}>
                 Detail Views
               </TableCell>
@@ -661,7 +683,15 @@ export default function TableView(props) {
                     {tableCellValue(value,col, rowIndex)}
                   </TableCell>
                 ))}
-                {del}
+                {
+                  view.allowed_actions.includes('Delete') ? (
+                    <TableCell sx={{ width: '50px' }} align='center'>
+                      <Button variant='contained' onClick={() => handleDelete(rowIndex)}>
+                        <DeleteRoundedIcon />
+                      </Button>
+                    </TableCell>
+                  ) : null
+                }
                 <TableCell sx={{ width: '150px' }} align='center'>
                   <Button
                     onClick={() => handleOpenDetailModal(rowIndex)}
