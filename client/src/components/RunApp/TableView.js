@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography'
 import Modal from '@mui/material/Modal'
 import DetailView from './DetailView'
 import LinearProgress from '@mui/material/LinearProgress';
+import DeleteModal from './DeleteModal';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 
@@ -51,7 +52,10 @@ export default function TableView(props) {
   const [detailIndex, setDetailIndex] = useState(-1); 
   const [detailIndexMap, setDetailIndexMap] = useState([])
   const [detailFilter, setDetailFilter] = useState(false) // the edit filter
-  const [detailRecord, setDetailRecord] = useState([])
+  const [detailRecord, setDetailRecord] = useState([]);
+
+  const [openDelete, setOpenDelete] = useState(false); // opens the detail modal
+  const [deleteIndex, setDeleteIndex] = useState(-1);
 
   //represents the current detail view (could be the matched detail or the reference detail)
   const [detail, setDetail] = useState(matchedDetail);
@@ -189,6 +193,11 @@ export default function TableView(props) {
     }
   }
 
+  function handleDelete(key) {
+    setOpenDelete(true);
+    setDeleteIndex(detailIndexMap[key]);
+  }
+
   function indexToIndexMap(displayRows, allRows, allColumns)
   {
     let keyValues = [];
@@ -297,7 +306,6 @@ export default function TableView(props) {
       }
   }
   
-
   function handleOpenDetailModal(row) {
     setOpenDetail(true)
     setDetail(matchedDetail);
@@ -330,7 +338,7 @@ export default function TableView(props) {
     for (let i = 0; i < refTable.refData[0].length; i++) {
       detailRows.push([refColumns[i], refTable.refData[refRowIndex][i]])
     }
-    setDetailRecord(detailRows)
+    setDetailRecord(detailRows);
 
     filterReferenceEditCols(refRowIndex,refTable, refTable.refDetail)
   }
@@ -363,8 +371,9 @@ export default function TableView(props) {
 
   useEffect(() => {
     setColNames(view.columns);
-    if (!openDetail){
+    if (!openDetail && !openDelete && !openAdd){
       setIsLoading(true);
+      getDataUrl();
       setTimeout(() => {
         setIsLoading(false);
         updateCache(table.URL);
@@ -373,7 +382,7 @@ export default function TableView(props) {
 
       }, 500)
     }
-  }, [view, openDetail, openAdd])
+  }, [view, openDetail, openAdd, openDelete]);
 
   let del, delCol, add, addModal
 
@@ -424,22 +433,23 @@ export default function TableView(props) {
       }
   }
 
-  if (view.allowed_actions.includes('Delete')) {
-    del = (
-      <TableCell sx={{ width: '50px' }} align='center'>
-        <Button variant='contained'>
-          <DeleteRoundedIcon />
-        </Button>
-      </TableCell>
-    )
-    delCol = (
-      <TableCell align='center' style={{ fontWeight: 'bold' }}>
-        Delete
-      </TableCell>
-    )
-  }
 
-  let det
+  // if (view.allowed_actions.includes('Delete')) {
+  //   del = (
+  //     <TableCell sx={{ width: '50px' }} align='center'>
+  //       <Button variant='contained' onClick={}>
+  //         <DeleteRoundedIcon />
+  //       </Button>
+  //     </TableCell>
+  //   )
+  //   delCol = (
+  //     <TableCell align='center' style={{ fontWeight: 'bold' }}>
+  //       Delete
+  //     </TableCell>
+  //   )
+  // }
+
+  let det;
 
   if (detail) {
     det = (
@@ -604,13 +614,11 @@ export default function TableView(props) {
 
   return (
     <div>
-      {
-        isLoading ? (
-          <Modal open={isLoading}>
-            <LinearProgress />
-          </Modal>
-        ) : null
-      }
+      <DeleteModal open={openDelete} setOpen={setOpenDelete} table={table} deleteIndex={deleteIndex} setDeleteIndex={setDeleteIndex}
+      updateCache = {updateCache} />
+      <Modal open={isLoading}>
+        <LinearProgress />
+      </Modal>
       {det}
       {addModal}
       <Box sx={{ paddingBottom: 5 }}>
@@ -635,7 +643,13 @@ export default function TableView(props) {
                   {column}
                 </TableCell>
               ))}
-              {delCol}
+              {
+                view.allowed_actions.includes('Delete') ? (
+                  <TableCell align='center' style={{ fontWeight: 'bold' }}>
+                    Delete
+                  </TableCell>
+                ) : null
+              }
               <TableCell align='center' style={{ fontWeight: 'bold' }}>
                 Detail Views
               </TableCell>
@@ -656,7 +670,15 @@ export default function TableView(props) {
                     {tableCellValue(value,col, rowIndex)}
                   </TableCell>
                 ))}
-                {del}
+                {
+                  view.allowed_actions.includes('Delete') ? (
+                    <TableCell sx={{ width: '50px' }} align='center'>
+                      <Button variant='contained' onClick={() => handleDelete(rowIndex)}>
+                        <DeleteRoundedIcon />
+                      </Button>
+                    </TableCell>
+                  ) : null
+                }
                 <TableCell sx={{ width: '150px' }} align='center'>
                   <Button
                     onClick={() => handleOpenDetailModal(rowIndex)}

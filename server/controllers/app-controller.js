@@ -379,7 +379,7 @@ const createTable = async (req, res) => {
       errorMessage: 'Improperly formatted request',
     })
   }
-  const newTable = new Table(body)
+  const newTable = new Table(body);
   if (!newTable) {
     return res.status(400).json({
       errorMessage: 'Improperly formatted request',

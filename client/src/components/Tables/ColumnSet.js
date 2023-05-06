@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import ListItem from '@mui/material/ListItem';
@@ -6,15 +6,34 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import Checkbox from '@mui/material/Checkbox';
 
 
-export default function columnSet(props) {
-    const {column, tablesList} = props;
+export default function ColumnSet(props) {
+    const {column, tablesList, labelCol, setLabelCol} = props;
+    const [label, setLabel] = useState(false);
     // return (
     //     <ListItem sx = {{border: "2px solid black", margin: "5px" }}>
     //         <Typography>{props.name}</Typography>
     //     </ListItem>
     // )
+
+    let disabled = false;
+
+    if(labelCol != "" && label != true) {
+        disabled = true;
+    }
+
+    function handleChange() {
+        if(label) {
+            setLabelCol("");
+            setLabel(false);
+        }
+        else{
+            setLabelCol("label-" + column);
+            setLabel(true);
+        }
+    }
 
     return (
         <ListItem>
@@ -28,7 +47,7 @@ export default function columnSet(props) {
                 </Grid>
                 <Grid item xs = {2}>
                     <Typography variant = "body">Label:</Typography>
-                    <TextField id = {"label-" + column}/>
+                    <Checkbox id = {"label-"+column} disabled = {disabled} checked = {label} onChange = {handleChange} sx={{ '& .MuiSvgIcon-root': { fontSize: 48 } }}/>
                 </Grid>
                 <Grid item xs = {2}>
                     <Typography variant = "body">Reference:</Typography>

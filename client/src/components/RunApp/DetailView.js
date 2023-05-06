@@ -4,6 +4,7 @@ import TableRow from '@mui/material/TableRow';
 import EditIcon from '@mui/icons-material/EditRounded';
 import CheckIcon from '@mui/icons-material/CheckRounded';
 import TableCell from '@mui/material/TableCell';
+import TableBody from '@mui/material/TableBody'
 import {
     Box,
     Modal,
@@ -34,6 +35,7 @@ const appSet = {
 
 export default function DetailView(props) {
     const [ rows, setRows ] = useState([]);
+
     // const [ editCols, setEditCols] = useState([])
     const { open, setOpen, detail, detailRecord, setDetailRecord, filter, table, detailIndex, setDetailIndex, updateCache} = props;
     const [ edit, setEdit ] = useState(false);
@@ -172,10 +174,17 @@ export default function DetailView(props) {
         }
         
 
+        let columnTypes = [];
+        for (let i = 0; i < table.columns.length; i++)
+        {
+            columnTypes.push(table.columns[i].type);
+        }
+
         const response = await api.post("/editRecord/", { 
             url: table.URL,
             index: detailIndex,
-            record: newRec
+            record: newRec,
+            types: columnTypes
         });
 
         await updateCache(table.URL);
@@ -199,12 +208,14 @@ export default function DetailView(props) {
                 </Box>
                 <TableContainer sx = {{maxWidth: "100%", maxHeight: "80.5%", overflowY: 'scroll', overflow: "auto"}} component={Paper}>
                 <Table>
+                    <TableBody>
                     {
                         rows.map((cell, key) => (
                             <TableRow key = {key}>
                                 
                                 <TableCell variant="head" sx={{fontWeight:"bold", align: "center"}}>{cell[0]}</TableCell>
                                 {
+
                                     edit && detail.editable_columns.includes(cell[0]) ? (
                                         <TableCell sx={{align:"center"}}>
                                             <TextField  
@@ -220,6 +231,7 @@ export default function DetailView(props) {
                             </TableRow>
                         ))
                     }
+                    </TableBody>
                 </Table>
                 </TableContainer>
                 {

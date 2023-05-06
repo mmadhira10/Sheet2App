@@ -41,8 +41,8 @@ export default function EditColumn(props) {
         }
         else{
             setLabelCol("label-" + column.name);
-            setLabel(true)
-        };
+            setLabel(true);
+        }
     }
     return (
         <ListItem>

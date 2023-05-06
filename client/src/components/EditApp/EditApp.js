@@ -46,7 +46,7 @@ export default function EditApp() {
 
     async function saveApp() {
         let app = {
-            creator: "John Doe",
+            creator: currentApp.creator,
             name: name,
             tables: currentApp.tables,
             views: currentApp.views,

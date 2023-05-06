@@ -192,13 +192,15 @@ const addRecord = async (req, res) => {
 const deleteRecord = async (req, res) => {
   const body = req.body
   if (!body) {
+    console.log("first error");
     return res.status(400).json({
       errorMessage: 'Improperly formatted request',
     })
   }
-  const url = body.url
-  const index = body.index
+  const url = body.url;
+  const index = body.index;
   if (!url) {
+    console.log("second error");
     return res.status(400).json({
       errorMessage: 'Improperly formatted request',
     })
@@ -212,8 +214,8 @@ const deleteRecord = async (req, res) => {
     const SPREADSHEET_ID = spid
     const SHEET_ID = sid
 
-    const result = await sheets.spreadsheets.values.batchUpdate({
-      SPREADSHEET_ID,
+    const result = await sheets.spreadsheets.batchUpdate({
+      spreadsheetId: SPREADSHEET_ID,
       resource: {
         requests: [
           {
@@ -234,6 +236,7 @@ const deleteRecord = async (req, res) => {
       result: result,
     })
   } catch (error) {
+    // console.log(error);
     return res.status(400).json({
       errorMessage: error,
     })
@@ -243,6 +246,7 @@ const deleteRecord = async (req, res) => {
 const editRecord = async (req, res) => {
   const body = req.body
   if (!body) {
+    console.log(body)
     return res.status(400).json({
       errorMessage: 'Improperly formatted request',
     })
@@ -251,8 +255,10 @@ const editRecord = async (req, res) => {
   const url = body.url;
   const index = body.index;
   const record = body.record;
+  const types = body.types;
 
   if (!url) {
+    console.log(body);
     return res.status(400).json({
       errorMessage: 'Improperly formatted request',
     })
@@ -278,9 +284,17 @@ const editRecord = async (req, res) => {
               },
               rows: [
                 {
-                  values: record.map(value => ({
-                    userEnteredValue: { stringValue: value },
-                  })),
+                  values: record.map((value, key) => {
+                    if (value == '') {
+                      return { userEnteredValue: { stringValue: value } };
+                    } else if (types[key] == "Boolean") {
+                      return { userEnteredValue: { boolValue: Boolean(value)}};
+                    } else if (types[key] == "Number") {
+                      return { userEnteredValue: { numberValue: Number(value) } };
+                    } else {
+                      return { userEnteredValue: { stringValue: value } };
+                    }                  
+                  }),
                 },
               ],
               fields: 'userEnteredValue',
