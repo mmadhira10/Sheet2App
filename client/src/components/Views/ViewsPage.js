@@ -9,6 +9,7 @@ import ViewSettings from "./ViewSettings.js";
 import ViewCard from "./ViewCard.js";
 import NavBar from "../NavBar.js";
 import { GlobalStoreContext } from "../../store";
+import { useNavigate } from "react-router-dom";
 
 import api from "../../app-routes";
 
@@ -60,8 +61,8 @@ export default function ViewsPage() {
     const [openView, setOpenView] = useState(false);
     const [count, setCount] = useState(1);
     const [views, setViews] = useState([]);
-
     const {currentApp, setCurrentApp} = useContext(GlobalStoreContext);
+    const navigate = useNavigate();
 
     async function getViews() {
         try {
@@ -87,6 +88,10 @@ export default function ViewsPage() {
     }
 
     useEffect(() => {
+        if(currentApp == null)
+        {
+            navigate("/");
+        }
         getViews()
     }, [currentApp]);
 

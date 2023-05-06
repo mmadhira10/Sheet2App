@@ -66,6 +66,7 @@ export default function RunApp() {
                 if (table_cols.length != current_cols.length)
                 {
                     setErrMsg(true);
+                    return;
                 }
 
                 for(let x = 0; x < table_cols.length; x++)
@@ -77,6 +78,7 @@ export default function RunApp() {
                         console.log(table_cols[x]);
                         console.log(current_cols[x].name);
                         setErrMsg(true);
+                        return;
                         
                     }
                 }
@@ -85,6 +87,7 @@ export default function RunApp() {
             {
                 console.log(error);
                 setErrMsg(true);
+                return;
             }
         }
     }
@@ -162,7 +165,7 @@ export default function RunApp() {
         align="center" 
         variant="h1" 
         sx={{fontWeight: 'bold', fontStyle:'italic'}}
-        >Welcome to {currentApp.name} {auth.name}!</Typography>
+        >Welcome to {currentApp != null ? (currentApp.name) : (navigate("/"))} {auth.name}!</Typography>
 
     if ( index > -1 ) {
         let currentView = views[index];
