@@ -10,7 +10,7 @@ import { GlobalStoreContext } from '../../store';
 import { useNavigate } from 'react-router-dom';
 
 export default function AppCard(props) {
-    const { appInfo, isCreator, isDev, isEndUser, isGlobalDev } = props;
+    const { appInfo, isCreator, isDev, isEndUser, isGlobalDev, handleModalOpen } = props;
     const { currentApp, setCurrentApp } = useContext(GlobalStoreContext);
     const navigate = useNavigate();
 
@@ -24,7 +24,7 @@ export default function AppCard(props) {
     }
     // console.log(isEndUser);
     function deleteApp() {
-
+        handleModalOpen(appInfo._id)
     }
 
     function editApp(e) {

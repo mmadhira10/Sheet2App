@@ -36,6 +36,7 @@ export default function RunApp() {
 
 
     useEffect(() => {
+        clearCache();
         getViews();
         getTables();
         getRoles();

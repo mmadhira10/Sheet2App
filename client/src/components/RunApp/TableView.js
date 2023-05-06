@@ -173,6 +173,8 @@ export default function TableView(props) {
                         let refKeyToRowMap = curRefTable.refKeyToRowMap;
                         let labelIndex = curRefTable.labelIndex;
                         let refRow = refKeyToRowMap.get(valAtIndex);
+                        //if refrow undefined means there's no mapping from that key value to the reference table
+                        
                         valAtIndex = curRefTable.refData[refRow][labelIndex];
                         curRefTable.viewRowToRefRow.push(refRow);
                     }
@@ -376,7 +378,7 @@ export default function TableView(props) {
       getDataUrl();
       setTimeout(() => {
         setIsLoading(false);
-        updateCache(table.URL);
+        //updateCache(table.URL);
         getDataUrl();
         isURLorEditable();
 

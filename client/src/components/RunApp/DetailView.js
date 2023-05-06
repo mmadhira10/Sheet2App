@@ -66,12 +66,9 @@ export default function DetailView(props) {
         setUsedCols(used);
     }
 
-    function handleSubmit() {
-        editRecord();
-        setTimeout(() => {
-
-        },)
-        updateCache(table.URL);
+    async function handleSubmit() {
+        await editRecord();
+        //updateCache(table.URL);
         handleBack();
     }
 
@@ -188,10 +185,6 @@ export default function DetailView(props) {
         });
 
         await updateCache(table.URL);
-
-        setTimeout(() => {
-
-        }, 3000);
     }
 
     useEffect(() => {
