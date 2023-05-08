@@ -165,14 +165,14 @@ export default function DetailView(props) {
                 newRec.push(val);
             }
         }
-        // console.log(newRec);
+        let leftoverKeys = keyColumn.slice(0, detailIndex - 1).concat(keyColumn.slice(detailIndex,keyColumn.length))
         let isCorrect = typeCorrect(newRec);
         if(isCorrect == false) {
             //display error message
             // console.log(errMsg);
             return;
         }
-        else if(keyColumn.includes(newRec[keyColIndex])){
+        else if(leftoverKeys.includes(newRec[keyColIndex])){
             //display error message
             setErrMsg("not unique key for edit record");
             setOpenError(true);
