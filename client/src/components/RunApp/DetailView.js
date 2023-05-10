@@ -167,6 +167,7 @@ export default function DetailView(props) {
         }
         let leftoverKeys = keyColumn.slice(0, detailIndex - 1).concat(keyColumn.slice(detailIndex,keyColumn.length))
         let isCorrect = typeCorrect(newRec);
+        console.log(leftoverKeys);
         if(isCorrect == false) {
             //display error message
             // console.log(errMsg);

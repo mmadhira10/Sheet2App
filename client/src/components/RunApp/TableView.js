@@ -295,7 +295,7 @@ export default function TableView(props) {
         index++
       }
 
-      if (filteredRowsAllColumns[rowIndex][index].toLowerCase() == 'false') {
+      if (filteredRowsAllColumns[rowIndex][index] != null && filteredRowsAllColumns[rowIndex][index].toLowerCase() == 'false') {
         setDetailFilter(false)
       } else {
         setDetailFilter(true)
@@ -313,7 +313,7 @@ export default function TableView(props) {
         
         let editFilterIndex = refTable.refData[0].indexOf(refDetail.edit_filter)
   
-        if (refTable.refData[rowIndex][editFilterIndex].toLowerCase() == 'false') {
+        if (refTable.refData[rowIndex][index] != null && refTable.refData[rowIndex][editFilterIndex].toLowerCase() == 'false') {
           setDetailFilter(false)
         } else {
           setDetailFilter(true)
@@ -343,7 +343,7 @@ export default function TableView(props) {
     
     setKeyColIndex(refTable.keyIndex);
     //get the column from a row-wise 2d array
-    setKeyColumn(refTable.refData.map(function(value) { return value[refTable.keyIndex]}));
+    setKeyColumn(refTable.refData.slice(1).map(function(value) { return value[refTable.keyIndex]}));
 
     let refColumns = refTable.refData[0];
     let refRowIndex = refTable.viewRowToRefRow[row];
@@ -395,7 +395,7 @@ export default function TableView(props) {
 
   useEffect(() => {
     setColNames(view.columns);
-    if (!openDetail && !openDelete && !openAdd){
+    if (!openDetail && !openDelete && !openAdd) {
       setIsLoading(true);
       getDataUrl();
       isURLorEditable();
